@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}My bets{% endblock %}
+{% block content %}
+<h1>My bets</h1>
+<p class="muted">Open bets settle roughly 40 seconds after they're placed —
+refresh this page to watch them resolve. A settled bet is a WIN or a LOSS; a
+voided bet (abandoned event, palpable odds error, customer-services adjustment)
+refunds the stake.</p>
+
+{% if bets %}
+<table>
+  <tr><th>Slip</th><th>Event</th><th>Pick</th><th>Odds</th><th>Stake</th>
+      <th>Status</th><th>Return</th><th>Result / reason</th></tr>
+  {% for b in bets %}
+    <tr>
+      <td class="mono">{{ b[0] }}</td>
+      <td>{{ b[2] }} v {{ b[3] }} <span class="muted">({{ b[1] }})</span></td>
+      <td>{{ b[4] }}</td>
+      <td>{{ '%.2f'|format(b[5]) }}</td>
+      <td>€ {{ '%.2f'|format(b[6]) }}</td>
+      <td>
+        {% if b[7] == 'SETTLED' %}
+          <span class="status status-{{ 'WIN' if b[8] > 0 else 'LOSS' }}">{{ 'WIN' if b[8] > 0 else 'LOSS' }}</span>
+        {% else %}
+          <span class="status status-{{ b[7] }}">{{ b[7] }}</span>
+        {% endif %}
+      </td>
+      <td>{% if b[7] == 'SETTLED' %}€ {{ '%.2f'|format(b[8]) }}{% elif b[7] == 'VOIDED' %}stake refunded{% else %}—{% endif %}</td>
+      <td class="muted">{% if b[7] == 'VOIDED' %}{{ b[9] }}{% elif b[10] %}result: {{ b[10] }}{% else %}in play…{% endif %}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}
+  <p>No bets yet — pick a price on the <a href="{{ url_for('home') }}">sportsbook</a>.</p>
+{% endif %}
+{% endblock %}

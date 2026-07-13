@@ -1,0 +1,22 @@
+# Python (shared repo venv — recreate with: py -3.14 -m venv .venv)
+.venv/
+__pycache__/
+*.pyc
+
+# DuckDB write-ahead logs (the .duckdb database file itself IS committed;
+# the .wal only exists while a server is running or after an unclean stop)
+*.duckdb.wal
+
+# Records received by the demo regulator SAFE (generated during demos)
+dataform-safe/**/*.xml
+
+# Generated financial reconciliation reports (regenerate: reconciliation.py)
+dataform-reconciliation/**/*.pdf
+
+# Generated SQL (understanding aid; regenerate: npm run emit-sql). The
+# top-level dataform-sql/README.md IS committed; the dialect trees are not.
+dataform-sql/duckdb/
+dataform-sql/bigquery/
+
+# Node (dataform-example pulls its own node_modules)
+node_modules/

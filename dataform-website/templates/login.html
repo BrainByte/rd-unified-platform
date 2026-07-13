@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+<h1>Log in</h1>
+<div class="card" style="max-width:420px">
+  <form method="post">
+    <label>Username</label>
+    <input type="text" name="username" required autofocus>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <p style="margin-top:14px"><button class="btn btn-gold">Log in</button></p>
+  </form>
+  <p class="muted">Demo logins: player <span class="mono">demo / demo</span> ·
+    customer services <span class="mono">admin / admin</span>.
+    Or <a href="{{ url_for('register') }}">join</a> as a new player.</p>
+</div>
+{% endblock %}

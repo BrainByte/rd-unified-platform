@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}BetNova{% endblock %} · BetNova</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="demo-banner">FICTITIOUS DEMO — no real money, no real odds, no real brand.
+  Built to demonstrate the regulatory-reporting architecture end to end.</div>
+
+<header class="topbar">
+  <a class="brand" href="{{ url_for('home') }}">Bet<span>Nova</span></a>
+  <nav>
+    <a href="{{ url_for('home') }}">Sports</a>
+    <a href="{{ url_for('casino') }}">Casino</a>
+    {% if user %}
+      <a href="{{ url_for('my_bets') }}">My Bets</a>
+      <a href="{{ url_for('account') }}">Account</a>
+      {% if user.is_admin %}<a class="admin-link" href="{{ url_for('admin') }}">Admin</a>{% endif %}
+    {% endif %}
+  </nav>
+  <div class="topbar-right">
+    {% if user %}
+      {% if wallet_balance is not none %}
+        <span class="balance">€ {{ '%.2f'|format(wallet_balance) }}</span>
+      {% endif %}
+      <span class="who">{{ user.username }} <small>({{ user.account_id }} · {{ user.jurisdiction }})</small></span>
+      <a class="btn btn-ghost" href="{{ url_for('logout') }}">Log out</a>
+    {% else %}
+      <a class="btn btn-ghost" href="{{ url_for('login') }}">Log in</a>
+      <a class="btn btn-gold" href="{{ url_for('register') }}">Join now</a>
+    {% endif %}
+  </div>
+</header>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flashes">
+      {% for cat, msg in messages %}
+        <div class="flash flash-{{ cat }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<main>{% block content %}{% endblock %}</main>
+
+<footer>
+  BetNova is a made-up operator used for live demos of a config-driven
+  regulatory-reporting platform. Every table it writes mirrors a CDC landing
+  table in the reporting pipeline. 18+ applies nowhere: none of this is real.
+</footer>
+</body>
+</html>

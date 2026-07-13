@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Financial reconciliation{% endblock %}
+{% block content %}
+<h1>Financial reconciliation</h1>
+<p class="muted">Generates the daily or monthly reconciliation PDF per market:
+the cash view (player transactions) vs the settlement view (the GGR tax base)
+bridged by the open-bets movement, three-way reported completeness against the
+regulator SAFE, and the GGR duty at each day's effective-dated rate. Process:
+<span class="mono">financial-reconciliations.md</span> (repo root).</p>
+
+<div class="card" style="max-width:640px">
+  <h3>Generate reports</h3>
+  <form method="post" action="{{ url_for('admin_reconciliation_generate') }}">
+    <label>Market</label>
+    <select name="jurisdiction">
+      <option value="ALL">All markets with activity</option>
+      {% for m in markets %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+    </select>
+    <label style="margin-top:10px">Period</label>
+    <label class="inline"><input type="radio" name="period" value="daily" checked> Daily</label>
+    <label class="inline" style="margin-left:14px"><input type="radio" name="period" value="monthly"> Monthly</label>
+    <div class="grid-2" style="margin-top:6px">
+      <div>
+        <label>Day (for daily)</label>
+        <input type="date" name="date" value="{{ default_date }}">
+      </div>
+      <div>
+        <label>Month (for monthly)</label>
+        <input type="month" name="month" value="{{ default_month }}">
+      </div>
+    </div>
+    <p style="margin-top:12px"><button class="btn btn-gold">Generate</button></p>
+  </form>
+  <p class="muted">A report is produced for every selected market with activity
+  in the period. RECONCILED / BREAKS status is flashed here and printed inside
+  each PDF; breaks are itemised record by record.</p>
+</div>
+
+<h2>Generated reports</h2>
+{% if reports %}
+<table>
+  <tr><th>Market</th><th>Report</th><th>Size</th><th>Generated (UTC)</th></tr>
+  {% for mkt, fname, kb, mtime in reports %}
+    <tr>
+      <td>{{ mkt }}</td>
+      <td><a href="{{ url_for('admin_reconciliation_file', mkt=mkt, filename=fname) }}" target="_blank" class="mono">{{ fname }}</a></td>
+      <td class="muted">{{ kb }} KB</td>
+      <td class="muted">{{ mtime.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">None yet — generate one above.</p>
+{% endif %}
+
+<p><a href="{{ url_for('admin') }}">← Dashboard</a></p>
+{% endblock %}

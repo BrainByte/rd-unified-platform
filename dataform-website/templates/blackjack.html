@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}Blackjack{% endblock %}
+{% block content %}
+<h1>Blackjack 🂡</h1>
+<div class="card" style="max-width:560px">
+  {% macro cards(hand) -%}
+    <div class="cards-row">
+      {%- for c in hand -%}
+        <span class="{{ 'red' if c[-1] in '♥♦' else '' }}">{{ c }}</span>
+      {%- endfor -%}
+    </div>
+  {%- endmacro %}
+
+  {% if done %}
+    <h3>Dealer ({{ done.dealer|length }} cards)</h3>
+    {{ cards(done.dealer) }}
+    <h3>You</h3>
+    {{ cards(done.player) }}
+    <div class="result-big {{ 'win' if done.payout > done.stake else ('muted' if done.payout == done.stake else 'lose') }}">
+      {{ done.text }} {% if done.payout > 0 %}— returns € {{ '%.2f'|format(done.payout) }}{% endif %}
+    </div>
+    <form method="post">
+      Stake € <input class="stake-input" type="number" name="stake" value="{{ done.stake }}" min="1" step="0.5">
+      <button class="btn btn-gold" name="action" value="deal">Deal again</button>
+    </form>
+    {% if chip %}
+    <form method="post" style="margin-top:6px">
+      <input type="hidden" name="use_chip" value="1">
+      <button class="btn btn-green" name="action" value="deal">🪙 Play your € {{ '%.2f'|format(chip[1]) }} golden chip</button>
+    </form>
+    {% endif %}
+  {% elif state %}
+    <h3>Dealer shows</h3>
+    {{ cards([state.dealer[0], '🂠']) }}
+    <h3>You ({{ value }})</h3>
+    {{ cards(state.player) }}
+    <form method="post" class="inline">
+      <button class="btn btn-green" name="action" value="hit">Hit</button>
+      <button class="btn btn-ghost" name="action" value="stand">Stand</button>
+    </form>
+  {% else %}
+    <p>Dealer stands on 17. Blackjack pays 3:2. Pretend chips only.</p>
+    <form method="post">
+      Stake € <input class="stake-input" type="number" name="stake" value="5" min="1" step="0.5">
+      <button class="btn btn-gold" name="action" value="deal">Deal</button>
+    </form>
+    {% if chip %}
+    <form method="post" style="margin-top:6px">
+      <input type="hidden" name="use_chip" value="1">
+      <button class="btn btn-green" name="action" value="deal">🪙 Play your € {{ '%.2f'|format(chip[1]) }} golden chip</button>
+    </form>
+    <p class="muted">Golden chip: winnings only come back (as cash); the chip
+    is consumed win, lose or push.</p>
+    {% endif %}
+  {% endif %}
+</div>
+<p><a href="{{ url_for('casino') }}">← Casino lobby</a></p>
+{% endblock %}

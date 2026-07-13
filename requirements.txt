@@ -1,0 +1,7 @@
+# Shared Python requirements for the repo venv (.venv, Python 3.14).
+# Used by dataform-website (the fictitious demo gaming site) and any
+# future Python tooling in this repo. See readme-web.md for setup.
+flask>=3.1
+duckdb>=1.4
+pytz>=2024.1     # duckdb needs it to return TIMESTAMPTZ values to Python
+fpdf2>=2.7       # pure-python PDF generation (financial reconciliation reports)

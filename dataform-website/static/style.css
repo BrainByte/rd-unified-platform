@@ -1,0 +1,149 @@
+/* BetNova — fictitious sportsbook styling (dark-green bookmaker vibe). */
+* { box-sizing: border-box; margin: 0; }
+body {
+  font-family: "Segoe UI", Arial, sans-serif; background: #0e1512; color: #e8efe9;
+  font-size: 14.5px; line-height: 1.45; min-height: 100vh;
+}
+a { color: #ffd25e; text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.demo-banner {
+  background: #b8860b; color: #14100a; text-align: center; font-weight: 600;
+  padding: 5px 12px; font-size: 12.5px; letter-spacing: .2px;
+}
+
+.topbar {
+  display: flex; align-items: center; gap: 22px; padding: 12px 22px;
+  background: linear-gradient(180deg, #17332a, #123027); border-bottom: 2px solid #ffd25e33;
+}
+.brand { font-size: 24px; font-weight: 800; color: #fff; letter-spacing: -.5px; }
+.brand span { color: #ffd25e; }
+.topbar nav { display: flex; gap: 16px; }
+.topbar nav a { color: #d8e6dd; font-weight: 600; }
+.topbar nav a.admin-link { color: #ff9d76; }
+.topbar-right { margin-left: auto; display: flex; align-items: center; gap: 12px; }
+.balance {
+  background: #0b241d; border: 1px solid #2b5a48; padding: 5px 12px;
+  border-radius: 15px; color: #7fe0b0; font-weight: 700;
+}
+.who { color: #bcd0c3; }
+.who small { color: #7d9486; }
+
+.btn {
+  display: inline-block; padding: 7px 16px; border-radius: 4px; border: none;
+  font-weight: 700; cursor: pointer; font-size: 14px;
+}
+.btn-gold { background: #ffd25e; color: #1c1607; }
+.btn-gold:hover { background: #ffdf8a; text-decoration: none; }
+.btn-ghost { background: transparent; border: 1px solid #4b6c5d; color: #d8e6dd; }
+.btn-green { background: #1d7a4f; color: #fff; }
+.btn-green:hover { background: #229159; }
+.btn-red { background: #8c2f2f; color: #fff; }
+.btn-small { padding: 3px 10px; font-size: 12.5px; }
+
+.flashes { max-width: 1080px; margin: 12px auto 0; padding: 0 20px; }
+.flash { padding: 9px 14px; border-radius: 5px; margin-bottom: 6px; font-weight: 500; }
+.flash-ok   { background: #143c2b; border: 1px solid #2b7a53; color: #a9e8c6; }
+.flash-warn { background: #4a3a11; border: 1px solid #9c7c26; color: #ffe6a3; }
+.flash-error{ background: #46181d; border: 1px solid #a03a44; color: #ffc4ca; }
+/* the operator-jackpot celebration (REQ: requirements/operator-jackpots) */
+.flash-jackpot {
+  background: linear-gradient(90deg, #4a3a11, #6b5416, #4a3a11);
+  border: 2px solid #ffd25e; color: #ffe9ad; font-size: 17px; font-weight: 800;
+  text-align: center; padding: 14px; animation: jackpot-pulse 1s ease-in-out 4;
+}
+@keyframes jackpot-pulse {
+  0%, 100% { box-shadow: 0 0 4px #ffd25e55; }
+  50% { box-shadow: 0 0 26px #ffd25ecc; }
+}
+
+main { max-width: 1080px; margin: 18px auto 40px; padding: 0 20px; }
+h1 { font-size: 24px; margin-bottom: 14px; }
+h2 { font-size: 17px; color: #ffd25e; margin: 22px 0 10px; }
+h3 { font-size: 15px; margin: 12px 0 8px; }
+
+/* promo deals */
+.deals { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 24px; }
+.deal {
+  background: linear-gradient(135deg, #1c3d31, #14291f); border: 1px solid #2b5a48;
+  border-radius: 8px; padding: 16px;
+}
+.deal b { color: #ffd25e; font-size: 16px; display: block; margin-bottom: 6px; }
+.deal small { color: #9db8a8; }
+
+/* fixtures */
+.sport-block { margin-bottom: 22px; }
+.fixture {
+  display: flex; align-items: center; gap: 14px; padding: 10px 14px;
+  background: #14231d; border: 1px solid #23443733; border-radius: 6px; margin-bottom: 6px;
+}
+.fixture .teams { flex: 1; }
+.fixture .teams b { color: #fff; }
+.fixture .comp { color: #7d9486; font-size: 12.5px; }
+.odds-btn {
+  min-width: 74px; text-align: center; background: #1d3a2e; border: 1px solid #33604d;
+  border-radius: 4px; padding: 6px 8px; color: #ffd25e; font-weight: 700; cursor: pointer;
+}
+.odds-btn small { display: block; color: #9db8a8; font-weight: 400; font-size: 11px; }
+.odds-btn:hover { background: #275443; }
+
+/* forms & cards */
+.card {
+  background: #14231d; border: 1px solid #23443777; border-radius: 8px;
+  padding: 18px; margin-bottom: 16px;
+}
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 760px) { .grid-2 { grid-template-columns: 1fr; } }
+label { display: block; margin: 8px 0 3px; color: #9db8a8; font-size: 13px; }
+input[type=text], input[type=password], input[type=number], select {
+  width: 100%; padding: 8px 10px; border-radius: 4px; border: 1px solid #33604d;
+  background: #0d1a14; color: #e8efe9; font-size: 14px;
+}
+input:focus, select:focus { outline: 2px solid #ffd25e55; }
+form.inline { display: inline; }
+.stake-input { width: 90px !important; display: inline-block; }
+
+table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 13.5px; }
+th, td { text-align: left; padding: 7px 10px; border-bottom: 1px solid #23443766; }
+th { color: #9db8a8; font-weight: 600; font-size: 12.5px; text-transform: uppercase; }
+tr:hover td { background: #18291f; }
+
+.status { padding: 2px 9px; border-radius: 10px; font-size: 12px; font-weight: 700; }
+.status-OPEN     { background: #274b6b; color: #a9d4ff; }
+.status-SETTLED  { background: #1d4a33; color: #8fe6b8; }
+.status-VOIDED   { background: #5b4420; color: #ffd98a; }
+.status-WIN      { background: #1d4a33; color: #8fe6b8; }
+.status-LOSS     { background: #46181d; color: #ffb3bb; }
+.status-PENDING  { background: #5b4420; color: #ffd98a; }
+.status-VERIFIED { background: #1d4a33; color: #8fe6b8; }
+.status-REQUESTED{ background: #274b6b; color: #a9d4ff; }
+.status-COMPLETED{ background: #1d4a33; color: #8fe6b8; }
+.status-FAILED   { background: #46181d; color: #ffb3bb; }
+
+/* casino */
+.game-tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; }
+.game-tile {
+  background: linear-gradient(160deg, #1c3d31, #101d17); border: 1px solid #2b5a48;
+  border-radius: 8px; padding: 26px 18px; text-align: center;
+}
+.game-tile .icon { font-size: 42px; }
+.game-tile b { display: block; font-size: 17px; margin: 8px 0 12px; color: #fff; }
+.reels { font-size: 58px; letter-spacing: 14px; text-align: center; margin: 18px 0; }
+.cards-row { font-size: 30px; letter-spacing: 6px; margin: 6px 0 12px; }
+.cards-row .red { color: #ff8f9a; }
+.result-big { font-size: 19px; font-weight: 700; margin: 10px 0; }
+.win  { color: #7fe0b0; }
+.lose { color: #ff9aa5; }
+
+/* admin */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+.kpi { background: #14231d; border: 1px solid #2b5a48; border-radius: 8px; padding: 14px; text-align: center; }
+.kpi .n { font-size: 26px; font-weight: 800; color: #ffd25e; }
+.kpi .l { color: #9db8a8; font-size: 12.5px; }
+
+footer {
+  max-width: 1080px; margin: 30px auto; padding: 14px 20px; color: #6f8577;
+  font-size: 12px; border-top: 1px solid #23443766;
+}
+.muted { color: #7d9486; }
+.mono { font-family: Consolas, monospace; }

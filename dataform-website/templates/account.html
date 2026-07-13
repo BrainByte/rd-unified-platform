@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}My account{% endblock %}
+{% block content %}
+<h1>My account</h1>
+
+{% if exclusion %}
+  <div class="flash flash-error">This account is currently <b>self-excluded</b>
+  ({{ exclusion }}). Deposits and all wagering are blocked while the exclusion is active.</div>
+{% endif %}
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Identity &amp; verification</h3>
+    <p>Account <b class="mono">{{ user.account_id }}</b> · market <b>{{ user.jurisdiction }}</b>
+       · KYC <span class="status status-{{ user.kyc_status }}">{{ user.kyc_status }}</span></p>
+    {% if user.kyc_status != 'VERIFIED' %}
+      <form method="post" action="{{ url_for('verify_identity') }}">
+        <p class="muted">Withdrawals stay held until your identity is verified —
+        exactly the control the reporting pipeline's unverified-withdrawal
+        detector enforces.</p>
+        <button class="btn btn-green">Verify identity (simulated document upload)</button>
+      </form>
+    {% else %}
+      <p class="muted">Verified — withdrawals are enabled.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Wallet</h3>
+    <p>Balance: <b class="balance">€ {{ '%.2f'|format(wallet_balance) }}</b></p>
+    <form method="post" action="{{ url_for('deposit') }}" class="inline">
+      <input class="stake-input" type="number" name="amount" value="50" min="1" step="0.5">
+      <button class="btn btn-green btn-small">Deposit</button>
+    </form>
+    <form method="post" action="{{ url_for('withdraw') }}" class="inline">
+      <input class="stake-input" type="number" name="amount" value="20" min="1" step="0.5">
+      <button class="btn btn-ghost btn-small">Withdraw</button>
+    </form>
+    <p class="muted" style="margin-top:8px">The balance is one unified wallet across
+    deposits, withdrawals, sports stakes/returns and casino play — derived from the
+    ledger, never stored.</p>
+  </div>
+
+  <div class="card">
+    <h3>Address</h3>
+    <form method="post" action="{{ url_for('save_address') }}">
+      <label>Street</label>
+      <input type="text" name="street" value="{{ address[0] if address else '' }}">
+      <label>City</label>
+      <input type="text" name="city" value="{{ address[1] if address else '' }}">
+      <label>Postcode <span class="muted">({{ user.jurisdiction }} format: {{ postcode_hint }})</span></label>
+      <input type="text" name="postcode" value="{{ address[2] if address else '' }}">
+      <p style="margin-top:10px"><button class="btn btn-gold btn-small">Save address</button></p>
+      <p class="muted">Tip for demos: save a deliberately bad postcode, then show the
+      reporting pipeline quarantining just this account while everyone else ships.</p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Payment method</h3>
+    <form method="post" action="{{ url_for('save_payment_method') }}">
+      <label>Method</label>
+      <select name="method">
+        <option>CARD</option><option>BANK</option><option>WALLET</option>
+      </select>
+      <label>Card number <span class="muted">(make one up)</span></label>
+      <input type="text" name="card_number" placeholder="4111 1111 1111 1111"
+             value="{{ '•••• •••• •••• ' + paymeth[1] if paymeth and paymeth[1] else '' }}">
+      <p style="margin-top:10px"><button class="btn btn-gold btn-small">Save payment method</button></p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Operator jackpot 🎰</h3>
+    <p>Current pool: <b class="balance">€ {{ '%.2f'|format(jackpot_pool) }}</b></p>
+    {% if jackpot_opted %}
+      <p>You are <b>opted in</b>: {{ '%.0f'|format(jackpot_cfg.contribution_rate * 100) }}%
+      of every cash casino stake joins the pool, and every play runs the draw —
+      win and the <b>whole pot</b> lands in your balance instantly.</p>
+      <form method="post" action="{{ url_for('jackpot_opt_out') }}">
+        <button class="btn btn-ghost btn-small">Opt out</button>
+      </form>
+    {% else %}
+      <p class="muted">Opt in and {{ '%.0f'|format(jackpot_cfg.contribution_rate * 100) }}%
+      of each cash casino stake joins the pool — every play could win the lot.</p>
+      <form method="post" action="{{ url_for('jackpot_opt_in') }}">
+        <button class="btn btn-gold btn-small">Opt in to operator jackpot</button>
+      </form>
+    {% endif %}
+    <p class="muted" style="margin-top:8px">Contributions and wins are recorded as
+    their own jackpot game (<span class="mono">{{ jackpot_cfg.game_id }}</span>)
+    running alongside your play — see requirements/operator-jackpots.</p>
+  </div>
+
+  <div class="card">
+    <h3>Golden chips 🪙</h3>
+    {% if chips %}
+      <table>
+        <tr><th>Chip</th><th>Value</th><th>Why</th><th>Status</th></tr>
+        {% for c in chips %}
+          <tr>
+            <td class="mono">{{ c[0] }}</td>
+            <td>€ {{ '%.2f'|format(c[1]) }}</td>
+            <td class="muted">{{ c[2] }}</td>
+            <td><span class="status status-{{ 'VERIFIED' if c[3] == 'AVAILABLE' else 'VOIDED' }}">{{ c[3] }}</span></td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">None yet.</p>
+    {% endif %}
+    <p class="muted">Deposit € {{ '%.0f'|format(promo.min_deposit) }}+ and a
+    € {{ '%.0f'|format(promo.chip_value) }} golden chip is added automatically.
+    Play it on <a href="{{ url_for('blackjack') }}">blackjack</a> or
+    <a href="{{ url_for('poker') }}">poker</a> — if it wins you keep the
+    <b>winnings only</b> as cash; the chip itself is never returned, and a
+    losing chip costs you nothing.</p>
+  </div>
+
+  <div class="card">
+    <h3>Responsible gambling limits</h3>
+    {% if limits %}
+      <table>
+        <tr><th>Type</th><th>Amount</th></tr>
+        {% for l in limits %}
+          <tr><td>{{ l[1].replace('_', ' ') }}</td><td>€ {{ '%.2f'|format(l[2]) }}</td></tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">No limits set.</p>
+    {% endif %}
+    <form method="post" action="{{ url_for('save_limit') }}">
+      <label>Set / replace a limit</label>
+      <select name="limit_type">
+        <option value="DEPOSIT_DAILY">Deposit — daily</option>
+        <option value="DEPOSIT_WEEKLY">Deposit — weekly</option>
+        <option value="DEPOSIT_MONTHLY">Deposit — monthly</option>
+        <option value="LOSS_DAILY">Loss — daily</option>
+        <option value="LOSS_WEEKLY">Loss — weekly</option>
+        <option value="LOSS_MONTHLY">Loss — monthly</option>
+        <option value="STAKE_CASINO">Stake — casino (per bet)</option>
+      </select>
+      <input class="stake-input" type="number" name="amount" value="100" min="1" step="1" style="margin-top:6px">
+      <button class="btn btn-green btn-small">Set limit</button>
+      <p class="muted" style="margin-top:8px">Deposits and stakes that would break a
+      limit are refused — the same effective-limit logic the pipeline's breach
+      detectors verify after the fact. <b>Stake — casino</b> caps every single
+      casino bet immediately; statutory age-banded slots caps also apply from
+      their effective dates (see requirements/max-stake-limits).</p>
+    </form>
+  </div>
+
+  <div class="card">
+    <h3>Recent payments</h3>
+    {% if payments %}
+      <table>
+        <tr><th>Id</th><th>Dir</th><th>Amount</th><th>Status</th><th>Why</th></tr>
+        {% for p in payments %}
+          <tr>
+            <td class="mono">{{ p[0] }}</td><td>{{ p[1] }}</td>
+            <td>€ {{ '%.2f'|format(p[2]) }}</td>
+            <td><span class="status status-{{ p[3] }}">{{ p[3] }}</span></td>
+            <td class="muted">{{ p[4] or '' }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="muted">No payments yet — make a (fictitious) deposit to start playing.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

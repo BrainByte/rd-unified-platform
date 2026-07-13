@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Poker{% endblock %}
+{% block content %}
+<h1>Showdown Poker ♠️</h1>
+<div class="card" style="max-width:560px">
+  {% macro cards(hand) -%}
+    <div class="cards-row">
+      {%- for c in hand -%}
+        <span class="{{ 'red' if c[-1] in '♥♦' else '' }}">{{ c }}</span>
+      {%- endfor -%}
+    </div>
+  {%- endmacro %}
+
+  {% if result %}
+    <h3>House</h3>
+    {{ cards(result.house) }}
+    <h3>You</h3>
+    {{ cards(result.player) }}
+    <div class="result-big {{ 'win' if result.payout > result.stake else ('muted' if result.payout == result.stake else 'lose') }}">
+      {{ result.text }} {% if result.payout > 0 %}— returns € {{ '%.2f'|format(result.payout) }}{% endif %}
+    </div>
+  {% else %}
+    <p>Five cards each, best hand wins double your stake, ties push. One click,
+    one showdown — dummy poker for the demo.</p>
+  {% endif %}
+  <form method="post">
+    Stake € <input class="stake-input" type="number" name="stake" value="5" min="1" step="0.5">
+    <button class="btn btn-gold">Deal</button>
+  </form>
+  {% if chip %}
+  <form method="post" style="margin-top:6px">
+    <input type="hidden" name="use_chip" value="1">
+    <button class="btn btn-green">🪙 Play your € {{ '%.2f'|format(chip[1]) }} golden chip</button>
+  </form>
+  <p class="muted">Golden chip: winnings only come back (as cash); the chip is
+  consumed win, lose or tie.</p>
+  {% endif %}
+</div>
+<p><a href="{{ url_for('casino') }}">← Casino lobby</a></p>
+{% endblock %}

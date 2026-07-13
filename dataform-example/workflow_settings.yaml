@@ -1,0 +1,8 @@
+defaultProject: your-gcp-project
+defaultLocation: EU
+defaultDataset: reporting_core
+defaultAssertionDataset: reporting_assertions
+dataformCoreVersion: 3.0.0
+vars:
+  env: dev            # dev | staging | prod — suffixes datasets in non-prod
+  parallel_run: "true" # when true, 40_recon legacy diff models are included

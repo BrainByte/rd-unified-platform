@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Admin{% endblock %}
+{% block content %}
+<h1>Back office — customer services &amp; demo control</h1>
+
+<div class="kpis">
+  <div class="kpi"><div class="n">{{ players }}</div><div class="l">Players</div></div>
+  <div class="kpi"><div class="n">{{ open_bets }}</div><div class="l">In-flight bets</div></div>
+  <div class="kpi"><div class="n">€ {{ '%.2f'|format(deposits24) }}</div><div class="l">Deposits (24h)</div></div>
+  <div class="kpi"><div class="n">{{ online|length }}</div><div class="l">Online (5 min)</div></div>
+</div>
+
+<p>
+  <a class="btn btn-ghost" href="{{ url_for('admin_players') }}">All players →</a>
+  <a class="btn btn-ghost" href="{{ url_for('admin_reconciliation') }}">Financial reconciliation →</a>
+</p>
+
+<h2>In-flight bets (live)</h2>
+{% if inflight %}
+<table>
+  <tr><th>Slip</th><th>Player</th><th>Event</th><th>Pick</th><th>Odds</th>
+      <th>Stake</th><th>Placed</th><th>Settles</th></tr>
+  {% for b in inflight %}
+    <tr>
+      <td class="mono">{{ b[0] }}</td><td>{{ b[1] }}</td>
+      <td>{{ b[2] }} v {{ b[3] }}</td><td>{{ b[4] }}</td>
+      <td>{{ '%.2f'|format(b[5]) }}</td><td>€ {{ '%.2f'|format(b[6]) }}</td>
+      <td class="muted">{{ b[7].strftime('%H:%M:%S') }}</td>
+      <td class="muted">{{ b[8].strftime('%H:%M:%S') if b[8] else '—' }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">None — place a bet as a player and refresh.</p>{% endif %}
+
+<h2>Fixtures armed to settle</h2>
+{% if arming %}
+<table>
+  <tr><th>Fixture</th><th>Sport</th><th>Event</th><th>Settles at</th><th></th></tr>
+  {% for f in arming %}
+    <tr>
+      <td class="mono">{{ f[0] }}</td><td>{{ f[1] }}</td>
+      <td>{{ f[2] }} v {{ f[3] }}</td>
+      <td class="muted">{{ f[4].strftime('%H:%M:%S') }}</td>
+      <td><form method="post" action="{{ url_for('admin_settle', fixture_id=f[0]) }}" class="inline">
+        <button class="btn btn-green btn-small">Settle now</button></form></td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No fixtures armed — they arm when the first bet lands.</p>{% endif %}
+
+<h2>Online players</h2>
+{% if online %}
+<table>
+  <tr><th>Account</th><th>Username</th><th>Market</th><th>Last seen</th></tr>
+  {% for u in online %}
+    <tr>
+      <td class="mono"><a href="{{ url_for('admin_player', account_id=u[0]) }}">{{ u[0] }}</a></td>
+      <td>{{ u[1] }}</td><td>{{ u[2] }}</td>
+      <td class="muted">{{ u[3].strftime('%H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">Nobody in the last 5 minutes.</p>{% endif %}
+
+<h2>Regulator SAFE — near-realtime submissions
+  <small class="muted">(<a href="http://127.0.0.1:5002/" target="_blank">open the SAFE</a>)</small></h2>
+{% if safe_counts %}
+<table>
+  <tr><th>Jurisdiction</th><th>Type</th><th>Records delivered</th></tr>
+  {% for s in safe_counts %}
+    <tr><td>{{ s[0] }}</td><td>{{ s[1] }}</td><td>{{ s[2] }}</td></tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">Nothing delivered yet — the engine polls every few seconds;
+players, completed payments and settled bets flow through automatically.</p>{% endif %}
+{% if safe_recent %}
+<table>
+  <tr><th>Type</th><th>Record</th><th>Market</th><th>Receipt</th><th>When</th></tr>
+  {% for r in safe_recent %}
+    <tr>
+      <td>{{ r[0] }}</td><td class="mono">{{ r[1] }}</td><td>{{ r[2] }}</td>
+      <td class="mono">{{ r[3] }}</td>
+      <td class="muted">{{ r[4].strftime('%H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endif %}
+
+<h2>Recent payments</h2>
+<table>
+  <tr><th>Id</th><th>Account</th><th>Dir</th><th>Amount</th><th>Status</th><th>Why</th></tr>
+  {% for p in recent_payments %}
+    <tr>
+      <td class="mono">{{ p[0] }}</td>
+      <td class="mono"><a href="{{ url_for('admin_player', account_id=p[1]) }}">{{ p[1] }}</a></td>
+      <td>{{ p[2] }}</td><td>€ {{ '%.2f'|format(p[3]) }}</td>
+      <td><span class="status status-{{ p[4] }}">{{ p[4] }}</span></td>
+      <td class="muted">{{ p[5] or '' }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

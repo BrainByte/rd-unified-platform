@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}Join{% endblock %}
+{% block content %}
+<h1>Join BetNova</h1>
+<div class="card" style="max-width:560px">
+  <form method="post">
+    <label>Username</label>
+    <input type="text" name="username" required autofocus>
+    <label>Password</label>
+    <input type="password" name="password" required>
+    <label>Market (jurisdiction)</label>
+    <select name="jurisdiction">
+      {% for code, j in jurisdictions.items() %}
+        <option value="{{ code }}">{{ j.name }} ({{ code }})</option>
+      {% endfor %}
+    </select>
+    <label>National ID <span class="muted">(fictitious — e.g. a made-up DNI/CPR/EGN)</span></label>
+    <input type="text" name="national_id" placeholder="e.g. 12345678Z">
+    <label>Date of birth <span class="muted">(age-banded slots stake limits apply — try a 2005 date)</span></label>
+    <input type="date" name="date_of_birth" value="1990-01-01">
+    <label style="margin-top:14px">
+      <input type="checkbox" name="accept_terms" value="1">
+      I accept the <a href="#terms">terms &amp; conditions</a> (version {{ terms_version }})
+    </label>
+    <p style="margin-top:14px"><button class="btn btn-gold">Create account</button></p>
+  </form>
+</div>
+
+<div class="card" id="terms" style="max-width:560px">
+  <h3>Terms &amp; conditions (fictitious, v{{ terms_version }})</h3>
+  <p class="muted">1. BetNova is not a real gambling operator; no clause here has any
+  legal effect. 2. All funds, odds, events, teams and outcomes are invented.
+  3. Your data lives in a local DuckDB file on this machine, used solely to
+  demonstrate a regulatory-reporting architecture. 4. The house always wins,
+  except when it doesn't, which is random. 5. By ticking the box you agree to
+  enjoy the demo responsibly.</p>
+</div>
+{% endblock %}

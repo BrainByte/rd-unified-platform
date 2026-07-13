@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}{{ acct[0] }}{% endblock %}
+{% block content %}
+<h1>{{ acct[1] }} <span class="muted mono">({{ acct[0] }})</span></h1>
+
+<div class="grid-2">
+  <div class="card">
+    <h3>Profile</h3>
+    <p>Market <b>{{ acct[2] }}</b> · national id <span class="mono">{{ acct[3] or '—' }}</span>
+       · KYC <span class="status status-{{ acct[4] }}">{{ acct[4] }}</span></p>
+    <p>Opened {{ acct[5].strftime('%Y-%m-%d %H:%M') }} · balance <b>€ {{ '%.2f'|format(bal) }}</b></p>
+    <p>Address: {% if address %}{{ address[0] }}, {{ address[1] }}, <b>{{ address[2] }}</b>{% else %}<span class="muted">none saved</span>{% endif %}</p>
+    <p>Limits: {% if limits %}{% for l in limits %}<span class="status status-OPEN">{{ l[0].replace('_',' ') }} € {{ '%.0f'|format(l[1]) }}</span> {% endfor %}{% else %}<span class="muted">none</span>{% endif %}</p>
+    <p>Exclusion: {% if exclusion %}<span class="status status-FAILED">ACTIVE ({{ exclusion }})</span>{% else %}<span class="muted">none active</span>{% endif %}</p>
+    <p>Operator jackpot: {% if jackpot_opted %}<span class="status status-VERIFIED">OPTED IN</span>{% else %}<span class="muted">not opted in</span>{% endif %}</p>
+  </div>
+
+  <div class="card">
+    <h3>Customer-services actions</h3>
+    {% if acct[4] != 'VERIFIED' %}
+      <form method="post" action="{{ url_for('admin_verify', account_id=acct[0]) }}" class="inline">
+        <button class="btn btn-green btn-small">Verify KYC</button>
+      </form>
+    {% endif %}
+    <form method="post" action="{{ url_for('admin_exclude', account_id=acct[0]) }}" class="inline">
+      <button class="btn btn-red btn-small">{{ 'End exclusion' if exclusion else 'Self-exclude player' }}</button>
+    </form>
+    <p class="muted" style="margin-top:8px">Excluding a player makes their next deposit
+    FAIL and blocks wagering — then show the audience the pipeline's
+    activity-while-excluded detector staying clean because the platform refused.</p>
+  </div>
+</div>
+
+<h2>Bets</h2>
+{% if bets %}
+<table>
+  <tr><th>Slip</th><th>Event</th><th>Pick</th><th>Odds</th><th>Stake</th>
+      <th>Status</th><th>Return</th><th></th></tr>
+  {% for b in bets %}
+    <tr>
+      <td class="mono">{{ b[0] }}</td>
+      <td>{{ b[1] }} v {{ b[2] }}</td><td>{{ b[3] }}</td>
+      <td>{{ '%.2f'|format(b[4]) }}</td><td>€ {{ '%.2f'|format(b[5]) }}</td>
+      <td><span class="status status-{{ b[6] }}">{{ b[6] }}</span></td>
+      <td>{% if b[6] == 'SETTLED' %}€ {{ '%.2f'|format(b[7]) }}{% elif b[6] == 'VOIDED' %}refunded{% else %}—{% endif %}</td>
+      <td>{% if b[6] != 'VOIDED' %}
+        <form method="post" action="{{ url_for('admin_void', slip_id=b[0]) }}" class="inline">
+          <button class="btn btn-ghost btn-small">Void</button>
+        </form>{% endif %}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No bets.</p>{% endif %}
+
+<h2>Payments</h2>
+{% if payments %}
+<table>
+  <tr><th>Id</th><th>Dir</th><th>Amount</th><th>Status</th><th>Why</th><th></th></tr>
+  {% for p in payments %}
+    <tr>
+      <td class="mono">{{ p[0] }}</td><td>{{ p[1] }}</td>
+      <td>€ {{ '%.2f'|format(p[2]) }}</td>
+      <td><span class="status status-{{ p[3] }}">{{ p[3] }}</span></td>
+      <td class="muted">{{ p[4] or '' }}</td>
+      <td>{% if p[1] == 'WITHDRAWAL' and p[3] == 'REQUESTED' %}
+        <form method="post" action="{{ url_for('admin_complete_withdrawal', payment_id=p[0]) }}" class="inline">
+          <button class="btn btn-green btn-small">Complete</button>
+        </form>{% endif %}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No payments.</p>{% endif %}
+
+<h2>Gaming sessions</h2>
+{% if sessions %}
+<table>
+  <tr><th>Session</th><th>Started</th><th>Last activity</th><th>Ended</th><th>Reason</th></tr>
+  {% for s in sessions %}
+    <tr>
+      <td class="mono">{{ s[0] }}</td>
+      <td class="muted">{{ s[1].strftime('%H:%M:%S') }}</td>
+      <td class="muted">{{ s[2].strftime('%H:%M:%S') }}</td>
+      <td class="muted">{{ s[3].strftime('%H:%M:%S') if s[3] else '—' }}</td>
+      <td>{% if s[4] %}<span class="status status-{{ 'VOIDED' if s[4] == 'INACTIVITY' else 'SETTLED' }}">{{ s[4] }}</span>{% else %}<span class="status status-OPEN">LIVE</span>{% endif %}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No sessions yet.</p>{% endif %}
+
+<h2>Golden chips</h2>
+<form method="post" action="{{ url_for('admin_award_chip', account_id=acct[0]) }}" class="inline">
+  Value € <input class="stake-input" type="number" name="value" value="5" min="1" max="100" step="0.5">
+  <button class="btn btn-green btn-small">Award golden chip</button>
+  <span class="muted">(customer services goodwill — REQ: requirements/golden-chips)</span>
+</form>
+{% if chips %}
+<table>
+  <tr><th>Chip</th><th>Value</th><th>Why</th><th>Status</th><th>Awarded</th></tr>
+  {% for c in chips %}
+    <tr>
+      <td class="mono">{{ c[0] }}</td>
+      <td>€ {{ '%.2f'|format(c[1]) }}</td>
+      <td class="muted">{{ c[2] }}</td>
+      <td><span class="status status-{{ 'VERIFIED' if c[3] == 'AVAILABLE' else 'VOIDED' }}">{{ c[3] }}</span></td>
+      <td class="muted">{{ c[4].strftime('%H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted" style="margin-top:6px">No chips.</p>{% endif %}
+
+<h2>Casino rounds</h2>
+{% if rounds %}
+<table>
+  <tr><th>Round</th><th>Game</th><th>Stake</th><th>Payout</th><th>Funding</th><th>Detail</th><th>When</th></tr>
+  {% for r in rounds %}
+    <tr>
+      <td class="mono">{{ r[0] }}</td><td>{{ r[1] }}</td>
+      <td>€ {{ '%.2f'|format(r[2]) }}</td><td>€ {{ '%.2f'|format(r[3]) }}</td>
+      <td>{% if r[4] == 'GOLDEN_CHIP' %}<span class="status status-PENDING">🪙 GOLDEN</span>{% else %}<span class="muted">cash</span>{% endif %}</td>
+      <td class="muted">{{ r[5] }}</td>
+      <td class="muted">{{ r[6].strftime('%H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}<p class="muted">No casino play.</p>{% endif %}
+
+<p><a href="{{ url_for('admin_players') }}">← All players</a> · <a href="{{ url_for('admin') }}">Dashboard</a></p>
+{% endblock %}

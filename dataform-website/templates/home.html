@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Sports{% endblock %}
+{% block content %}
+
+<div class="deals">
+  <div class="deal"><b>🪙 €5 GOLDEN CHIP</b> when you deposit €50 or more —
+    play it on blackjack or poker, keep the winnings as cash.
+    <small>This one actually works (fictitiously) — see your Account page.</small></div>
+  <div class="deal"><b>Acca boost 25%</b> on 4+ leg accumulators this weekend.
+    <small>Made-up deal for demo purposes.</small></div>
+  <div class="deal"><b>Casino welcome pack</b> — 50 pretend spins on NovaSlots.
+    <small>Also entirely fictitious.</small></div>
+</div>
+
+<h1>Today's events</h1>
+<p class="muted">Every fixture, team and price below is invented. Place a bet and it
+settles about 40 seconds later, so you can watch the whole lifecycle — placed,
+settled (win / loss) or voided — flow straight into the reporting data.</p>
+
+{% for sport, rows in sports.items() %}
+  <div class="sport-block">
+    <h2>{{ sport }}</h2>
+    {% for f in rows %}
+      <div class="fixture">
+        <div class="teams">
+          <b>{{ f[3] }}</b> v <b>{{ f[4] }}</b>
+          <div class="comp">{{ f[2] }} · {{ f[0] }}</div>
+        </div>
+        <form method="post" action="{{ url_for('place_bet') }}" class="inline">
+          <input type="hidden" name="fixture_id" value="{{ f[0] }}">
+          <input type="hidden" name="selection" value="HOME">
+          <input class="stake-input" type="number" name="stake" value="10" min="1" step="0.5" title="Stake (€)">
+          <button class="odds-btn" title="Back {{ f[3] }}"><small>Home</small>{{ '%.2f'|format(f[6]) }}</button>
+        </form>
+        {% if f[7] %}
+        <form method="post" action="{{ url_for('place_bet') }}" class="inline">
+          <input type="hidden" name="fixture_id" value="{{ f[0] }}">
+          <input type="hidden" name="selection" value="DRAW">
+          <input class="stake-input" type="number" name="stake" value="10" min="1" step="0.5" title="Stake (€)">
+          <button class="odds-btn" title="Back the draw"><small>Draw</small>{{ '%.2f'|format(f[7]) }}</button>
+        </form>
+        {% endif %}
+        <form method="post" action="{{ url_for('place_bet') }}" class="inline">
+          <input type="hidden" name="fixture_id" value="{{ f[0] }}">
+          <input type="hidden" name="selection" value="AWAY">
+          <input class="stake-input" type="number" name="stake" value="10" min="1" step="0.5" title="Stake (€)">
+          <button class="odds-btn" title="Back {{ f[4] }}"><small>Away</small>{{ '%.2f'|format(f[8]) }}</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+{% endfor %}
+
+<p class="muted">Set a stake next to any price and click it to place the bet.
+{% if not user %}You'll need to <a href="{{ url_for('register') }}">join</a> or
+<a href="{{ url_for('login') }}">log in</a> first.{% endif %}</p>
+{% endblock %}

@@ -1,0 +1,19 @@
+{
+  "name": "dataform-regulatory-example",
+  "version": "0.4.0",
+  "private": true,
+  "description": "Config-driven regulatory reporting pipeline (BigQuery/Dataform) with offline DuckDB test harness",
+  "scripts": {
+    "test": "node --test",
+    "demo": "node demo/compile-demo.js",
+    "local": "node local/run.js",
+    "local:dry": "node local/run.js --dry-run",
+    "seed:generate": "node seed/generate.js",
+    "emit-sql": "node local/emit-sql.js",
+    "dataform:compile": "node local/dataform-compile.js",
+    "check": "npm test && npm run demo && npm run local && npm run emit-sql"
+  },
+  "devDependencies": {
+    "@duckdb/node-api": "1.4.5-r.1"
+  }
+}

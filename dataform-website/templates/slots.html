@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Slots{% endblock %}
+{% block content %}
+<h1>NovaSlots 🎰</h1>
+<div class="card" style="max-width:520px; text-align:center">
+  {% if result %}
+    <div class="reels">{{ result.reels | join(' ') }}</div>
+    {% if result.payout > 0 %}
+      <div class="result-big win">You win € {{ '%.2f'|format(result.payout) }}!</div>
+    {% else %}
+      <div class="result-big lose">No win this time.</div>
+    {% endif %}
+  {% else %}
+    <div class="reels">❔ ❔ ❔</div>
+  {% endif %}
+  <form method="post">
+    Stake € <input class="stake-input" type="number" name="stake" value="2" min="0.5" step="0.5">
+    <button class="btn btn-gold">Spin</button>
+  </form>
+  <p class="muted" style="margin-top:12px">Three of a kind pays 4×–25×; a pair of
+  cherries pays 1.5×. Entirely made up, entirely random.</p>
+</div>
+<p><a href="{{ url_for('casino') }}">← Casino lobby</a></p>
+{% endblock %}
