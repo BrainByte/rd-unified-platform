@@ -8,7 +8,9 @@ re-creating the 17-fork legacy estate in Python.
 
 Companion documents: the four schema analyses and
 [comparison](comparison.md) in this folder (what the regulators actually
-demand); the demo translation layer
+demand); [mapping-engine-deployment.md](mapping-engine-deployment.md) (the
+mapping method in implementation detail, and the Cloud Workflows deployment
+steps); the demo translation layer
 `dataform-website/regulator_formats/` (a working seam, four markets); the
 production skeleton `dataform-starter/submission-service/` (where the layer
 runs in GCP).
