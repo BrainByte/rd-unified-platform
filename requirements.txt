@@ -1,4 +1,4 @@
-# Shared Python requirements for the repo venv (.venv, Python 3.14).
+# Shared Python requirements for the repo venv (.venv, Python 3.11).
 # Used by dataform-website (the fictitious demo gaming site) and any
 # future Python tooling in this repo. See readme-web.md for setup.
 flask>=3.1

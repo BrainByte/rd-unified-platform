@@ -36,8 +36,8 @@ BigQuery + Dataform; the entire pipeline also runs offline in DuckDB in seconds.
 cd dataform-example
 npm install && npm run check     # tests + demo + whole pipeline in DuckDB
 
-# the live demo (needs Python 3.14; venv at the repo root)
-py -3.14 -m venv .venv
+# the live demo (needs Python 3.11; venv at the repo root)
+py -3.11 -m venv .venv
 .venv/Scripts/python -m pip install -r requirements.txt
 .venv/Scripts/python dataform-website/app.py    # site :5001, SAFE :5002
 ```

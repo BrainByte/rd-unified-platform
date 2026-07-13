@@ -15,17 +15,17 @@ it is a single-user architecture demo.
 
 ## Setup on a new computer
 
-Prerequisites: **Python 3.14** and git. On Windows:
+Prerequisites: **Python 3.11** and git. On Windows:
 
 ```powershell
-winget install Python.Python.3.14        # or download from python.org
+winget install Python.Python.3.11        # or download from python.org
 ```
 
 Then, from the repository root (`rd-unified-platform/`):
 
 ```powershell
 # 1. one shared venv at the repo root (further Python work reuses it)
-py -3.14 -m venv .venv
+py -3.11 -m venv .venv
 
 # 2. install the (tiny) requirements: flask, duckdb, pytz
 .venv\Scripts\python -m pip install -r requirements.txt
@@ -37,7 +37,7 @@ py -3.14 -m venv .venv
 macOS / Linux:
 
 ```bash
-python3.14 -m venv .venv
+python3.11 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 .venv/bin/python dataform-website/app.py
 ```
@@ -199,5 +199,5 @@ dataform-safe/      records the SAFE has accepted (pretty-printed XML,
   next request (and the admin can settle any fixture immediately).
 - A `data/betnova.duckdb.wal` file may appear while the server runs; it is
   gitignored and disappears on clean shutdown.
-- Python 3.14 / Flask 3.1 / DuckDB 1.5 (`requirements.txt` at the repo root;
+- Python 3.11 / Flask 3.1 / DuckDB 1.5 (`requirements.txt` at the repo root;
   `pytz` is required by duckdb for timezone-aware timestamps).

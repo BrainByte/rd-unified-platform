@@ -1,4 +1,4 @@
-# Python (shared repo venv — recreate with: py -3.14 -m venv .venv)
+# Python (shared repo venv — recreate with: py -3.11 -m venv .venv)
 .venv/
 __pycache__/
 *.pyc

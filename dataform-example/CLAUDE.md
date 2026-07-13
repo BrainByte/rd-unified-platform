@@ -230,7 +230,7 @@ the gate. One more convention: the demo database
 
 **DEMO ECOSYSTEM (repo root, outside dataform-example/) — 2026-07-12:**
 - BetNova (`dataform-website/`, see repo-root `readme-web.md`): an
-  entirely FICTITIOUS single-user gaming site (Python 3.14 / Flask /
+  entirely FICTITIOUS single-user gaming site (Python 3.11 / Flask /
   persistent DuckDB committed to git) that plays the role of the
   operator OLTP so the architecture can be demonstrated end to end by
   clicking, not slides. Register in any of the seven markets (T&Cs,
@@ -403,7 +403,7 @@ then run `node --test` and `node demo/compile-demo.js`. For the live
 demo stack (website + SAFE + submission engine + reconciliation) see
 repo-root `readme-web.md`; it runs with
 `.venv\Scripts\python dataform-website\app.py` (repo-root .venv,
-Python 3.14 — recreate with `py -3.14 -m venv .venv` +
+Python 3.11 — recreate with `py -3.11 -m venv .venv` +
 `pip install -r requirements.txt`). When asked to implement a NEW
 requirement "documented the same way", follow the repo-root
 `requirements/<name>/` pattern (requirements.md with REQ ids →
