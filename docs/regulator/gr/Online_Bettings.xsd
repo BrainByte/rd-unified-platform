@@ -1,0 +1,268 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε δύο (2) ώρες κατ' ελάχιστο.
+(1) Minimum, every two (2) hours.
+
+Σχόλια / Comments:
+(1) Ένα στοίχημα αποτελείται από ένα ή περισσότερα στοιχηματικά γεγονότα ή αγορές.
+(1) One bet may associated with one or more bet events or markets.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Betting" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="ManufacturerLN" type="mstns:CollapsedGenericID">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Αριθμός Μητρώου Κατασκευαστή:
+Ο μοναδικός κωδικός πιστοποίησης του Κατασκευαστή, στην πλατφόρμα του οποίου διεξάγεται το Παίγνιο. Ο κωδικός πιστοποίησης αποδίδεται από την Ε.Ε.Ε.Π.. Στην περίπτωση που η πλατφόρμα ανήκει στον Κάτοχο Άδειας συμπληρώνεται ο αριθμός πιστοποίησης του Κατόχου Άδειας, ο οποίος αποδίδεται από την Ε.Ε.Ε.Π..
+
+Manufacturer License Number:
+The unique certification number of the Manufacturer of the gaming platform on which the game is conducted. The license number is provided by HGC. If the gaming platform is owned by the Licensee, the HGC's license number is provided.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="BetData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="BetID" type="mstns:BetID" />
+                                                <xs:element name="BetName" type="mstns:ExtraSmallString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Ονομασία του Στοιχήματος:
+                                                            Δίνεται από τον Κάτοχο Άδειας μία σύντομη ονομασία για το Στοίχημα (π.χ. Singles, Trebles...).
+
+                                                            Bet Name:
+                                                            A short name given to the bet by the License Holder (e.g. Singles, Trebles...).
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetIDOdds" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Απόδοση Στοιχήματος:
+Η απόδοση του στοιχήματος, τη χρονική στιγμή τοποθέτησής του από τον Παίκτη. Στην περίπτωση συστημάτων καταγράφεται η μέγιστη απόδοση του συστήματος.
+
+Bet Odds
+The odds of the bet (BetID), at the time the Player places the bet. In case of combined odds, the maximum given odds are recorded. 
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:decimal">
+                                                            <xs:fractionDigits value="4" />
+                                                            <xs:minInclusive value="0.0000" />
+                                                            
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BetEventData" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="BetEventID" type="mstns:GenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κωδικός Στοιχηματικού Γεγονότος:
+Ο μοναδικός κωδικός στοιχηματικού γεγονότος (BetEventName), τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+Bet Event Identifier:
+Unique identifier of a Bet Event (BetEventName), granted by the Licensee.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="MarketID" type="mstns:GenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                            Κωδικός Αγοράς:
+Ο μοναδικός κωδικός της προσφερόμενης Αγοράς, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+Market Identifier:
+Unique identifier of the offered Market, granted by the Licensee.
+                                                                        </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PlayerSelection" type="mstns:ExtraSmallString">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                                    Επιλογή Παίκτη:
+                                                                                    Η επιλογή του Παίκτη στη συγκεκριμένη αγορά του στοιχηματικού γεγονότος (Σημείο Στοιχηματισμού: π.χ. Over 1.5.).
+
+                                                                                    Player Selection:
+                                                                                    The player's selection for the specific market of Bet Event (Mark: e.g. Over 1.5.).
+                                                                                </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PlayerSelectionOdds" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                               Απόδοση Στοιχηματικής Επιλογής:
+Η απόδοση της στοιχηματικής επιλογής, τη χρονική στιγμή τοποθέτησης του στοιχήματος από τον Παίκτη.
+
+Player Selection Odds:
+The odds of the player selection, at the time the Player places the bet.  
+                                                            </xs:documentation>
+                                                                </xs:annotation>
+                                                                <xs:simpleType>
+                                                                    <xs:restriction base="xs:decimal">
+                                                                        <xs:fractionDigits value="4" />
+                                                                        <xs:minInclusive value="0.0000" />
+                                                                       
+                                                                    </xs:restriction>
+                                                                </xs:simpleType>
+                                                            </xs:element>
+                                                            <xs:element name="BetTypeB">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                Τύπος Κατηγοριοποίησης Στοιχήματος:
+                                                                
+                                                                Ο δείκτης κατηγοριοποίησης στοιχήματος. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                                                (1) = Pre Game
+                                                                (2) = In Play
+                                                                (0) = Other
+                                                                
+                                                                Bet TypeB:
+                                                                The type of the bet. Values are granted by HGC. Allowed values:
+                                                                (1) = Pre Game
+                                                                (2) = In Play
+                                                                (0) = Other
+                                                            </xs:documentation>
+                                                                </xs:annotation>
+                                                                <xs:simpleType>
+                                                                    <xs:restriction base="xs:nonNegativeInteger">
+                                                                        <xs:enumeration value="0" />
+                                                                        <xs:enumeration value="1" />
+                                                                        <xs:enumeration value="2" />
+                                                                    </xs:restriction>
+                                                                </xs:simpleType>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="BetType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Τύπος Στοιχήματος:
+                                                    
+Ο δείκτης κατηγοριοποίησης στοιχήματος. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Μονό
+(2) = Παρολί
+(3) = Σύστημα - Πολλαπλό
+(0) = Άλλο
+
+Bet Type:
+The type of the bet. Values are granted by HGC. Allowed values:
+(1) = Single
+(2) = Paroli / parlay
+(3) = Multiples
+(0) = Other</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BetIP">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                           Ηλεκτρονική Διεύθυνση Στοιχηματισμού:
+                                                        Η ηλεκτρονική διεύθυνση από την οποία συνδέθηκε ο Παίκτης στο σύστημα του Κατόχου Άδειας (π.χ.: 192.168.45.122).
+                                                        
+                                                        ID Address:
+                                                        The IP address of the Player's device (e.g.: 192.168.45.122).
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:minLength value="1" />
+                                                            <xs:maxLength value="45" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BetPlacedDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Τοποθέτησης Στοιχήματος:
+Η ημερομηνία και ώρα τοποθέτησης του στοιχήματος (UTC).
+
+Bet Placement Date:
+Date and time the bet was placed by the Player (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="EstimatedBetSettlementDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Πιθανή Ημερομηνία Διευθέτησης Στοιχήματος:
+Η πιθανή ημερομηνία διευθέτησης του στοιχήματος (UTC).
+(εάν υφίσταται)
+
+Estimated Bet Settlement Date:
+Estimated date that the bet will by settled (UTC).
+(if applicable)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetAmount" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Αξία Στοιχήματος:
+Το συνολικό ποσό που στοιχηματίσθηκε από έναν Παίκτη. Το ποσό αυτό περιλαμβάνει τυχόν ποσά επιβραβεύσεων που δεν είναι άμεσα αναλήψιμα (non redeemable bonuses) που έχουν δοθεί στον Παίκτη και χρησιμοποιήθηκαν κατά την τοποθέτηση του στοιχήματος.
+
+Bet Amount:
+The total amount placed as a bet from a Player. This amount includes any non redeemable bonus amounts given to the Player and wagered by the Player.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="NonRedeemableBonusAmountWagered" type="mstns:MonetaryAmount" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    
+                                                    Αξία Μη Αναλήψιμων Επιβραβεύσεων που Τοποθετήθηκαν:
+Το συνολικό ποσό των επιβραβεύσεων που δεν είναι άμεσα αναλήψιμες (non redeemable bonus)  που χρησιμοποιήθηκαν από τον Παίκτη κατά την τοποθέτηση του στοιχήματος.
+
+Non Redeemable Bonus Amount Wagered:
+The total amount of non redeemable bonuses wagered by the Player in BetID.
+                                                    
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="Currency" type="mstns:Currency" />
+                                            </xs:sequence>
+                                            <xs:assert test="if (exists(EstimatedBetSettlementDate)) then (BetPlacedDate lt EstimatedBetSettlementDate) else if (not (exists(EstimatedBetSettlementDate))) then true() else false() " />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="BonusID" type="mstns:BonusID" minOccurs="0" maxOccurs="unbounded" />
+                                    <xs:element name="LogInSessionID" type="mstns:LogInSessionID" />
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                        <xs:assert test="if (exists(BonusID)) then exists(BetData/NonRedeemableBonusAmountWagered) else if (not (exists(BonusID))) then (not(exists(BetData/NonRedeemableBonusAmountWagered))) else false()" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Betting" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

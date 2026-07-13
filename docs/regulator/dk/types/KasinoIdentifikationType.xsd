@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 version="1.0">
+            
+            <xs:simpleType name="KasinoIdentifikationType">
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="45"/>
+                  <xs:enumeration value="KasinoKoebenhavn"/>
+                  <xs:enumeration value="KasinoAalborg"/>
+                  <xs:enumeration value="KasinoAarhus"/>
+                  <xs:enumeration value="KasinoOdense"/>
+                  <xs:enumeration value="KasinoVejle"/>
+                  <xs:enumeration value="KasinoHelsingoer"/>
+                  <xs:enumeration value="KasinoPearlSeaways"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:schema>

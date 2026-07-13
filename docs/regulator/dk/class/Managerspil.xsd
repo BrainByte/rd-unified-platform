@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Managerspil er en type af puljespil hvor en spiller køber sig ind fra starten af en turnering med et indkøb, og senere igennem turneringen kan tilkøbe ydelser som enten kan eller ikke kan gå i den samlede pulje. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/AntalType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:element name="ManagerspilSpillereTillIndh" type="fase2.1:AntalType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal spillere hos tilladelsesindehaveren i managerspillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilSpillereTotal" type="fase2.1:AntalType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal spillere hos alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilmeldingBeløbTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Total beløb som indskud i form af tilmelding hos tilladelsesindehaveren i managerspillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilmeldingBeløbTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud i form af tilmelding hos alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk. Beløbet skal være eksklusiv eventuel fee. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilmeldingFeeTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale fee eller kommission for alle spillere hos tilladelsesindehaveren i managerspillet. Rapporteres kun hvis tilladelsesindehaver tager en separat fee eller kommission (der skal ikke rapporteres indskud minus gevinst). Hvis ikke tilladelsesindehaver tager fee eller kommission for deltagelse i spillet rapporteres nul.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilmeldingFeeTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale fee eller kommission for alle spillere hos alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk.  Rapporteres kun hvis en eller flere tilladelsesindehavere tager en separat fee eller kommission (der skal ikke rapporteres indskud minus gevinst). Hvis ikke en eller flere tilladelsesindehavere tager fee eller kommission for deltagelse i spillet rapporteres nul.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilkøbPuljeBeløbTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud i form af tilkøb til puljen hos tilladelsesindehaveren i managerspillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilkøbPuljeBeløbTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud i form af tilkøb til puljen hos alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilkøbPuljeFeeTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale fee eller kommission fra tilkøb til puljen for tilladelsesindehaveren i managerspillet.  Rapporteres kun hvis tilladelsesindehaver tager en separat fee eller kommission (der skal ikke rapporteres indskud minus gevinst). Hvis ikke tilladelsesindehaver tager fee eller kommission for deltagelse i spillet rapporteres nul.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilkøbPuljeFeeTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale fee eller kommission fra tilkøb til puljen hos alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk.  Rapporteres kun hvis en eller flere tilladelsesindehavere tager en separat fee eller kommission (der skal ikke rapporteres indskud minus gevinst). Hvis ikke en eller flere tilladelsesindehavere tager fee eller kommission for deltagelse i spillet rapporteres nul.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilføjetPrizepool"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale beløb som er tilføjet til prizepoolen af tilladelsesindehaveren. Hvis der spilles i netværk angives det totale beløb som er tilføjet af alle tilladelsesindehavere.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilGevinstTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale gevinst i gevinstpuljen (inkl. indskud) hos tilladelsesindehaveren i managerspillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilGevinstTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale gevinst i gevinstpuljen (inkl. indskud) for alle tilladelsesindehavere i managerspillet. Anvendes hvis der spilles i netværk.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilTilbagebetalingProcent" type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilbagebetalingsprocenten for managerspillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

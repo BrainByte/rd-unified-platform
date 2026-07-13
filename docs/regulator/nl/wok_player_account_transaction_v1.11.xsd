@@ -1,0 +1,86 @@
+<?xml version="1.0"?>
+<!--
+    111111111111111111111111
+    111111111100111111111111
+    111111110011101011111111
+    111110001110000001110111
+    111000001110000001000111
+    111110000000000010011111
+    111111000000000110011111
+    111100100000001110001111
+    111110000010000111001111
+    111100011111100001101111
+    111001110000000000001111
+    111111110001100000111111
+    111110000001100110000111
+    111101010111111000001111
+    111111111111111010111111
+    111111111111111111111111
+-->
+<!-- Version 1.11 Authorized for public release -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="include_v1.11.xsd"/>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="512" minOccurs="1" name="WOK_Player_Account_Transaction_v1.11">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- general -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Record_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Extraction_Date" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Operator_ID" type="stringMedium"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Data_Safe_ID" type="stringMedium"/>
+							<!-- if this is a replacement record: in Replaced_Record_ID, fill in the ID of the record it replaces -->
+							<xs:element maxOccurs="1" minOccurs="0" name="Replaced_Record_ID" type="UID"/>
+                            <!-- specific -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Player_Profile_ID" type="stringMedium"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Transaction_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Transaction_Datetime" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Transaction_Amount" type="monetaryAmount"/>
+                            <xs:element maxOccurs="1" minOccurs="0" name="Transaction_Deposit_Instrument">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="CREDIT_CARD"/>
+                                        <xs:enumeration value="ELECTRONIC_MONEY"/>
+                                        <xs:enumeration value="BANK_TRANSFER"/>
+                                        <xs:enumeration value="OTHER"/>
+                                        <!-- More values may be added in future versions. -->
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Transaction_Type">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="DEPOSIT"/>
+                                        <xs:enumeration value="WITHDRAWAL"/>
+                                        <xs:enumeration value="WINNING"/>
+                                        <xs:enumeration value="BONUS"/>
+                                        <xs:enumeration value="STAKE"/>
+                                        <xs:enumeration value="CASH_OUT"/>
+										<xs:enumeration value="VOID_BET"/>
+										<xs:enumeration value="VOID_STAKE"/>	
+                                        <xs:enumeration value="BONUS_CANCELLED"/>
+                                        <xs:enumeration value="BONUS_EXPIRED"/>
+                                        <xs:enumeration value="RESETTLEMENT"/>
+                                        <xs:enumeration value="OTHER"/>
+                                        <!-- More values may be added in future versions. -->
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Transaction_Status">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="SUCCESSFUL"/>
+                                        <xs:enumeration value="UNSUCCESSFUL"/>
+                                        <!-- More values may be added in future versions. -->
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>							
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

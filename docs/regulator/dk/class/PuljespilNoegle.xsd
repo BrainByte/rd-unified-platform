@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>En række består af en eller flere kampe, der hver især repræsenterer et udfald spilleren skal gætte. En kamp kan være alt, hvad en tilladelsesindehaver vælger spillere kan spille på, lige fra en fodboldkamp, til hvilke ord der bliver brugt i dronningens nytårstale.   Formålet med denne klasse er at tilladelsesindehaver skal angive de spilmuligheder der er i et puljespil. Spilmulighederne skal angives med tekst samt angives på en generel form, hvor spilmuligheden omsættes til et tal.   For at gøre det muligt for Spillemyndigheden at foretage beregninger af vinderstrukturen for puljespil, skal Tilladelsesindehaver indrapportere puljespillets spilmuligheder på en generel form, hvor hvert muligt udfald matcher et tal. Vinderstrukturen er antal vindere i hver gevinstkategori.  Den generelle form for puljespil består af generelle rækker og en generel nøgle. En generel række indeholder det spilleren har spillet omsat til en talrække. Det angives i data-elementet RækkeSpilkombinationer, hvor hver spillet række rapporteres på den generelle form. Vinderrækken angives også på den generelle form i dataelementet PuljespilVinderRække, og sammenlignes PuljespilVinderRække og alle RækkeSpilkombinationer kan man se hvor mange vindere, der er i de forskellige gevinstpuljer.  Den generelle nøgle anvendes til at omsætte en generel række til noget alment forståeligt, f.eks. se hvilket fodboldhold spilleren har spillet på skulle vinde en kamp. Med den generelle nøgle skal man kunne omsætte både vinder rækken og alle de spillede rækker til noget alment forståeligt. Tilladelsesindehaver skal rapportere en generel nøgle for hvert puljespil der åbnes, og det gøres med felterne PuljespilNøgleBeskrivelse og PuljespilNøgleGenerel.  I denne klasse angives det spilleren kan spille på, både i tekst og på en generel form.   Et eksempel: Tips3  Tipsseddelen: Kamp 1: Hold 1 mod Hold 2 Kamp 2: Hold 3 mod Hold 4 Kamp 3: Hold 5 mod Hold 6  Den generelle nøgle angives nu som ni linjer, hvor hver linje indeholder data-elementerne PuljespilNøgleKampNummer, PuljespilNøgleBeskrivelse, PuljespilNøgleGenerel. Dette svarer til det som leveren i PuljespilStartStruktur. Eksemplet ser således ud: 1, Hold 1, 1 1, Uafgjort, 2 1, Hold 2, 3 2, Hold 3, 1 2, Uafgjort, 2 2, Hold 4, 3 3, Hold 5, 1 3, Uafgjort, 2 3, Hold 6, 3  I eksemplet er der tre spillere. Spiller 1 og spiller 2 spiller hver én række, og spiller 3 spiller to rækker. De skal så angives i RækkeSpilkombinationer på denne måde: Spiller 1, række 1: 1,2,3 Spiller 2, række 1: 1,1,1 Spiller 3, række 1: 1,3,2 Spiller 3, række 2: 1,3,3  Efter kampene er spillet indrapporteres vinderrækken på den generelle form med PuljespilVinderRække. Den ser således ud: 1,3,2 Det ses hurtigt at Spiller 3 har vundet på række 1. Med den beskrivelse der er angivet i PuljespilStartStruktur kan man nu omsætte det spilleren har spillet til noget alment forståeligt. Spilleren har spillet følgende: Hold 1, Hold 4, Uafgjort.   Ønsker man at se hele tipskuponnen, kan den sættes sammen på følgende måde ud fra det indrapporterede i PuljespilStartStruktur: Kamp 1: Hold 1, Uafgjort, Hold 2 Kamp 2: Hold 3, Uafgjort, Hold 4 Kamp 3: Hold 5, Uafgjort, Hold 6. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/TekstKortType.xsd"/>
+         <xs:element name="PuljespilNøgleKampNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Nummeret på kampen i spillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilNøgleBeskrivelse" type="fase2.1:TekstKortType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse i tekst af et muligt kamp udfald.  Eksempel: For kampen FCK - Brøndby, angives f.eks. FCK, uafgjort eller Brøndby, afhængig af hvad der angives i PuljespilNøgleGenerel.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilNøgleGenerel" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af et muligt spilresultat på den generelle form.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder oplysninger om internationale puljer.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="MonopolLandeDataRækkerTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal rækker i alt i spillet = alle lande (dvs. inkl. rækker spillet i DK).  Anvendes til Onsdagslotto. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataRækkerSuperpulje" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal rækker i alt der deltager i superpuljen = de lande der har tilmeldt sig til at deltage i superpuljen (dvs. inkl. rækker spillet i DK).  Anvendes til Onsdagslotto. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataFørstePræmieØvrige" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal 1. præmier i øvrige lande = alle lande minus Danmark.  Anvendes til Onsdagslotto. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataLande" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>Liste med landenavne på de lande der deltager i superpuljen. Landenavnene adskilles med komma.  Anvendes til Onsdagslotto. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataOmsætningTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Samlet omsætning fra alle deltagerlande angivet i euro (dvs. inkl. omsætning i Danmark).  Anvendes til Eurojackpot. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataBoosterGaranti"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Garanti-tilskud til 1. præmiepuljen fra Booster fonden.  Beløbet oplyses i EUR og anvendes til Eurojackpot. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolLandeDataBoosterSpecial"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Special-tilskud til 1. præmiepuljen fra Booster fonden.  Beløbet oplyses i EUR og anvendes til Eurojackpot. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

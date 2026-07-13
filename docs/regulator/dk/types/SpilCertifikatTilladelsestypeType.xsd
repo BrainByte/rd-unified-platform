@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 version="1.0">
+            
+            <xs:simpleType name="SpilCertifikatTilladelsestypeType">
+               <xs:annotation>
+                  <xs:documentation>Typen af tilladelse.</xs:documentation>
+               </xs:annotation>
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="25"/>
+                  <xs:enumeration value="Væddemål"/>
+                  <xs:enumeration value="OnlineKasino"/>
+                  <xs:enumeration value="VæddemålOgOnlineKasino"/>
+                  <xs:enumeration value="KasinoSpilleautomater"/>
+                  <xs:enumeration value="Monopol"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:schema>

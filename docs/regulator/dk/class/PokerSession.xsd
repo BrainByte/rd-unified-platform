@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>En session regnes fra spilleren sætter sig ved et bord til spilleren forlader bordet. Der er én session pr. spiller pr. bord.  Indskuddet fra en session i poker skal beregnes som summen af alle indskud i sessionen.   Eksempel: En spiller sætter sig ved et pokerbord med 20 kr og spiller 2 hænder. Indskuddet på første hånd ender på 1 kr og indskuddet på anden hånd ender på 2 kr. På første hånd vinder spilleren 2 kr og på anden hånd vinder spilleren 3 kr i . I feltet PokerSessionIndskudSpil skal angives 3 kr (1kr + 2 kr) og i PokerSessionGevinstSpil skal angives 5 kr (2 kr + 3 kr) for den spillede session.  </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:element name="PokerSessionIndskudSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud for spilleren i sessionen, der går til spillet (ikke jackpot).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerSessionIndskudJackpot"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Del af rake i pokersessionen som går til jackpot.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerSessionGevinstSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale gevinst (inkl. indskud) for spilleren i sessionen fra spillet (ikke fra evt. jackpot).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerSessionRake" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale rake for spilleren i sessionen. Skal være eksklusiv bidrag til jackpot.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerSessionAntalHænder" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale antal hænder for spilleren i sessionen. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

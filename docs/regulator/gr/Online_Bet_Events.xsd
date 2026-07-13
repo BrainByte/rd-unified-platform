@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE/Frequency:
+(1) Όποτε προστίθενται νέα στοιχηματικά γεγονότα.
+(1) whenever new bet events are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε υφιστάμενα στοιχηματικά γεγονότα
+(2) Whenever information regarding existing bet events changes.
+            
+(3) Κάθε δύο (2) ώρες κατ' ελάχιστο.
+(3) Minimum, every two (2) hours.
+                
+Σχόλια / Comments:
+(1) Το MarketID είναι ο μοναδικός κωδικός αγοράς που δίνεται από τον Κάτοχο και ισχύει για όλα τα στοιχηματικά γεγονότα στα οποία προσφέρεται η συγκεκριμένη αγορά.
+(1) MarketID is the unique identifier of Market given by the Licensee. The same MarkedID applies to all events that the specific market is offered.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Bet_Event" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="BetEventData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="BetEventID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Στοιχηματικού Γεγονότος:
+Ο μοναδικός κωδικός στοιχηματικού γεγονότος (BetEventName), τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+Bet Event Identifier:
+Unique identifier of a Bet Event (BetEventName), granted by the Licensee.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventName" type="mstns:LongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>'Όνομα Στοιχηματικού Γεγονότος:
+Σύντομη περιγραφή του στοιχηματικού γεγονότος όπως εμφανίζεται στους ιστοτόπους/ονόματα χώρου του Κατόχου Άδειας. Να περιλαμβάνονται οι πληροφορίες για Άθλημα-Χώρα-Διοργάνωση-Ονομασία Γεγονότος (π.χ.: Ποδόσφαιρο - Ισπανία - Copa del Rey UD Ίμπιζα - Μπαρτσελόνα).
+
+Bet Event Name:
+A short description of the bet event, as it is displayed in the related Licensee's web pages. Sports – Country – Tournament/League - Event should be included(e.g.: Football - Spain - Copa del Rey - Ibiza -Barcelona).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventNameData" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="HGCMarketID" type="mstns:CollapsedGenericID" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                       Κωδικός Αγοράς:
+                                                                    Ο μοναδικός κωδικός της προσφερόμενης Αγοράς, τον οποίο αποδίδει η Ε.Ε.Ε.Π..
+                                                                    (εάν υφίσταται)
+                                                                    
+                                                                    Market Identifier:
+                                                                    Unique identifier of the offered Market, granted by the HGC.
+                                                                    (if applicable)
+                                                                    </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="MarketID" type="mstns:GenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                        Κωδικός Αγοράς:
+                                                                    Ο μοναδικός κωδικός της προσφερόμενης Αγοράς, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+                                                                    
+                                                                    Market Identifier:
+                                                                    Unique identifier of the offered Market, granted by the Licensee.
+                                                                    </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="MarketName" type="mstns:LongString">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                       Όνομα Αγοράς
+Η ονομασία της Αγοράς που προσφέρεται στο στοιχηματικό γεγονός (π.χ.: Γκολ Over/Under(extra), Player to be booked).
+
+Market Name
+The name of the offered Market of the Bet Event  (e.g.:  score Over/Under(extra), Player to be booked).
+                                                                    </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="BetEventCategoryA" type="mstns:BetEventCategoryA">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Στοιχηματικών Γεγονότων (Α) σύμφωνα με τον Κανονισμό Παιγνίων:
+Πρώτο (Α) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων . Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Αθλητικά Γεγονότα
+(2) = Εικονικά Αθλητικά Γεγονότα
+(3) = Εικονικά Γεγονότα
+(4) = Λοιπά Γεγονότα
+
+Bet Events Category (A):
+First (A) level of bet events categorization in accordance with Gaming Regulation. Values are granted by HGC. Allowed values:
+(1) = Sports Events
+(2) = Fantasy Sports
+(3) = Virtual Events
+(4) = Other Events</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventCategoryB">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Στοιχηματικών Γεγονότων (B):
+Δεύτερο (B) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Pre Game
+(2) = In Play
+(3) =  Pre Game and In Play
+
+Bet Events Category (B):
+Second (B) level of bet events categorization. Values are granted by HGC. Allowed values:
+(1) = Pre Game
+(2) = In Play
+(3) =  Pre Game and In Play</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:positiveInteger">
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BetEventCategoryC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Στοιχηματικών Γεγονότων (Γ):
+Τρίτο (Γ) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Τοπικά Γεγονότα σε επίπεδο χώρας (π.χ.: Super League 1 , LaLiga, Premier League, Κύπελλο Ελλάδας , Copa del Re, κ.λπ.)
+(2) = Διεθνή Γεγονότα (π.χ.: Olympic Games, Champions League, κ.λπ.)
+(3) = Πολιτική
+(4) = Ψυχαγωγία
+(0) = Άλλο
+
+Bet Events Category (C):
+Third (C) level of bet events categorization. Values are granted by HGC. Allowed values:
+(1) = Country level events (e.g.: Super League 1 , LaLiga, Premier League, Κύπελλο Ελλάδας , Copa del Re, etc.)
+(2) = International events (e.g.: Olympic Games, Champions League, etc.)
+(3) = Politics
+(4) = Entertainment
+(0) = Other</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BetEventCategoryD" type="mstns:GenericID" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Στοιχηματικών Γεγονότων (Δ):
+Τέταρτο (Δ) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων. Για τις περιπτώσεις (1) και (2) του πεδίου "BetEventCategoryC", η ονομασία της ομάδας/συνόλου των στοιχηματικών γεγονότων, όπως εμφανίζεται στους ιστοτόπους/ονόματα χώρου του Κατόχου Άδειας (π.χ.: Super League 1 , LaLiga, Premier League, Κύπελλο Ελλάδας , Copa del Re, κ.λπ.).
+
+Bet Events Category (D):
+Fourth (D) level of bet events categorization. Only for values (1) and (2) of field "BetEventCategoryC", the name of the bet events group, as it is displayed in the related Licensee's web pages (e.g.: Super League 1 , LaLiga, Premier League, Κύπελλο Ελλάδας , Copa del Re, etc.).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="SportIOCCode" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Αθλήματος:
+Ο τριψήφιος IOC (International Olympic Committee) κωδικός του εκάστοτε αθλήματος που αναφέρονται τα στοιχηματικά γεγονότα.
+(εάν υφίσταται)
+
+Sport Code:
+The IOC (International Olympic Committee) code of the sport that the bet events are related to. 
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:length value="3" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="CountryISOCode" type="mstns:CountryCode" minOccurs="0" maxOccurs="unbounded">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Χώρας:
+Ο τριψήφιος ISO (ISO 3166-1, alpha 3 code) κωδικός της χώρας στην οποία διεξάγονται τα στοιχηματικά γεγονότα. 
+(εάν υφίσταται)
+
+Country Code:
+The ISO (ISO 3166-1, alpha 3 code) code of the country that the bet events are related to. 
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventCreationDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Δημιουργίας Στοιχηματικού Γεγονότος:
+Η ημερομηνία και ώρα που το στοιχηματικό γεγονός έγινε διαθέσιμο στον Παίκτη, μέσα από το σύστημα του Κατόχου Άδειας (UTC).
+
+Bet Event Creation Date:
+Date and time the bet event became available to the Players, through Licensee's systems.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Ημερομηνία Διεξαγωγής Στοιχηματικού Γεγονότος:
+                                                        Η ημερομηνία και ώρα που διεξάγεται το στοιχηματικό γεγονότος (UTC).
+                                                        (εάν υφίσταται)
+                                                        
+                                                        Bet Event Date:
+                                                        Date and time that the event will take place (UTC).
+                                                        (if applicable)
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BetEventResultDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Αποτελέσματος Στοιχηματικού Γεγονότος:
+Η εκτιμώμενη ημερομηνία και ώρα που το αποτέλεσμα του στοιχηματικού γεγονότος θα γίνει γνωστό (UTC).
+(εάν υφίσταται)
+
+Bet Event Result Date:
+Estimated date and time that the result of the bet event will be set (end of fixture) (UTC).
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BonusRestrictionIndicator" type="xs:boolean">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Δείκτης Περιορισμού Επιβραβεύσεων:
+Ο δείκτης που προσδιορίζει εάν ένα στοιχηματικό γεγονός μπορεί να συνδεθεί με κατηγορίες επιβραβεύσεων (bonus schemas). Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(true) = Ένα στοιχηματικό γεγονός μπορεί να συνδεθεί με κατηγορίες επιβραβεύσεων
+(false) = Ένα στοιχηματικό γεγονός ΔΕΝ μπορεί να συνδεθεί με κατηγορίες επιβραβεύσεων
+
+Bonus Restriction Indicator:
+Identifies whether a bet event is eligible for a bonus (linked to one or more bonus schemas). Values are granted by HGC. Allowed values:
+(true) = Bet event eligible for a bonus
+(false) = Bet event NOT eligible for a bonus</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="CancellationData">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="BetEventCancellation" type="xs:boolean">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Δείκτης Ακύρωσης Στοιχηματικού Γεγονότος:
+Ο δείκτης που προσδιορίζει εάν ένα στοιχηματικό γεγονός έχει ακυρωθεί. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(false) = Ένα στοιχηματικό γεγονός δεν έχει ακυρωθεί
+(true) = Ένα στοιχηματικό γεγονός έχει ακυρωθεί
+
+Bet Event Cancelation:
+Indicates whether a bet event has been canceled or not. Values are granted by HGC. Allowed values:
+(false) = Bet event has NOT been canceled
+(true) = Bet event has been canceled</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="BetEventCancellationDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ημερομηνία Ακύρωσης Στοιχηματικού Γεγονότος:
+Η ημερομηνία και ώρα που ένα στοιχηματικό γεγονός ακυρώθηκε (UTC).
+(εάν υφίσταται)
+
+Bet Event Cancelation Date:
+Date and time a bet event was canceled (UTC).
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (BetEventCategoryC = 1 or BetEventCategoryC = 2) then exists(BetEventCategoryD) else if (BetEventCategoryC != 1 and BetEventCategoryC != 2) then not(exists(BetEventCategoryD)) else false() " />
+                                            <xs:assert test="if (BetEventCategoryC = 2) then not(exists(CountryISOCode)) else if (BetEventCategoryC = 1) then exists(CountryISOCode) else if (BetEventCategoryC = 3 or BetEventCategoryC = 4) then (exists(CountryISOCode) or not(exists(CountryISOCode))) else if (BetEventCategoryC = 0 ) then true() else false() " />
+                                            <xs:assert test="if (exists(BetEventResultDate)) then (BetEventCreationDate lt BetEventResultDate) else if (not (exists(BetEventResultDate))) then true() else false() " />
+                                            <xs:assert test="if (CancellationData/BetEventCancellation[string(.) eq 'true']) then exists(CancellationData/BetEventCancellationDate) else if (CancellationData/BetEventCancellation[string(.) eq 'false']) then (not(exists(CancellationData/BetEventCancellationDate))) else false()" />
+                                            <xs:assert test="if (exists(CancellationData/BetEventCancellationDate)) then (BetEventCreationDate lt CancellationData/BetEventCancellationDate) else if (not(exists(CancellationData/BetEventCancellationDate))) then true() else false() " />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath=" mstns:Online_Bet_Event" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

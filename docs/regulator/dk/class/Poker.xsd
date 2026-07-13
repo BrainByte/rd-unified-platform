@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Poker opdeles i cash games og turnering. Ved cash games lægger spilleren en indsats ved et bord og kan almindeligvis afbryde spillet efter hver hånd. Ved turneringer betales et indskud og der spilles om en total pulje som deles mellem vinderne.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/PokerKvalifikationType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="PokerAntalSpillereKval" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Deltagere som har kvalificeret sig via andre turneringer.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAntalSpillereTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal spillere der er med i turneringen via tilladelsesindehaveren.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAntalSpillereTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale antal spillere i turneringen (inkl. spillere fra andre spiludbydere, hvis der spilles i et netværk).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerKvalifikation" type="fase2.1:PokerKvalifikationType">
+               
+               <xs:annotation>
+                  <xs:documentation>Markering af hvorvidt turneringen er en kvalifikationsturnering.  1 = Turneringen kan ikke kvalificeres til, eller kvalificere til andre turneringer.  2 = Turneringen kan kvalificeres til, men man kan ikke kvalificere sig til andre turneringer. 3 = Turneringen kan ikke kvalificeres til, men man kan kvalificere sig til andre turneringer. 4 = Turneringen kan kvalificeres til, og man kan kvalificere sig til andre turneringer.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerBuyInTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale buy-in der er betalt til tilladelsesindehaver for hele turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerBuyInTotal" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale pulje af buy-in der er betalt til turneringen. Hvis der er tale om en netværksturnering, er det alle udbyderes spillere samlede buy-in.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerRebuyTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale rebuy der er betalt til tilladelsesindehaver for hele turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerRebuyTotal" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale pulje af Rebuy's der er betalt til turneringen. Hvis der er tale om en netværksturnering, er det alle udbyderes spillere samlede rebuy.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAddonTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale pulje af add-on der er betalt til tilladelsesindehaver. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAddonTotal" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale pulje af Addon's der er betalt til turneringen. Hvis der er tale om en netværksturnering, er det alle udbyderes spillere samlede Addon</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerFeeTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale fee som der er gået til tilladelsesindehaver.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerFeeTotal" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale fee der er betalt til turneringen. Hvis der er tale om en netværksturnering, er det alle udbyderes spillere samlede fee.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerBuyinAntalTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilladelsesindehavers samlede antal buyins.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerBuyinAntalTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale antal buyins for alle spiludbydere for hele turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerRebuyAntalTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilladelsesindehavers totale antal rebuys i turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerRebuyAntalTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale antal rebuys for alle spiludbydere for hele turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAddonAntalTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilladelsesindehavers totale antal addons i turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerAddonAntalTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale antal addons for alle spiludbydere for hele turneringen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerTilføjetPrizepool"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>For turneringer med garanteret prizepool garantere udbyder en minimumsprizepool, dvs. hvis summen buyin, rebuy og addon ikke er tilstrækkelig til at opfylde garantien supplere spiludbyder med et beløb op til garantien. I dette felt angives hvor meget der er tilføjet prizepool af tilladelsesindehaver og andre spiludbydere, hvis der spilles i et netværk.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerGevinstTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale gevinstpulje (buy-in, re-buy, add-on samt evt. beløb tilføjet gevinstpuljen) der er blevet udbetalt ved turneringens slut hos tilladelsesindehaveren.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerGevinstTotal" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale gevinstpulje (buy-in, re-buy, add-on samt evt. beløb tilføjet gevinstpuljen) der er blevet udbetalt ved turneringens slut (for alle spiludbydere såfremt der er tale om en netværksturnering).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

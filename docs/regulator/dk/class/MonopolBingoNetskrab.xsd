@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder oplysninger om Bingo- og Netskrabespil. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:element name="MonopolBingoNetskrabIndskud"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale indskud til et Bingo/Netskrabespil over spillets levetid.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolBingoNetskrabGevinstSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle udbetalte gevinster fra spillets egen gevinstpulje (ikke jackpots) til et Bingo/Netskrabespil over spillets levetid.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolBingoNetskrabGevinstJackpot"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle udbetalte jackpots (ikke spillets gevinstpulje) til et Bingo/Netskrabespil over spillets levetid.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolBingoNetskrabAntalSpil" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle gennemførte spil i et Bingo/Netskrabespil over spillets levetid. Kan beregnes som antallet af indskudstransaktioner.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolBingoNetskrabTilbagebetalingProcent" type="fase2.1:ProcentType">
+               
+            </xs:element>
+      </xs:schema>

@@ -1,0 +1,368 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε δύο (2) ώρες κατ' ελάχιστο.
+(1) Minimum, every two (2) hours.
+
+Σχόλια / Comments:
+(1) Μία συνεδρία παιγνίου, θα καταγραφεί στην αναφορά της ημέρας που εκκαθαρίζεται η φορολογική συνεδρία στην οποία ανήκει.
+(1) A game session will be recorded in the report of the day that the related taxation session is processed.
+
+(2) Αναφορικά με το διομότιμο (peer to peer) Παίγνιο Πόκερ, το Bad Beat καταγράφεται ως Jackpot.
+(2) Regarding peer to peer Poker Games, the Bad Beat is considered Jackpot.
+
+(3) Στα Παίγνια που διεξάγονται με παικτικές συνεδρίες, η φορολόγηση των κερδών των Παικτών (συμπεριλαμβανομένων και των Jackpots) γίνεται κατά τη λήξη της παικτικής συνεδρίας. Τα σχετικά με τη φορολόγηση παικτών δεδομένα ενσωματώνονται στο μοντέλο δεδομένων "TaxationSessions",  ενώ ο φόρος Παικτών ανά Παικτική Ημέρα ενσωματώνεται στο μοντέλο δεδομένων "EndOfDayOther".
+(3) In Games played in sessions, Player's tax is calculated at the end of Player's session. The amount taxed includes both Player's winnings and Jackpots. The relevant data are submitted using the data model entitled "TaxationSessions", while Players' taxes, every reporting day, are submitted using the "EndOfDayOther" data model.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Peer_to_Peer_Game" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PtPGameCategoryA">
+                                        <xs:annotation>
+                                            <xs:documentation>Κατηγορία Διομότιμων Παιγνίων (Α):
+Πρώτο (Α) επίπεδο κατηγοριοποίησης των διομότιμων Παιγνίων (peer to peer games). Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Παίγνια που διεξάγονται διομότιμα (peer to peer), σε ζωντανή μετάδοση (live), σε Ειδικό Χώρο (studio), με ζωντανό γκρουπιέρη (dealer) και το αποτέλεσμα των οποίων δεν εξάγεται από γεννήτρια τυχαίων αριθμών (Random Number Generator).
+(2) = Παίγνια που διεξάγονται διομότιμα (peer to peer) και αυτοτελώς (πχ. Πόκερ cash games).
+
+Peer to Peer Game Category (A):
+First (A) level of peer to peer games categorization. Values are granted by HGC. Allowed values:
+(1) = Peer to peer games, live, in a studio, with a live dealer and whose output is not extracted by a Random Number Generator.
+(2) = Peer to peer games (eg. poker cash games).         </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:positiveInteger">
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="PtPGameCategoryB">
+                                        <xs:annotation>
+                                            <xs:documentation>Κατηγορία Διομότιμων Παιγνίων (B):
+Δεύτερο (B) επίπεδο κατηγοριοποίησης των διομότιμων Παιγνίων (peer to peer games). Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Πόκερ
+(0) = Άλλο
+
+Peer To Peer Game Category (B):
+Second (B) level of peer to peer categorization. Values are granted by HGC. Allowed values:
+(1) = Poker
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="0" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="PtPGameCategoryC">
+                                        <xs:annotation>
+                                            <xs:documentation>Κατηγορία Διομότιμων Παιγνίων (Γ):
+Τρίτο (Γ) επίπεδο κατηγοριοποίησης των διομότιμων Παιγνίων (peer to peer games). Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Texas Hold'em
+(2) = Omaha
+(3) = Five Card Draw
+(4) = Razz
+(5) = 7Card Stud
+(6) = Spin &amp; Go
+(7) = Caribbean Stud Poker
+(0) = Άλλο
+
+Peer To Peer Game Category (C):
+Third (C) level of game categorization. Values are granted by HGC. Allowed values:
+(1) = Texas Hold'em
+(2) = Omaha
+(3) = Five Card Draw
+(4) = Razz
+(5) = 7Card Stud
+(6) = Spin and Go
+(7) = Caribbean Stud Poker
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                                <xs:enumeration value="3" />
+                                                <xs:enumeration value="4" />
+                                                <xs:enumeration value="5" />
+                                                <xs:enumeration value="6" />
+                                                <xs:enumeration value="7" />
+                                                <xs:enumeration value="0" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="ManufacturerLN" type="mstns:CollapsedGenericID">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Αριθμός Μητρώου Κατασκευαστή:
+                                        Ο μοναδικός κωδικός πιστοποίησης του Κατασκευαστή, στην πλατφόρμα του οποίου διεξάγεται το Παίγνιο. Ο κωδικός πιστοποίησης αποδίδεται από την Ε.Ε.Ε.Π.. Στην περίπτωση που η πλατφόρμα ανήκει στον Κάτοχο Άδειας συμπληρώνεται ο αριθμός πιστοποίησης του Κατόχου Άδειας, ο οποίος αποδίδεται από την Ε.Ε.Ε.Π..
+
+                                        Manufacturer License Number:
+                                        The unique certification number of the Manufacturer of the gaming platform on which the game is conducted. The license number is provided by HGC. If the gaming platform is owned by the Licensee, the HGC's license number is provided.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="LogInSessionID" type="mstns:LogInSessionID" />
+                                    <xs:element name="TaxationSessionID" type="mstns:TaxationSessionID" />
+                                    <xs:element name="NetworkIndicator" type="xs:boolean">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Δείκτης Διεξαγωγής Παιγνίου:
+                                                Ο δείκτης ο οποίος επισημαίνει κατά πόσο ένα Παίγνιο διεξάγεται, είτε α) σε κλειστό δίκτυο (συμμετέχουν σε αυτό αποκλειστικά Παίκτες από Κατόχους Άδειας, αδειοδοτημένους στην Ελληνική Επικράτεια), είτε β) σε ανοικτό δίκτυο (συμμετέχουν σε αυτό και Παίκτες από αδειοδοτημένους παρόχους, άλλων Ρυθμιστικών Αρχών, σύμφωνα με σχετικές οδηγίες της Ε.Ε.Ε.Π.).
+                                                Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                                (false) = Κλειστό δίκτυο
+                                                (true) = Ανοικτό δίκτυο
+
+                                                Network Indicator:
+                                                Indication of whether a game is played either a) at a closed network (participants are players only from Licensees licensed by the Greek State), or, at an open network, (participants are players both from Licensees licensed by the Greek State and Licensees licensed by other jurisdictions, according to HGC guidelines).
+                                                Values are granted by HGC. Allowed values:
+                                                (false) = Closed network
+                                                (true) = Open network
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="PtPGameSessionData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="PtPGameSessionID" type="mstns:PtPGameSessionID" />
+                                                <xs:element name="PtPGameSessionStartDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Ημερομηνία Έναρξης Συνεδρίας Παιγνίου:
+                                                            Η ημερομηνία και ώρα έναρξης της συνεδρίας διομότιμου (peer to peer) παιγνίου (UTC).
+
+                                                            Game Session Start Date:
+                                                            Date and time the peer to peer game session has started (UTC).
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PtPGameSessionEndDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Λήξης Συνεδρίας Παιγνίου:
+Η ημερομηνία και ώρα λήξης της συνεδρίας διομότιμου (peer to peer) παιγνίου (UTC).
+
+Game Session End Date:
+Date and time the peer to peer game session has ended (UTC)       </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalNumberPokerCashGamesHands" type="xs:nonNegativeInteger" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Πλήθος Κύκλων Παιγνίων (HANDS):
+Συμπληρώνεται ο συνολικός αριθμός των κύκλων παιγνίων (Poker Hands) στη συνεδρία διομότιμου παιγνίου. Το πεδίο συμπληρώνεται  για τα Παίγνια Πόκερ cash games. 
+
+Total Game Cycles (HANDS):
+The toal number of Poker Hands in game session. NOTE: Filled only for peer to peer Poker cash games.
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="Stakes">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="PtPGameSessionAmountWagered" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Πονταρίσματος Συνεδρίας Παιγνίου:
+Το συνολικό ποσό (stakes/total buyin) με το οποίο συμμετείχε ο Παίκτης σε μια συνεδρία διομότιμου (peer to peer) παιγνίου. Το ποσό αυτό περιλαμβάνει τυχόν ποσά επιβραβεύσεων που δεν είναι άμεσα αναλήψιμες (non redeemable bonus), οι οποίες έχουν δοθεί και παιχτεί από τον Παίκτη. Σε αυτό το ποσό ΔΕΝ συμπεριλαμβάνεται το συνολικό ποσό που αντιστοιχεί σε συνεισφορές για Λειτουργίες Jackpot (jackpot rake).
+
+Amount Wagered in Game Session:
+The total amount (stakes/total buyin) wagered from Player within a peer to peer game session, excluding stakes allocated to Jackpots (jackpot rake). This amount includes stakes coming from non redeemable bonuses.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PtPGameSessionLicenseeRake" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Προμήθειας Κατόχου Άδειας:                                                                
+Το συνολικό ποσό προμήθειας (rake) του Κατόχου Άδειας που καταβλήθηκε από τον Παίκτη, κατά τη διάρκεια της συνεδρίας διομότιμου (peer to peer) παιγνίου.
+Σε αυτό το ποσό ΔΕΝ συμπεριλαμβάνεται το ποσό που αντιστοιχεί σε συνεισφορές για Λειτουργίες Jackpot (jackpot rake).
+(εάν υφίσταται)
+
+Licensee Rake n Game Session:
+The amount which the Licensee has claimed as commission/rake for the moves in the session, during a peer to peer game session, excluding stakes allocated to Jackpot (jackpot rake).
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PtPGameSessionJackpotRake" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Συνεισφορών Λειτουργιών Jackpot:
+Το συνολικό ποσό που καταβλήθηκε για Λειτουργίες Jackpot από τον Παίκτη (jackpot rake), κατά τη διάρκεια της συνεδρίας διομότιμου (peer to peer) παιγνίου.
+(εάν υφίσταται)
+
+Total Jackpot Rake:
+The total stakes allocated to Jackpots during a peer to peer game session.
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PtPGameSessionNonRedeemableBonusAmountWagered" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                Ποσό Μη Άμεσα Αναλήψιμων Επιβραβεύσεων Παίκτη:
+Το συνολικό ποσό επιβράβευσεων που δεν είναι άμεσα αναλήψιμες (non redeemable bonus amounts) που πονταρίστηκε από τον Παίκτη, κατά τη διάρκεια μιας συνεδρίας διομότιμου (peer to peer) παιγνίου. Σε αυτό το ποσό, ΔΕΝ συμπεριλαμβάνονται τυχόν ποσά που αντιστοιχούν σε επιστροφή μέρους της προμήθειας του Παίκτη (rake back).
+(εάν υφίσταται)
+
+Game Session Non Redeemable Bonus Amount:
+The total non redeemable bonus amount wagered by the Player, during a peer to peer game session, excluding any rake back amounts
+(if applicable)
+                                                            </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="Winnings" minOccurs="0">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="PtPGameSessionAmountWon" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κερδισμένο Ποσό Συνεδρίας Παιγνίου:
+Το συνολικό ποσό που ο Παίκτης κέρδισε κατά τη διάρκεια μιας συνεδρίας διομότιμου (peer to peer) παιγνίου. Στο ποσό αυτό συμπεριλαμβάνεται το συνολικό ποσό των παρακρατούμενων φόρων και το συνολικό ποσό των επιβραβεύσεων (bonus amounts, rake back bonus κ.λπ.), εάν υφίστανται. Σε αυτό το ποσό ΔΕΝ συμπεριλαμβάνονται τυχόν ποσά που αντιστοιχούν σε κέρδη από Λειτουργίες Jackpot, τα οποία δηλώνονται στο σχετικό μοντέλο δεδομένων.
+(εάν υφίσταται)
+
+Game Session Amount Won:
+A Player’s total winnings in a peer to peer game session, including withholding tax amounts and all bonus amounts (rake back incl.), if any. Jackpot wins should not be reported in this field. Jackpot wins reported in the related data model.
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PtPGameSessionRedeemableRakeBackBonus" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                Ποσό Επιστροφής Προμήθειας Παίκτη (Άμεσα Αναλήψιμη Επιβράβευση):
+Το συνολικό άμεσα αναλήψιμο ποσό επιστροφής μέρους της προμήθειας του Παίκτη προς τον Κάτοχο Άδειας (rake back) ή όποιαδήποτε άλλη άμεσα αναλήψιμη επιβράβευση, κατά τη διάρκεια της συνεδρίας διομότιμου (peer to peer) παιγνίου, από τον Κάτοχο Άδειας προς τον Παίκτη. Στο ποσό αυτό ΔΕΝ συμπεριλαμβάνεται το συνολικό ποσό επιβραβεύσεων (bonus amounts), εάν υφίστανται.
+(εάν υφίσταται)
+
+Rake Back Amount (Redeemable Bonus):
+The total redeemable amount of rake given back to the Player or any other redeemable bonus given to Player, during a peer to peer game session, by the Licensee.
+(if applicable)
+                                                            </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PtPGameSessionNonRedeemableBonusAmountWon" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                                Ποσό Μη Άμεσα Αναλήψιμων Επιβραβεύσεων:
+Το ποσό των μη άμεσα αναλήψιμων επιβραβεύσεων (non redeemable bonuses), που κερδήθηκαν από τον Παίκτη στη συνεδρία διομότιμου (per to peer) παιγνίου.
+(εάν υφίσταται)
+
+Non Redeemable Bonus Amount:
+The non redeemable bonus amounts, won by the Player, in a peer to peer game session.
+(if applicable)
+                                                            </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="Currency" type="mstns:Currency" />
+                                            </xs:sequence>
+                                            <xs:assert test="PtPGameSessionStartDate le PtPGameSessionEndDate" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="JackpotID" type="mstns:JackpotID" minOccurs="0" maxOccurs="unbounded" />
+                                    <xs:element name="BonusID" type="mstns:BonusID" minOccurs="0" maxOccurs="unbounded" />
+                                    <xs:element name="IncompleteGameSessionIndicator">
+                                        <xs:annotation>
+                                            <xs:documentation>Δείκτης Ημιτελούς Συνεδρίας Παιγνίου:
+Δείκτης που προσδιορίζει εάν μία συνεδρία διομότιμου (per to peer) παιγνίου έχει ολοκληρωθεί ή όχι. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ολοκληρωμένη συνεδρία διομότιμου (per to peer) παιγνίου.
+(2) = Απώλεια της επικοινωνίας μεταξύ της Πλατφόρμας Τυχερών Παιγνίων και της Συσκευής του Παίκτη.
+(3) = Επανεκκίνηση της Πλατφόρμας Τυχερών Παιγνίων.
+(4) = Επανεκκίνηση ή δυσλειτουργία της Συσκευής Παίκτη.
+(5) = Αντικανονικό τερματισμό του Λογισμικού Χρήστη (client software).
+(6) = Εντολή (command) απενεργοποίησης Παιγνίου από την Πλατφόρμα Τυχερών Παιγνίων κατά τη διάρκεια διεξαγωγής Παιγνίου.
+(7) = Απροσδιόριστο γεγονός.
+(0) = Άλλο
+
+
+Incomplete Game Session Indicator:
+Indicator of an incomplete peer to peer game session. Values are granted by HGC. Allowed values:
+(1) = Complete peer to peer game session.
+(2) = loss of communication between the Gaming Platform and the Player's Device.
+(3) = the Gaming Platform rebooting.
+(4) = the Player Device rebooting or malfunctioning.
+(5) = abnormal termination of the Client Software.
+(6) = a game deactivation command from the Gaming Platform while the game is being played.
+(7) = reason can not be specified.
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="0" />
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                                <xs:enumeration value="3" />
+                                                <xs:enumeration value="4" />
+                                                <xs:enumeration value="5" />
+                                                <xs:enumeration value="6" />
+                                                <xs:enumeration value="7" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="LiveGames" minOccurs="0">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="StudioID" type="mstns:StudioID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Κωδικός Ειδικού Χώρου Διεξαγωγής Παιγνίου:
+Ο μοναδικός κωδικός του Ειδικού Χώρου (Studio) διεξαγωγής του Παιγνίου, τον οποίο αποδίδει η Ε.Ε.Ε.Π.
+(όταν το πεδίο  "PtPGameCategoryA" = 1)
+
+Studio Identification Number:
+The unique identification number of the Studio the Game was held, provided by HGC.
+(when "PtPGameCategoryA" = 1)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TableID" type="mstns:TableID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Κωδικός Τραπεζιού Διεξαγωγής Παιγνίου:
+Ο μοναδικός κωδικός του τραπεζιού διεξαγωγής του Παιγνίου, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+(όταν το πεδίο  "PtPGameCategoryA" = 1)
+
+Table Identification Number:
+The unique identification number of the table the Game was held, provided by the Licensee.
+(when "PtPGameCategoryA" = 1)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                        <xs:assert test="(not(exists(PtPGameCategoryA))) or (PtPGameCategoryA = 1 and exists(LiveGames)) or (PtPGameCategoryA != 1 and not(exists(LiveGames)))" />
+                        <xs:assert test="if (exists(BonusID)) then (exists(PtPGameSessionData/Stakes/PtPGameSessionNonRedeemableBonusAmountWagered) or exists(PtPGameSessionData/Winnings/PtPGameSessionRedeemableRakeBackBonus) or exists(PtPGameSessionData/Winnings/PtPGameSessionNonRedeemableBonusAmountWon)) else if(not(exists(BonusID))) then (not(exists(PtPGameSessionData/Stakes/PtPGameSessionNonRedeemableBonusAmountWagered)) and not(exists(PtPGameSessionData/Winnings/PtPGameSessionRedeemableRakeBackBonus)) and not(exists(PtPGameSessionData/Winnings/PtPGameSessionNonRedeemableBonusAmountWon))) else false()" />
+                        <xs:assert test="if (exists(JackpotID)) then exists(PtPGameSessionData/Stakes/PtPGameSessionJackpotRake) else if (not(exists(JackpotID))) then (not(exists(PtPGameSessionData/Stakes/PtPGameSessionJackpotRake))) else false()" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Peer_to_Peer_Game" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

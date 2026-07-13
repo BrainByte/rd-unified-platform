@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Køb for et managerspil.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/ManagerspilKoebTypeType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="ManagerspilKøbType" type="fase2.1:ManagerspilKøbTypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Typen af et køb i et managerspil. Hvis der er tilkøb der ikke går i puljen, skal det ikke rapporteres til Spillemyndigheden.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilKøbBeløb" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Størrelsen af købet angives med beløb.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="ManagerspilKøbFee" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilladelsesindehavers fee eller kommission for spilkøbet rapporteres.  Rapporteres kun hvis tilladelsesindehaver tager en separat fee eller kommission. Hvis ikke tilladelsesindehaver tager fee eller kommission for deltagelse i spillet rapporteres nul.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

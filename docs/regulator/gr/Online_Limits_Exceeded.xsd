@@ -1,0 +1,226 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Ημερήσια. Στο τέλος της Παικτικής Ημέρας.
+(1) Daily. At the end of the Gaming Day.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Limits_Exceeded" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="LimitsExceeded" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="LimitCategory">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Ορίου Παικτικής Δραστηριότητας:
+Η Κατηγορία στην οποία εμπίπτει το όριο παικτικής δραστηριότητας. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ημερήσιο Χρονικό Όριο Παικτικής Δραστηριότητας 
+(2) = Εβδομαδιαίο Χρονικό Όριο Παικτικής Δραστηριότητας
+(3) = Μηνιαίο Χρονικό Όριο Παικτικής Δραστηριότητας 
+(4) = Ημερήσιο Χρηματικό Καταθετικό Όριο Παικτικής Δραστηριότητας 
+(5) = Εβδομαδιαίο Χρηματικό Καταθετικό Όριο Παικτικής Δραστηριότητας 
+(6) = Μηνιαίο Χρηματικό Καταθετικό Όριο Παικτικής Δραστηριότητας
+(7) = Ημερήσιο Χρηματικό Όριο Παικτικής Δραστηριότητας Απώλειας Χρημάτων
+(8) = Εβδομαδιαίο Χρηματικό Όριο Παικτικής Δραστηριότητας Απώλειας Χρημάτων
+(9) = Μηνιαίο Χρηματικό Όριο Παικτικής Δραστηριότητας Απώλειας Χρημάτων
+(0) = Άλλο 
+
+Limit Category:
+The category of the limit. Values are granted by HGC. Allowed Values:
+(1) = Daily time limit
+(2) = Weekly time limit
+(3) = Monthly time limit
+(4) = Daily Deposit limit
+(5) = Weekly Deposit limit
+(6) = Monthly Deposit limit
+(7) = Daily Loss limit
+(8) = Weekly Loss limit
+(9) = Monthly Loss limit
+(0) = Other
+</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                            <xs:enumeration value="6" />
+                                                            <xs:enumeration value="7" />
+                                                            <xs:enumeration value="8" />
+                                                            <xs:enumeration value="9" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="GameType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Κατηγορία Παιγνίου στο οποίο εφαρμόζεται το όριο:
+                                                            Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                                            (1) = Παίγνιο Στοιχήματος (Άδεια Τύπου 1)
+                                                            (2) = Λοιπά Διαδικτυακά Παίγνια (Άδεια Τύπου 2)
+                                                            (0) = Εφαρμογή και στους δύο τύπους παιγνίων
+
+                                                            Game Category in which the limit is applied:
+                                                            Values are granted by HGC. Allowed Values:
+                                                            (1) = Betting (License Type 1)
+                                                            (2) = Other Online Game (License Type 2)
+                                                            (0) = Both
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="ExceededDuration" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Χρονική Διάρκεια Ορίου που ο Παίκτης έχει υπερβεί:
+Η χρονική διάρκεια (σε δευτερόλεπτα), του Ορίου Παικτικής Δραστηριότητας, που ο Παίκτης έχει υπερβεί.
+(όταν το πεδίο  "LimitCategory" = 1,2,3)
+
+Duration Exceeded:
+The duration (in seconds) exceeded by the Player, for the specific time limit.
+(when "LimitCategory" = 1,2,3)</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:positiveInteger">
+                                                            <xs:totalDigits value="5" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="ExceededAmount" type="mstns:PositiveMonetaryAmount" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ποσό Ορίου που ο Παίκτης προσπάθησε να υπερβεί:
+Το ποσό, του Ορίου Παικτικής Δραστηριότητας, που ο Παίκτης έθεσε και προσπάθησε να υπερβεί.
+(όταν το πεδίο  "LimitCategory" = 4,5,6,7,8,9)
+
+Amount Exceeded:
+The limit amount set and attempted to be exceeded by the Player, for the specific limit category.
+(when "LimitCategory" = 4,5,6,7,8,9)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LogInSessionID" type="mstns:LogInSessionID" minOccurs="0" />
+                                                <xs:element name="BetIndicatorLimitExceeded" type="xs:boolean">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Δείκτης Υπέρβασης Ορίου Παικτικής Δραστηριότητας:
+Ο δείκτης υπέρβασης Ορίου Παικτικής Δραστηριότητας από τον Παίκτη, κατά τη διάρκεια στοιχηματισμού σε στοιχηματικό γεγονός.
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(false) = Όχι (σε όλες τις άλλες περιπτώσεις).
+(true) = Ναι (στη περίπτωση υπέρβασης ορίου Απώλειας Χρημάτων, κατά τη διάρκεια στοιχηματισμού).
+
+Exceeded Limit Indicator:
+An Indicator that shows whether a Player has exceeded a limit during betting on bet events. Values are granted by HGC. Allowed Values:
+(false) = No (in all other cases).
+(true) = Yes ( in case there is an attempt from the Player to exceed his/her  loss limit, during betting).
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LimitExceedDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Υπέρβασης Ορίου:
+Η ημερομηνία και ώρα υπέρβασης του Ορίου Παικτικής Δραστηριότητας(UTC).
+
+Limit Exceed Date:
+Date and time the Player Exceeded the limit (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:choice minOccurs="0" maxOccurs="1">
+                                                    <xs:element name="GameSessionID" type="mstns:GameSessionID">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Συνεδρία Παιγνίου:
+Ο μοναδικός κωδικός συνεδρίας παιγνίου κατά την οποία ο Παίκτης υπερέβη το Όριο Παικτικής Δραστηριότητας. 
+Η συνεδρία παιγνίου ορίζεται ως το χρονικό διάστημα κατά το οποίο ένας Παίκτης συμμετέχει στη διεξαγωγή ενός Παιγνίου, σε ένα μέσο διεξαγωγής.
+(εάν υφίσταται)
+
+Game Session Identifier:
+Unique identifier of a game session where the Player exceeded the limit.
+A game session is the time a Player participates in a single Game.
+(if applicable)
+                                                    </xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:element>
+                                                    <xs:element name="PtPGameSessionID" type="mstns:PtPGameSessionID">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Συνεδρία Παιγνίου:
+Ο μοναδικός κωδικός συνεδρίας διομότιμου (peer to peer) παιγνίου κατά την οποία ο Παίκτης υπερέβη το Όριο Παικτικής Δραστηριότητας. 
+Η συνεδρία παιγνίου ορίζεται ως το χρονικό διάστημα κατά το οποίο ένας Παίκτης συμμετέχει στη διεξαγωγή ενός Παιγνίου, σε ένα μέσο διεξαγωγής.
+(εάν υφίσταται)
+
+Game Session Identifier:
+Unique identifier of a peer to peer game session where the Player exceeded the limit.
+A game session is the time a Player participates in a single peer to peer Game. (if applicable)
+                                                    </xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:element>
+                                                    <xs:element name="PokerTournamentID" type="mstns:PokerTournamentID">
+                                                        <xs:annotation>
+                                                            <xs:documentation>
+                                                        Κωδικός Τουρνουά Πόκερ:
+                                                        Ο μοναδικός κωδικός Τουρνουά Πόκερ κατά το οποίο ο Παίκτης υπερέβη το Όριο Παικτικής Δραστηριότητας.
+                                                        (εάν υφίσταται)
+
+                                                        Poker Tournament ID:
+                                                        Unique identifier of the Poker Tournament where the Player exceeded the limit. (if applicable)
+                                                    </xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:element>
+                                                    <xs:element name="PTTransactionID" type="mstns:PTTransactionID">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Κωδικός Συναλλαγής Παίκτη σε Τουρνουά Πόκερ:
+Ο μοναδικός Κωδικός Συναλλαγής του Παίκτη σε Τουρνουά Πόκερ, κατά την οποία ο Παίκτης υπερέβη το Όριο Παικτικής Δραστηριότητας.
+(εάν υφίσταται)
+
+Poker Tournament Transaction ID:
+Unique identifier of the Player Transaction in a Poker Tournament, where the Player exceeded the limit. (if applicable)
+                                                    </xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:element>
+                                                </xs:choice>
+                                            </xs:sequence>
+                                            <xs:assert test="if (LimitCategory ge 1 and LimitCategory le 3) then (exists(ExceededDuration) and not(exists(ExceededAmount))) else if (LimitCategory ge 4 and LimitCategory le 9) then (not(exists(ExceededDuration)) and exists(ExceededAmount)) else if (LimitCategory = 0) then true() else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                    <xs:unique name="UniqueLimitCategory">
+                        <xs:selector xpath="mstns:LimitsExceeded" />
+                        <xs:field xpath="mstns:LimitCategory" />
+                    </xs:unique>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Limits_Exceeded" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

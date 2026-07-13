@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" version="1.0">
+	<xs:simpleType name="HesteagtigKategoriNavnType">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+			<xs:enumeration value="Vinder"/>
+			<xs:enumeration value="Plads"/>
+			<xs:enumeration value="Trio"/>
+			<xs:enumeration value="Tvilling"/>
+			<xs:enumeration value="Komb"/>
+			<xs:enumeration value="DD"/>
+			<xs:enumeration value="V4"/>
+			<xs:enumeration value="V5"/>
+			<xs:enumeration value="V64"/>
+			<xs:enumeration value="V65"/>
+			<xs:enumeration value="V75"/>
+			<xs:enumeration value="V86"/>
+			<xs:enumeration value="Swinger"/>
+			<xs:enumeration value="Placepot"/>
+			<xs:enumeration value="V3"/>
+			<xs:enumeration value="V6"/>
+			<xs:enumeration value="V76"/>
+			<xs:enumeration value="V87"/>
+			<xs:enumeration value="Kvartet"/>
+			<xs:enumeration value="Kvintet"/>
+			<xs:enumeration value="Sekstet"/>
+			<xs:enumeration value="Septet"/>
+			<xs:enumeration value="Trilling"/>
+			<xs:enumeration value="Quadpot"/>
+			<xs:enumeration value="Quintpot"/>
+			<xs:enumeration value="Tripot"/>
+			<xs:enumeration value="KvartetPlus"/>
+			<xs:enumeration value="KvintetPlus"/>
+			<xs:enumeration value="KvintetPlusNy"/>
+			<xs:enumeration value="2af4"/>
+			<xs:enumeration value="KombFP"/>
+			<xs:enumeration value="TvillingFP"/>
+			<xs:enumeration value="TrioFP"/>
+			<xs:enumeration value="V85"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

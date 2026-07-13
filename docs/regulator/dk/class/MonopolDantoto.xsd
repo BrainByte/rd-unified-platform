@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder oplysninger om Dantoto.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/MonopolDantotoKategoriNavnType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst30Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/DanTotoHostType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:include schemaLocation="../types/DantotoKuponTypeType.xsd"/>
+         <xs:element name="MonopolDantotoKategoriNavn" type="fase2.1:MonopolDantotoKategoriNavnType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af hvilket Dantoto spil der er tale om. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoEventIdentifikation" type="fase2.1:Tekst30Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Unik identifikation af en event. Tilladelsesindehaver vælger selv dette.   Der anvendes: bane-dag-år.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoEventDato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Dato for Dantoto eventet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoEventSlutDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Slut dato og tid for sidste løb på den givne bane på den givne dag.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoBaneNavn" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Navnet på den bane hvor eventet bliver afholdt.  Hvis der i særlige tilfælde oprettes specielle baner uden navn, angives blot banenummer i dette felt. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoBaneNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Nummeret på den bane, hvor eventet bliver afholdt.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoHost" type="fase2.1:DanTotoHostType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af, om Danske Spil hoster løbet (intern) eller om en anden arrangør hoster løbet (ekstern).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoOmsætningEfterAnnulleringer"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle indskud ved eventet, fratrukket annulleringer.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoOmsætningFørAnnulleringer"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle indskud ved eventet uanset om et indskud senere er annulleret eller ej.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoAnnulleringerBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Annullerede transaktioner i kr. vedr. eventet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+
+    <xs:element name="MonopolDantotoLøbNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>Nummeret på et løb under et Dantoto event.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolDantotoEventLøbNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>Nummeret på et løb under et Dantoto event.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolDantotoSpilLøbNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>Nummeret på et løb under et Dantoto event.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolDantotoReservehesteAutomatisk" type="fase2.1:TekstLangType">
+          <xs:annotation>
+                  <xs:documentation>Liste med reserveheste genereret af Danske Spil til et givent løb.   Listen skal være kommasepareret med angivelse af nummerrækkefølgen på reservehestene. F.eks.: 8,11,6,4,9,1,10,5,7,2,3.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoReservehesteManuelt" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>Liste med reserveheste udvalgt af spilleren til et givent løb.   Listen skal være kommasepareret med angivelse af nummerrækkefølgen på reservehestene. F.eks.: 10,7. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoUdgåedeHeste" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>Liste med udgåede heste til et givent løb.   Listen skal være kommasepareret med angivelse numrene på de udgåede heste. F.eks.: 3,5,9.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoKuponType" type="fase2.1:DantotoKuponTypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Type af kupon. Kan være Normal, Lyn eller Smart Lyn.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoLukketForSpilDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tidspunktet hvor der er lukkes for indskud til det givne Dantoto spil. Der rapporteres det endelige tidspunkt, og tidspunkter for omstarter, hvor der midlertidigt lukkes for spil skal ikke rapporteres. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoIndskudSpilTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af indskud (fratrukket annulleringer) hos tilladelsesindehaver for et givent MonopolSpilProduktIdentifikation.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoAntalRækkerTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af antal rækker (fratrukket annulleringer) hos tilladelsesindehaver for et givent MonopolSpilProduktInformation</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolDantotoGevinstPuljeBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totalsummen af beløb fra alle gevinstpuljer i spillet for et givent MonopolSpilProduktIdentifikation.  Monopol: Beløbet angives i brutto (dvs. før gevinstafgift er fratrukket). Beløbet skal være det totale brutto gevinst beløb. Det vil sige, at evt. overført primo pulje og tilføjet pulje skal være indeholdt i beløbet, og eventuelt overført ultimo pulje skal være fratrukket.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

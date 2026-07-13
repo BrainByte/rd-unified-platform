@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε δύο (2) ώρες κατ' ελάχιστο.
+(1) Minimum, every two (2) hours.
+</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Log_In_Session" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                            <xs:element name="LogInSessionData">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="LogInSessionID" type="mstns:LogInSessionID" />
+                                        <xs:element name="LoginSessionStartDate" type="mstns:dateTimeUTC">
+                                            <xs:annotation>
+                                                <xs:documentation>Ημερομηνία Έναρξης Παικτικής Συνεδρίας:
+Η ημερομηνία και ώρα Έναρξης της Παικτικής Συνεδρίας(UTC).
+
+Login Session Start Date:
+Date and time the Login Session started (UTC).</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="LoginSessionEndDate" type="mstns:dateTimeUTC">
+                                            <xs:annotation>
+                                                <xs:documentation>Ημερομηνία Λήξης Παικτικής Συνεδρίας:
+Η ημερομηνία και ώρα Λήξης της Παικτικής Συνεδρίας (UTC).
+
+Login Session End Date:
+Date and Time the Login Session ended (UTC).</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:element>
+                                        <xs:element name="LoginSessionEndReason">
+                                            <xs:annotation>
+                                                <xs:documentation>Αιτιολογία Λήξης Παικτικής Συνεδρίας :
+Κωδικοποίηση της αιτιολογίας της λήξης Παικτικής Συνεδρίας. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ο Παίκτης αποσυνδέεται από τα συστήματα του Κατόχου Άδειας.
+(2) = Το ΚΠΣ του Κατόχου Άδειας τερμάτισε την Παικτική Συνεδρία.
+(3) = Τεχνικό λάθος.
+(0) = Άλλο.
+
+Login Session End Reason:
+The reason a session has ended. Values are granted by HGC. Allowed values:
+(1) = Player logged out from Licensee's systems.
+(2) = Licensee ended the Player's session.
+(3) = Technical problem.
+(0) = Other.</xs:documentation>
+                                            </xs:annotation>
+                                            <xs:simpleType>
+                                                <xs:restriction base="xs:nonNegativeInteger">
+                                                    <xs:enumeration value="0" />
+                                                    <xs:enumeration value="1" />
+                                                    <xs:enumeration value="2" />
+                                                    <xs:enumeration value="3" />
+                                                </xs:restriction>
+                                            </xs:simpleType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:assert test="LoginSessionStartDate le LoginSessionEndDate" />
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="PlayerID" type="mstns:PlayerID" />
+                            <xs:element name="IP">
+                                <xs:annotation>
+                                    <xs:documentation>Ηλεκτρονική Διεύθυνση Στοιχηματισμού:
+Η ηλεκτρονική διεύθυνση από την οποία συνδέθηκε ο Παίκτης στο σύστημα του Κατόχου Άδειας (π.χ.: 192.168.45.122).
+
+ID Address:
+The IP address of the Player's device (e.g.: 192.168.45.122).</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:minLength value="1" />
+                                        <xs:maxLength value="45" />
+                                        <xs:whiteSpace value="collapse" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="Location" minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation>Γεω-προσδιορισμός Στοιχηματισμού:
+Ο γεωγραφικό προσδιορισμός της διεύθυνσης από την οποία συνδέθηκε ο Παίκτης στο σύστημα του Κατόχου Άδειας, σε επίπεδο Ελληνικού ταχυδρομικού κώδικα (Τ.Κ.).
+(εάν υφίσταται)
+
+Geo Location:
+The Greek area code of the Player's device.
+(if applicable)</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:whiteSpace value="collapse" />
+                                        <xs:length value="5" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="DomainName" type="mstns:DomainName" />
+                            <xs:element name="ChannelIndicator">
+                                <xs:annotation>
+                                    <xs:documentation>Δείκτης Καναλιού Διεξαγωγής Παιγνίου:
+Ο δείκτης ο οποίος διαχωρίζει κατά πόσο ένα Παίγνιο διεξάγεται, είτε μέσα από διεπαφή χρήστη ηλεκτρονικού υπολογιστή (PC Interface), είτε μέσα από διεπαφή χρήστη κινητής συσκευής (Mobile Interface). Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ηλεκτρονικός Υπολογιστής
+(2) = Κινητή Συσκευή
+(0) = Άλλο
+
+Channel Indicator:
+Through what sales channel the game was provided. Values are granted by HGC. Allowed values:
+(1) = PC Interface
+(2) = Mobile Interface
+(0) = Other</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:nonNegativeInteger">
+                                        <xs:enumeration value="0" />
+                                        <xs:enumeration value="1" />
+                                        <xs:enumeration value="2" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="RoamingIndicator" type="xs:boolean">
+                                <xs:annotation>
+                                    <xs:documentation>
+                                       Δείκτης Λογαριασμού Περιαγωγής:
+Ο δείκτης αυτός διαχωρίζει τις συνδέσεις σε συνδέσεις περιαγωγής και ελληνικών ΗΛΠ . Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(false) = Συνδεση παίκτη που διαθέτει ελληνικό Ηλεκτρονικό Λογαριασμό Παίκτη 
+(true) = Σύνδεση Παίκτη που διαθέτει Ηλεκτρονικό Λογαριασμό Περιαγωγής
+
+Roaming Account Indicator:
+What type account is used by the player. Roaming or regular Greek account.  Values are granted by HGC. Allowed values:
+(false) = Player with Greek Account
+(true) = Player with Roaming Account
+                                    </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Log_In_Session" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

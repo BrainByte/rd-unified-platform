@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         
+         <xs:annotation>
+            <xs:documentation/>
+            <xs:documentation>r7165</xs:documentation>
+         </xs:annotation>
+         <xs:include schemaLocation="../class/SpilFil.xsd"/>
+         <xs:include schemaLocation="../class/SpilCertifikat.xsd"/>
+         <xs:include schemaLocation="../class/SpilKategori.xsd"/>
+         <xs:include schemaLocation="../class/SpilProdukt.xsd"/>
+         <xs:include schemaLocation="../class/SpillerInformation.xsd"/>
+         <xs:include schemaLocation="../class/Spil.xsd"/>
+         <xs:include schemaLocation="../class/PokerKoeb.xsd"/>
+         <xs:include schemaLocation="../class/ValutaOplysning.xsd"/>
+         <xs:include schemaLocation="../class/Jackpot.xsd"/>
+         <xs:element name="PokerTurneringTransaktionStruktur"
+                     type="fase2.1:PokerTurneringTransaktionStrukturType"/>
+         <xs:complexType name="PokerTurneringTransaktionStrukturType">
+         
+         
+         
+         
+         
+         
+         
+         
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+               <xs:sequence>
+               <xs:element name="PokerTurneringTransaktionStruktur">
+                  <xs:complexType>
+                     <xs:sequence>
+                        <xs:element name="FilInformation">
+                           <xs:complexType>
+                              <xs:sequence>
+                                 <xs:element ref="fase2.1:SpilFilVersion"/>
+                  
+                                 <xs:element ref="fase2.1:SpilFilIdentifikation"/>
+                              </xs:sequence>
+                           </xs:complexType>
+                        </xs:element>
+                        <xs:element name="TilladelsesindehaverOgSpil">
+                           <xs:complexType>
+                              <xs:sequence>
+                                 <xs:element ref="fase2.1:SpilCertifikatIdentifikation"/>
+                  
+                                 <xs:element ref="fase2.1:SpilKategoriNavn"/>
+                  
+                                 <xs:element ref="fase2.1:SpilProduktNavn"/>
+                  
+                                 <xs:element ref="fase2.1:SpilProduktIdentifikation"/>
+                              </xs:sequence>
+                           </xs:complexType>
+                        </xs:element>
+                        <xs:element name="TurneringTransaktionInfoListe">
+                           <xs:complexType>
+                              <xs:sequence>
+
+                                 <xs:element name="TurneringTransaktionInfo" minOccurs="1" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                       <xs:sequence>
+                                          <xs:element ref="fase2.1:SpillerInformationIdentifikation"/>
+                  
+                                          <xs:element ref="fase2.1:SpilTransaktionIdentifikation"/>
+                  
+                                          <xs:element ref="fase2.1:SpilKøbDatoTid"/>
+                  
+                                          <xs:element ref="fase2.1:SpilSalgskanal"/>
+                  
+                                          <xs:element ref="fase2.1:PokerKøbType"/>
+                  
+                                          <xs:element ref="fase2.1:PokerKøbBeløb"/>
+                  
+                                          <xs:element ref="fase2.1:PokerKøbFee"/>
+                  
+                                          <xs:element ref="fase2.1:ValutaOplysningKode"/>
+                                          <xs:element name="SpilSted">
+                                             <xs:complexType>
+                                                <xs:choice>
+                                                   <xs:element ref="fase2.1:SpilTerminalIdentifikation"/>
+				
+				
+				                                               <xs:element ref="fase2.1:SpilHjemmeside"/>
+                                                </xs:choice>
+                                             </xs:complexType>
+                                          </xs:element>
+                                          <!--Sequence removed-->
+
+                                             <xs:element name="SpilAnnullering" minOccurs="0">
+                                                <xs:complexType>
+                                                   <xs:sequence>
+                                                      <xs:element ref="fase2.1:SpilAnnullering"/>
+                  
+                                                      <xs:element ref="fase2.1:SpilAnnulleringDatoTid"/>
+                                                   </xs:sequence>
+                                                </xs:complexType>
+                                             </xs:element>
+                                          
+
+                                          <xs:element name="JackpotListe">
+                                             <xs:complexType>
+                                                <xs:sequence>
+
+                                                   <xs:element name="Jackpot" minOccurs="0" maxOccurs="unbounded">
+                                                      <xs:complexType>
+                                                         <xs:sequence>
+                                                            <xs:element ref="fase2.1:JackpotIdentifikation"/>
+                  
+                                                            <xs:element ref="fase2.1:SpilIndskudJackpot"/>
+                                                         </xs:sequence>
+                                                      </xs:complexType>
+                                                   </xs:element>
+                                                </xs:sequence>
+                                             </xs:complexType>
+                                          </xs:element>
+
+                                       </xs:sequence>
+                                    </xs:complexType>
+                                 </xs:element>
+                              </xs:sequence>
+                           </xs:complexType>
+                        </xs:element>
+
+                     </xs:sequence>
+                  </xs:complexType>
+               </xs:element>
+            </xs:sequence>
+            
+         
+         
+         
+         
+         </xs:complexType>
+      </xs:schema>

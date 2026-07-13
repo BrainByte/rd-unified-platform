@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:annotation>
+		<xs:documentation>En spil er den enhed en spiller køber for at spille spillet. Spiller betaler et indskud for spillet og spillet kan indeholde en til flere væddemål, der hver især kan give gevinst.  Eksempel: Fastodds spil, Liverpool vs. Man Utd, hvor oddset på Liverpool sejr er 2,00. En spiller placerer 100 kr på en Liverpool sejr, hvilket også bliver kampens resultat. Spilleren for en udbetaling på 100 kr x 2,00 = 200 kr. I feltet SpilIndskud angives 100 kr og i feltet SpilGevinst angives 200 kr. </xs:documentation>
+	</xs:annotation>
+	<xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+	<xs:include schemaLocation="../types/DatoTidType.xsd"/>
+	<xs:include schemaLocation="../types/SalgskanalType.xsd"/>
+	<xs:include schemaLocation="../types/TekstKortType.xsd"/>
+	<xs:include schemaLocation="../types/TalHelType.xsd"/>
+	<xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+	<xs:include schemaLocation="../types/Tal1Type.xsd"/>
+	<xs:element name="SpilTransaktionIdentifikation" type="fase2.1:Tekst45Type">
+		<xs:annotation>
+			<xs:documentation>Unik identifikation af en spillers spil-køb. Tilladelsesindehaver vælger selv dette. Kan f.eks. være genereret som UUID.  Elementet binder transaktionsstrukturer sammen med slutstrukturer for Puljespil og Fastodds.  Elementet binder desuden et køb sammen med en annullering for Managerspil, PokerTurnering, FastOdds, Puljespil, Kasinospil og PokerCashGame. Både køb og annullering rapporteres i en transaktionstruktur.  Det samme id må således kun anvendes igen i en transaktionstruktur, hvis der er tale om en annullering af et tidligere køb.  Monopol: For talspil er dataelementet opbygget som CDC + internt sekvens nr + produkt nr + løbende uge nr.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilKøbDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Dato og tid hvor spiller har købt spillet. (UTC)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilKoebDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Dato og tid hvor spiller har købt spillet. (UTC)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+
+	<xs:element name="SpilIndløsningDatoTid" type="fase2.1:DatoTidType"/>
+	<xs:element name="SpilSalgskanal" type="fase2.1:SalgskanalType">
+		<xs:annotation>
+			<xs:documentation>Hvilket medie er spillet foretaget igennem. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilTerminalIdentifikation" type="fase2.1:Tekst45Type">
+		<xs:annotation>
+			<xs:documentation>Identifikation på den landbaserede terminal, som spillet er spillet på. Identifikationen skal kunne henføres til den fysiske maskine, der er spillet på.   Kun påkrævet for landbaseret spil. Feltet skal ikke rapporteres for online spil. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilHjemmeside" type="fase2.1:TekstKortType">
+		<xs:annotation>
+			<xs:documentation>Adresse (URL) på den hjemmeside, som spillet er foretaget på.  Kun påkrævet for online spil. Feltet skal ikke rapporteres for landbaserede spil. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilForventetSlutDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Forventet dato og tid for afgørelse af spillet. (UTC)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilFaktiskSlutDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Den faktiske dato og tid for afgørelse af spillet. (UTC)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilAntalRækker" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Et spil kan bestå af et antal rækker som hver især består af kampe med mulige udfald. Dette felt angiver hvor mange rækker en spiller har spillet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilIndskud" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Beløb det har kostet spilleren at købe spillet.  Ved betexchange skal begge spilleres indskud sendes som separate transaktioner og altså ikke lægges sammen til en transaktion. Kun matchede væddemål skal rapporteres.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilIndskudJackpot" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Del af Indskud der er gået til en jackpotpulje.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilIndskudSpil" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Del af Indskud der er gået til spillet. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilGevinst" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Beløbet spilleren har vundet på spillet efter spillets afslutning inkl. indskud. Har spilleren tabt sit indskud vil dette beløb være nul.  For fast-odds skal der ved tab af indskud rapporteres nul i dette felt.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilGevinstJackpot" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Del af gevinsten på spillet, der er kommet fra jackpot.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilGevinstSpil" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Del af gevinst på spillet der er kommet fra spillet (inkl. indskud).  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilKommission" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Tilladelsesindehavers kommission efter evt. rabatordninger i forbindelse med formidling af væddemålet. Benyttes f.eks. ved Betexchange.  Denne attribut skal kun indeholde kommission, og er ikke indskud minus gevinst. Kun hvis der indkræves en specifik kommission fra indskuddet, skal dette rapporteres. Kommission kunne f.eks. være ved peer-to-peer spil, hvor to spillere spiller mod hinanden og tilladelsesindehaver tager en kommission for spillet. Værdien af denne attribut kan ikke være negativ.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilAnnullering" type="fase2.1:Tal1Type">
+		<xs:annotation>
+			<xs:documentation>Boolean til angivning af om transaktionen er en annullering eller ej. Ved annullering angives 1, hvis det ikke er en annullering angives 0.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilAnnulleringDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Dato og tid for annullering af spillet. (UTC)</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

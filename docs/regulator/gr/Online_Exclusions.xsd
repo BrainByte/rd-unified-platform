@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>
+                Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθενται νέοι Αποκλεισμοί Παικτών.
+(1) Whenever new Player Exclusions are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε Αποκλεισμούς Παικτών.
+(2) Whenever information regarding Player Exclusions, changes.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Exclusion" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="ExclusionID" type="mstns:GenericID">
+                                        <xs:annotation>
+                                            <xs:documentation>Κωδικός Αποκλεισμού:
+Ο μοναδικός κωδικός αποκλεισμού Παίκτη, τον οποίο αποδίδει ο Κάτοχος Άδειας. 
+
+Exclusion Identifier:
+Unique identifier of Player's exclusion, provided by the Licensee.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ExclusionType">
+                                        <xs:annotation>
+                                            <xs:documentation>Τύπος Αποκλεισμού:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Αποκλεισμός
+(2) = Αυτοαποκλεισμός
+(0) = Άλλο
+
+Exclusion Type:
+Values are granted by HGC. Allowed values:
+(1) = Exclusion
+(2) = Self Exclusion
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="0" />
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="ExclusionChannel">
+                                        <xs:annotation>
+                                            <xs:documentation>Φορέας Αποκλεισμού:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Κάτοχος Άδειας
+(2) = Ε.Ε.Ε.Π.
+(0) = Άλλος
+
+Exclusion Channel:
+The channel through the exclusion took place. Values are granted by HGC. Allowed values:
+(1) = Licensee
+(2) = HGC
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="0" />
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="ExclusionDurationCategory">
+                                        <xs:annotation>
+                                            <xs:documentation>Χρονική Κατηγορία Αποκλεισμού:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Αόριστης Διάρκειας
+(2) = Ορισμένης Διάρκειας
+(3) = 24ωρη Αποχή
+(0) = Άλλος
+
+Exclusion Duration Category: 
+The categorization of exclusion in terms of duration. Values are granted by HGC. Allowed values:
+(1) = Indefinite Exclusion
+(2) = Temporary Exclusion
+(3) = 24 Hours Exclusion
+(0) = Other</xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="0" />
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                                <xs:enumeration value="3" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="ExclusionRequestDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>Ημερομηνία Αίτησης Αποκλεισμού:
+Η ημερομηνία και ώρα αίτησης του αποκλεισμού (UTC).
+(εάν υφίσταται)
+
+Exclusion Request Date
+Date and time the exclusion was requested (UTC).
+(if applicable)</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ExpectedExclusionDuration" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>Αναμενόμενη Διάρκεια Αποκλεισμού:
+Η αναμενόμενη διάρκεια του αποκλεισμού. Η διάρκεια αναφέρεται σε ημέρες. Σε περίπτωση αόριστης διάρκειας αποκλεισμού το πεδίο λαμβάνει την τιμή '0'.
+
+Expected Exclusion Duration:
+The expected duration of the exclusion, in days. When the exclusion is indefinite, the value is '0'</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ExclusionStartDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>Ημερομηνία Έναρξης Αποκλεισμού:
+Η ημερομηνία και ώρα ενεργοποίησης του αποκλεισμού στα συστήματα του Κάτοχου Άδειας (UTC).
+
+Exclusion Start Date:
+Date and time the exclusion started in Licensee's systems(UTC).</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="EndExclusionRequestDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>Ημερομηνία Αίτησης Λήξης Αποκλεισμού:
+Η ημερομηνία και ώρα αίτησης λήξης του αποκλεισμού (UTC).
+(εάν υφίσταται)
+
+End Exclusion Request Date
+Date and time the ending of the exclusion was requested (UTC).
+(if applicable)</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ExclusionEndDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>Ημερομηνία Λήξης Αποκλεισμού:
+Η ημερομηνία και ώρα λήξης του αποκλεισμού στα συστήματα του Κάτοχου Άδειας (UTC).
+(εάν υφίσταται)
+
+Exclusion End Date:
+Date and time the exclusion Ended in Licensee's systems (UTC).
+(if applicable)</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ExclusionReason" type="mstns:LongString">
+                                        <xs:annotation>
+                                            <xs:documentation>Αιτιολογία Αποκλεισμού : 
+Η αιτιολογία του αποκλεισμού.
+
+Exclusion Reason:
+The Reason of exclusion.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                        <xs:assert test="if (exists(ExclusionRequestDate)) then  (ExclusionRequestDate le ExclusionStartDate) else if (not(exists(ExclusionRequestDate))) then true() else false()" />
+                        <xs:assert test="if (exists(ExclusionEndDate)) then  (ExclusionStartDate le ExclusionEndDate) else if (not(exists(ExclusionEndDate))) then true() else false()" />
+                        <xs:assert test="if (exists(EndExclusionRequestDate)) then  (EndExclusionRequestDate le ExclusionEndDate) else if (not(exists(EndExclusionRequestDate))) then true() else false()" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Exclusion" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

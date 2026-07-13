@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema  xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+               elementFormDefault="qualified"
+               version="1.0">
+
+      <xs:simpleType name="SportsgrenskodeType">
+         <xs:annotation>
+            <xs:documentation>
+               Type der definerer koden for en sportsgren. Benyttes hovedsageligts inden for begivenhedsrapportering.
+            </xs:documentation>
+         </xs:annotation>
+         <xs:restriction base="xs:string">
+            <xs:maxLength value="45"/>
+               <xs:enumeration value="AlpintSkiløb"/>
+               <xs:enumeration value="AmerikanskFodbold">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ikke at forveksle med fodbold der foregår i Amerika
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Andet">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Alt andet end sport og politik
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="AndetSport">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Al sport der ikke hører ind under de andre listede muligheder
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Atletik"/>
+               <xs:enumeration value="AustralskFodbold">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ikke at forveksle med fodbold der foregår i australien
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Badminton"/>
+               <xs:enumeration value="Baseball"/>
+               <xs:enumeration value="Basketball">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. 3X3 Basketball
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Bobslæde"/>
+               <xs:enumeration value="Boksning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Både amatør- og professionelt
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Bordtennis"/>
+               <xs:enumeration value="Bowls">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ikke at forveksle med bowling
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Breakdance"/>
+               <xs:enumeration value="Brydning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Både fri- og græsk-romersk og andre
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Bueskydning"/>
+               <xs:enumeration value="Cricket"/>
+               <xs:enumeration value="Curling"/>
+               <xs:enumeration value="Cykling">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. banecykling; bmx og mountainbike
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Dart"/>
+               <xs:enumeration value="Esport"/>
+               <xs:enumeration value="Flagfootball"/>
+               <xs:enumeration value="Floorball"/>
+               <xs:enumeration value="Fodbold"/>
+               <xs:enumeration value="Formel1"/>
+               <xs:enumeration value="FreestyleSkiløb"/>
+               <xs:enumeration value="Futsal"/>
+               <xs:enumeration value="Fægtning"/>
+               <xs:enumeration value="Golf">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. minigolf
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Gymnastik">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. Rytmisk sportsgymnastik; Trampolin; Tumbling mm.
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="GæliskeSportsgrene"/>
+               <xs:enumeration value="Hestesport">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. Hestevæddeløb - men fx dressur; military; ridebanespring
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Hestevæddeløb"/>
+               <xs:enumeration value="Hockey">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. ishockey eller Floorball
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Hundevæddeløb"/>
+               <xs:enumeration value="HurtigløbPåSkøjter">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. Short track/kortbane
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Håndbold">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. strandhåndbold og lign.
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Ishockey"/>
+               <xs:enumeration value="Judo"/>
+               <xs:enumeration value="Kabaddi"/>
+               <xs:enumeration value="KanoKajak">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. maraton og slalom
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="KapflyvningMedBrevduer"/>
+               <xs:enumeration value="KortbaneløbPåSkøjter"/>
+               <xs:enumeration value="Kunstskøjteløb"/>
+               <xs:enumeration value="Kælk"/>
+               <xs:enumeration value="Lacrosse"/>
+               <xs:enumeration value="Langrend">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. Nordisk kombineret
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="MMA"/>
+               <xs:enumeration value="ModerneFemkamp"/>
+               <xs:enumeration value="MotorsportØvrig">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Alt andet end Formel 1 og speedway
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="NordiskKombineret"/>
+               <xs:enumeration value="OL">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Kun ting der ikke er den enkelte sportsgren - fx værtsby; og antal medaljer til et land
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Orienteringsløb"/>
+               <xs:enumeration value="Padel"/>
+               <xs:enumeration value="Politik"/>
+               <xs:enumeration value="Pool"/>
+               <xs:enumeration value="Roning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. Beachroning
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="RugbyLeague"/>
+               <xs:enumeration value="RugbyUnion">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. Rugby Sevens/syvmandsrugby
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Sejlsport">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. RSX
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Skak">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. Fischer Random
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Skateboard"/>
+               <xs:enumeration value="Skeleton"/>
+               <xs:enumeration value="Skibjergbestigning"/>
+               <xs:enumeration value="Skihop">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. skiflyvning; ekskl. Nordisk kombineret
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Skiskydning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ofte kaldet biatlon
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Skydning"/>
+               <xs:enumeration value="Snooker"/>
+               <xs:enumeration value="Snowboarding"/>
+               <xs:enumeration value="Softball"/>
+               <xs:enumeration value="Speedway"/>
+               <xs:enumeration value="Sportsklatring"/>
+               <xs:enumeration value="Squash"/>
+               <xs:enumeration value="Surfing">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. windsurfing; men ekskl. RSX-kapsejlads
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Svømning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. maratonsvømning
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Synkronsvømning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. individuelt
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Taekwondo"/>
+               <xs:enumeration value="Tennis"/>
+               <xs:enumeration value="Triatlon"/>
+               <xs:enumeration value="Udspring"/>
+               <xs:enumeration value="Vandpolo"/>
+               <xs:enumeration value="Volleyball">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Inkl. Beachvolleyball
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+               <xs:enumeration value="Vægtløftning">
+                  <xs:annotation>
+                     <xs:documentation>
+                           Ekskl. styrkeløft
+                     </xs:documentation>
+                     </xs:annotation>
+               </xs:enumeration>
+            </xs:restriction>
+      </xs:simpleType>
+   </xs:schema>

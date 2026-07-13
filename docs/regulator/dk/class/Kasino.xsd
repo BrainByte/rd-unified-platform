@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Informationer der knytter sig til kasinoer, der har opstillet gevinstgivende spilleautomater.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/KasinoIdentifikationType.xsd"/>
+         <xs:element name="KasinoIdentifikation" type="fase2.1:KasinoIdentifikationType">
+               
+               <xs:annotation>
+                  <xs:documentation>Identifikation på kasinoet. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

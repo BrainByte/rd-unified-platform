@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:include schemaLocation="../types/Tal2Type.xsd"/>
+         <xs:include schemaLocation="../types/MonopolSpilTypeType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:element name="TalSpilNøgleNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Indeks for den plads nøglen beskriver. F.eks. i Lotto - mellem 1 og 9. 1 - 1. lottotal 2 - 2. lottotal 3 - 3. lottotal 4 - 4. lottotal 5 - 5. lottotal 6 - 6. lottotal 7 - 7. lottotal 8 - tillægstal 9 - trumf</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilNøgleBeskrivelse" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af NøgleNummer - f.eks. tal 8 i Lotto er Tillægstal og tal 9 er Trumftal.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilNøgleValideTal" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>En række består af en eller flere tal, der hver især repræsenterer et udfald spilleren skal gætte. Formålet med denne klasse er at tilladelsesindehaver skal angive de spilmuligheder der er i et puljespil. Spilmulighederne skal angives med tekst samt angives på en generel form, hvor spilmuligheden omsættes til et tal. For at gøre det muligt for Spillemyndigheden at foretage beregninger af vinderstrukturen for puljespil, skal Tilladelsesindehaver indrapportere puljespillets spilmuligheder på en generel form, hvor hvert muligt udfald matcher et tal. Vinderstrukturen er antal vindere i hver gevinstkategori. Den generelle form for puljespil består af generelle rækker og en generel nøgle. En generel række indeholder det spilleren har spillet omsat til en talrække. Det angives i data-elementet RækkeSpilkombinationer, hvor hver spillet række rapporteres på den generelle form. Vinderrækken angives også på den generelle form i dataelementet PuljespilVinderRække, og sammenlignes PuljespilVinderRække og alle RækkeSpilkombinationer kan man se hvor mange vindere, der er i de forskellige gevinstpuljer. Den generelle nøgle anvendes til at omsætte en generel række til noget alment forståeligt, f.eks. se hvilket fodboldhold spilleren har spillet på skulle vinde en kamp. Med den generelle nøgle skal man kunne omsætte både vinder rækken og alle de spillede rækker til noget alment forståeligt. Tilladelsesindehaver skal rapportere en generel nøgle for hvert puljespil der åbnes, og det gøres med felterne PuljespilNøgleBeskrivelse og PuljespilNøgleGenerel. I denne klasse angives det spilleren kan spille på, både i tekst og på en generel form. Et eksempel: Lotto : Tal1: 1-32 Tal2: 1-32 Tal3: 1-32, etc... Den generelle nøgle angives nu som ni linjer, hvor hver linje indeholder data-elementerne PuljespilNøgleKampNummer, PuljespilNøgleBeskrivelse, PuljespilNøgleGenerel. Dette svarer til det som leveren i PuljespilStartStruktur. Hvis man spiller en Lottokupon med 6,10,12,16,19,25,30, 1 (sidste er trumf) ser den således ud:1, Tal 1, 6 2, Tal 2, 10 3, Tal 3, 12 4, Tal 4, 16 5, Tal 5, 19 6, Tal 6, 25 7, Tal 7, 30 8, Trumf, 1. Efter vindertallende er trukket indrapporteres vinderrækken på den generelle form med PuljespilVinderRække. Den ser således ud: 6,5,11,13,21,25,29,1.Ønsker man at se hele tipskuponnen, kan den sættes sammen på følgende måde ud fra det indrapporterede i PuljespilStartStruktur: Tal1: 6, 6, Tal2: 10, 5, Tal3: 12,11, Tal4: 16, 13,Tal5: 19, 21, Tal6: 25, 25,Tal7: 30, 29, Trumf 1,1</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilAntalTal" type="fase2.1:Tal2Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af tal der skal spilles for, at have en række i puljespillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilType" type="fase2.1:MonopolSpilTypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Kan tage værdierne: Normal Matematisk Reduceret</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilSamletAntalRækker" type="fase2.1:TalHelType">
+               
+            </xs:element>
+         <xs:element name="TalSpilOmsætningPrLand"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Omsætningen fordelt pr. land.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilSamletOmsætning"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskriver den samlede omsætning for alle lande, der deltager i spillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilEndOfGameDatoTid" type="fase2.1:DatoTidType">
+               
+            </xs:element>
+         <xs:element name="TalSpilIndskudSpilTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt eller negativt beløb med længden 10 samt 10 decimaler. Værdierne ligger indenfor følgende område: -9.999.999.999 til 9.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilIndskudSpilTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt eller negativt beløb med længden 10 samt 10 decimaler. Værdierne ligger indenfor følgende område: -9.999.999.999 til 9.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilIndskudJackpotTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt eller negativt beløb med længden 10 samt 10 decimaler. Værdierne ligger indenfor følgende område: -9.999.999.999 til 9.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilIndskudJackpotTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt eller negativt beløb med længden 10 samt 10 decimaler. Værdierne ligger indenfor følgende område: -9.999.999.999 til 9.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilAntalRækkerTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt heltal, der kan repræsenterer værdier i intervallet 0 til 999.999.999.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilGevinstPuljeBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt eller negativt beløb med længden 10 samt 10 decimaler. Værdierne ligger indenfor følgende område: -9.999.999.999 til 9.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilVinderRække" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt heltal, der kan repræsenterer værdier i intervallet 0 til 999.999.999.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TalSpilGevinstPuljeProcent" type="fase2.1:ProcentType">
+               
+            </xs:element>
+         <xs:element name="TalSpilAntalResultatPuljer" type="fase2.1:TalHelType">
+               
+            </xs:element>
+         <xs:element name="TalSpilRækkePris" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+            </xs:element>
+      </xs:schema>

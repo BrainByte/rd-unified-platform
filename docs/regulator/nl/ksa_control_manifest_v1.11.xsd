@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+    111111111111111111111111
+    111111111100111111111111
+    111111110011101011111111
+    111110001110000001110111
+    111000001110000001000111
+    111110000000000010011111
+    111111000000000110011111
+    111100100000001110001111
+    111110000010000111001111
+    111100011111100001101111
+    111001110000000000001111
+    111111110001100000111111
+    111110000001100110000111
+    111101010111111000001111
+    111111111111111010111111
+    111111111111111111111111
+-->
+<!-- Version 1.11 Authorized for public release -->
+<xs:schema version="1.11" elementFormDefault="qualified"
+		   xmlns:xs="http://www.w3.org/2001/XMLSchema"
+		   xmlns:enc="http://www.w3.org/2001/04/xmlenc#"
+		   xmlns:dsig="http://www.w3.org/2000/09/xmldsig#">
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	<xs:import namespace="http://www.w3.org/2001/04/xmlenc#" schemaLocation="xenc-schema.xsd"/>
+    <xs:include schemaLocation="include_v1.11.xsd"/>
+	<xs:element name="ControlManifest">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="Operator_ID" type="stringMedium" minOccurs="1" maxOccurs="1"/>
+				<xs:element name="Data_Safe_ID" type="stringMedium" maxOccurs="1" minOccurs="1"/>
+				<!-- date and time when manifest file was generated -->
+				<xs:element name="Generation_Date" type="dateTimeUTC"/>
+				<!-- sequential counter of the manifest in this safe instance -->
+				<xs:element name="Manifest_Sequence_Number" type="xs:integer"/>
+				<!-- hash (SHA-256) value of the `Hash_File` of the current batch file and the previous manifest file -->
+				<xs:element name="Hash_Value">
+					<xs:complexType>
+						<xs:all>
+							<xs:element minOccurs="1" maxOccurs="1" name="Previous_ManifestFile" type="xs:string"/>
+							<xs:element minOccurs="1" maxOccurs="1" name="Current_BatchFile" type="xs:string"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Metadata" maxOccurs="1">
+					<xs:complexType>
+						<xs:all>
+							<!-- number of records in the data file related to this manifest file (a record is any element which has no parent other than <root>) -->
+							<xs:element name="Number_of_Records" type="xs:integer"/>
+							<!-- <Extraction_Date> of the first record in the data file related to this manifest file -->
+							<xs:element name="First_Timestamp" type="dateTimeUTC"/>
+							<!-- <Extraction_Date> of the last record in the data file related to this manifest file -->
+							<xs:element name="Last_Timestamp" type="dateTimeUTC"/>
+							<!-- the size of the uncompressed data file in bytes -->
+							<xs:element name="File_Size_Uncompressed" type="xs:integer"/>
+							<!-- the size of the compressed data file in bytes -->
+							<xs:element name="File_Size_Compressed" type="xs:integer"/>
+							<!-- the absolute path of the current zip file -->
+							<xs:element name="Absolute_Path_Current_Zip" type="xs:string"/>
+							<!-- the absolute path of the previous zip file -->
+							<xs:element name="Absolute_Path_Previous_Zip" type="xs:string"/>
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				<!-- key -->
+				<!-- xs:element name="EncryptedKey" type="enc:EncryptedKeyType" maxOccurs="unbounded"/ -->
+				<xs:element ref="enc:EncryptedKey" maxOccurs="unbounded"/>
+				<xs:element ref="enc:EncryptedData"/>
+				<xs:element ref="dsig:Manifest"/>
+				<xs:element ref="dsig:Signature"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

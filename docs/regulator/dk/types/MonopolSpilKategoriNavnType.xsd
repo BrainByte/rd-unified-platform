@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 version="1.0">
+            
+            <xs:simpleType name="MonopolSpilKategoriNavnType">
+               <xs:restriction base="xs:string">
+                  <xs:maxLength value="25"/>
+                  <xs:enumeration value="MonopolLoerdagsLotto"/>
+                  <xs:enumeration value="MonopolOnsdagsLotto"/>
+                  <xs:enumeration value="MonopolVikingLotto"/>
+                  <xs:enumeration value="MonopolLoerdagsJoker"/>
+                  <xs:enumeration value="MonopolOnsdagsJoker"/>
+                  <xs:enumeration value="MonopolEuroJackpot"/>
+                  <xs:enumeration value="MonopolKeno"/>
+                  <xs:enumeration value="MonopolBoxen"/>
+                  <xs:enumeration value="MonopolLodtraekning"/>
+                  <xs:enumeration value="MonopolDantoto"/>
+                  <xs:enumeration value="MonopolBingo"/>
+                  <xs:enumeration value="MonopolNetskrab"/>
+                  <xs:enumeration value="MonopolFysiskSkrab"/>
+                  <xs:enumeration value="MonopolAltEllerIntet"/>
+                  <xs:enumeration value="MonopolLotteri"/>
+                  <xs:enumeration value="MonopolVirtuelFastOdds"/>
+                  <xs:enumeration value="MonopolFindOgVind"/>
+                  <xs:enumeration value="MonopolKlasseLotteri"/>
+               </xs:restriction>
+            </xs:simpleType>
+         </xs:schema>

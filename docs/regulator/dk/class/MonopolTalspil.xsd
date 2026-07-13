@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder oplysninger om Talspil.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tal2Type.xsd"/>
+         <xs:include schemaLocation="../types/MonopolSpilTypeType.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/ValutaType.xsd"/>
+         <xs:include schemaLocation="../types/ValutaKursType.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:element name="MonopolTalspilAntalTal" type="fase2.1:Tal2Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af tal der skal markeres pr. række, for at deltage i puljespillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilType" type="fase2.1:MonopolSpilTypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af spillerens valg af hvilket system, der er anvendt til at generere kuponen. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilSamletAntalRækker" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Netto antal rækker = Brutto antal rækker fratrukket annulleringer. Anvendes ved internationale spil. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilOmsætningPrLand"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Omsætningen fordelt pr. land.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilSamletOmsætning"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskriver den samlede omsætning for alle lande, der deltager i spillet. Er der ikke tale om fællesspil med andre lande, rapporteres blot DLOs omsætning. På tidspunktet for generering af MonopolTalspilSlutStruktur angives også blot DLOs omsætning.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilSamletOmsætningValuta" type="fase2.1:ValutaType">
+               
+            </xs:element>
+         <xs:element name="MonopolTalspilSamletOmsætningValutaKurs" type="fase2.1:ValutaKursType">
+               
+            </xs:element>
+         <xs:element name="MonopolTalspilEndOfGameDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Dato og tid for lukning af mulighed for at spille og annullere spil. (UTC). </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilIndskudSpilTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indskuddets totale størrelse for alle spil spillet hos tilladelseshaver. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilIndskudSpilTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Total indskud til jackpot for alle tilladelsesindehavere i netværket.   Talspil: Sættes lig værdien i MonopolTalspilIndskudSpilTillIndh, da landedata samles i separat standard record. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilIndskudJackpotTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud til jackpot for tilladelsesindehaveren.  Talspil: Sættes lig nul, da der ikke findes tværgående jackpots for talspil. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilIndskudJackpotTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Total indskud til jackpot for alle tilladelsesindehavere i netværket.   Talspil: Sættes lig nul, da der ikke findes tværgående jackpots for talspil. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilAntalRækkerTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af samtlige spillede rækker hos tilladelsesindehaver. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilGevinstPuljeBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totalsummen af beløb fra alle gevinstpuljer i spillet Angives i brutto (dvs. før gevinstafgift er fratrukket). </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilRækkePris"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Pris på at spille på én række i puljespillet. Anvendes for spil hvor rækkeprisen er fast og rapporteres derfor i startstrukturen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilKenoRækkePris"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Pris på at spille på én række i puljespillet. Anvendes for spil hvor rækkeprisen er varierende og rapporteres derfor i transaktionstrukturen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilOverordnetSpilTransaktionIdentifikation"
+                     type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Transaktionsid for tilknyttet transaktion. Gælder kun for Joker.  Rapporteres både i transaktionen for hovedspillet (lotto/boxen etc) og på joker-transaktionen, således at de to begge får et id-der binder dem sammen.  Id'et skal være unikt, således at der ikke er tvivl om hvilken transaktion fra hovedspillet en given jokertransaktion er tilknyttet og omvendt.  </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilDrawNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af drawnummer for den givne trækning.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolTalspilUgeNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af uge-nummer for den givne trækning.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

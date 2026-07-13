@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+               elementFormDefault="qualified"
+               attributeFormDefault="unqualified"
+               version="1.0">
+
+               <xs:annotation>
+                  <xs:documentation>
+                     Kode for sportsgrenen som begivenheden hører til.
+                     Bemærk at for sport uden for de nævnte sportsgrene, skal koden AndetSport benyttes.
+                     Ved begivenheder, der ikke er sport og ikke er dækket af de øvrige kategorier, anvendes koden "Andet".
+                  </xs:documentation>
+               </xs:annotation>
+
+            <xs:include schemaLocation="../types/SportsgrenskodeType.xsd"/>
+
+            <xs:element name="Sportsgrenskode" type="fase2.1:SportsgrenskodeType">
+                  <xs:annotation>
+                     <xs:documentation>Beskrivelse af hvilken overordnet slags spil der er tale om. Disse grupperinger er defineret af Spillemyndigheden.</xs:documentation>
+                  </xs:annotation>
+               </xs:element>
+
+    </xs:schema>

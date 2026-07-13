@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Denne klasse beskriver spilmulighederne i puljespillet på en generel form, der gør det muligt at rapportere alle puljespil i den samme struktur.   En række består af en eller flere tal, der hver især repræsenterer et udfald spilleren skal gætte. Formålet med denne klasse er at tilladelsesindehaver skal angive de spilmuligheder der er i et puljespil. Spilmulighederne skal angives med tekst samt angives på en generel form, hvor spilmuligheden omsættes til et tal. For at gøre det muligt for Spillemyndigheden at foretage beregninger af vinderstrukturen for puljespil, skal Tilladelsesindehaver indrapportere puljespillets spilmuligheder på en generel form, hvor hvert muligt udfald matcher et tal. Vinderstrukturen er antal vindere i hver gevinstkategori. Den generelle form for puljespil består af generelle rækker og en generel nøgle. En generel række indeholder det spilleren har spillet omsat til en talrække. Det angives i data-elementet RækkeSpilkombinationer, hvor hver spillet række rapporteres på den generelle form. Vinderrækken angives også på den generelle form i dataelementet PuljespilVinderRække, og sammenlignes PuljespilVinderRække og alle RækkeSpilkombinationer kan man se hvor mange vindere, der er i de forskellige gevinstpuljer.   Se nærmere beskrivelse i Vejledning til Tekniske Krav. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+    <xs:element name="MonopolPuljespilNøgleNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>For Dantoto: Se Vejledning til Tekniske Krav.  For Talspil: Se Vejledning til Tekniske Krav. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolPuljespilEventNøgleNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>For Dantoto: Se Vejledning til Tekniske Krav.  For Talspil: Se Vejledning til Tekniske Krav. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolPuljespilSpilNøgleNummer" type="fase2.1:TalHelType">
+        <xs:annotation>
+            <xs:documentation>For Dantoto: Se Vejledning til Tekniske Krav.  For Talspil: Se Vejledning til Tekniske Krav. </xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="MonopolPuljespilNøgleBeskrivelse" type="fase2.1:Tekst45Type">
+         <xs:annotation>
+                  <xs:documentation>For Dantoto: Se Vejledning til Tekniske Krav.  For Talspil: Se Vejledning til Tekniske Krav.  </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolPuljespilNøgleValideTal" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>For Dantoto: Se Vejledning til Tekniske Krav.  For TalSpil: Se Vejledning til Tekniske Krav. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolPuljespilGevinstPuljeProcent" type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvor mange procent denne gevinstpulje udgør af den samlede gevinstpulje for spillet.  Procenten skal beregnes på baggrund af fordelingen mellem puljerne før der er trukket gevinstafgift af gevinsterne.   Summen af alle puljespillets GevinstPuljeProcent skal være 100%.  </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolPuljespilAntalResultatPuljer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af gevinstpuljer. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

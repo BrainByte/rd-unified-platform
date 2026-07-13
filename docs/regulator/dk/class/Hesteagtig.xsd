@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:annotation>
+		<xs:documentation>Klassen indeholder oplysninger om puoljevæddemål. Datamodel fortsættelse fra monopolet(s hestespil) (puljevæddemål). Må bruges til alt andet end hestevæddeløb på danske baner. Når der nedenfor bruges ordet hest, skal det altså ikke tages bogstaveligt.</xs:documentation>
+	</xs:annotation>
+	<xs:include schemaLocation="../types/HesteagtigKategoriNavnType.xsd"/>
+	<xs:include schemaLocation="../types/Tekst30Type.xsd"/>
+	<xs:include schemaLocation="../types/DatoType.xsd"/>
+	<xs:include schemaLocation="../types/DatoTidType.xsd"/>
+	<xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+	<xs:include schemaLocation="../types/TalHelType.xsd"/>
+	<xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+	<xs:include schemaLocation="../types/TekstLangType.xsd"/>
+	<xs:element name="HesteagtigKategoriNavn" type="fase2.1:HesteagtigKategoriNavnType">
+		<xs:annotation>
+			<xs:documentation>Beskrivelse af hvilken type spil der er tale om.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigEventIdentifikation" type="fase2.1:Tekst30Type">
+		<xs:annotation>
+			<xs:documentation>Unik identifikation af en event. Tilladelsesindehaver vælger selv dette. Human Readable evt. ved brug af kendt kode.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigEventDato" type="fase2.1:DatoType">
+		<xs:annotation>
+			<xs:documentation>Dato for heste eventet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigEventSlutDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Slut dato og tid for sidste løb på den givne bane på den givne dag.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigOmsætningEfterAnnulleringer" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Summen af alle indskud ved eventet, fratrukket annulleringer.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigOmsætningFørAnnulleringer" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Summen af alle indskud ved eventet uanset om et indskud senere er annulleret eller ej.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigAnnulleringerBeløb" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Annullerede transaktioner i anvendte valuta vedr. eventet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigLøbNummer" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Nummeret på et løb under et heste event.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigEventLøbNummer" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Nummeret på et løb under et heste event.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigSpilLøbNummer" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Nummeret på et løb under et heste event.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigReservehesteAutomatisk" type="fase2.1:TekstLangType">
+		<xs:annotation>
+			<xs:documentation>Liste med reserveheste genereret til et givent løb.   Listen skal være kommasepareret med angivelse af nummerrækkefølgen på reservehestene. F.eks.: 8,11,6,4,9,1,10,5,7,2,3.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigReservehesteManuelt" type="fase2.1:TekstLangType">
+		<xs:annotation>
+			<xs:documentation>Liste med reserveheste udvalgt af spilleren til et givent løb.   Listen skal være kommasepareret med angivelse af nummerrækkefølgen på reservehestene. F.eks.: 10,7. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigUdgåedeHeste" type="fase2.1:TekstLangType">
+		<xs:annotation>
+			<xs:documentation>Liste med udgåede heste til et givent løb.   Listen skal være kommasepareret med angivelse numrene på de udgåede heste. F.eks.: 3,5,9.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigLukketForSpilDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Tidspunktet hvor der er lukkes for indskud til det givne spil. Der rapporteres det endelige tidspunkt, og tidspunkter for omstarter, hvor der midlertidigt lukkes for spil skal ikke rapporteres. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigIndskudSpilTillIndh" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Summen af indskud (fratrukket annulleringer) hos tilladelsesindehaver for et givent SpilProduktIdentifikation.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigAntalRækkerTillIndh" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Summen af antal rækker (fratrukket annulleringer) hos tilladelsesindehaver for et givent SpilProduktInformation - denne skal være optalt ift. til en af tilladelsesindehaver bestemt underforstået rækkepris. Den underforståede rækkepris skal være sat således, at tallet i dette felt bliver helttalligt.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HesteagtigGevinstPuljeBeløb" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Totalsummen af beløb fra alle gevinstpuljer i spillet for et givent SpilProduktIdentifikation.Beløbet skal være det totale gevinstbeløb (ikke kun den del der tilfalder Tilladelsesindehaver). Det vil endvidere sige, at evt. overført primo pulje og tilføjet pulje skal være indeholdt i beløbet, og eventuelt overført ultimo pulje skal være fratrukket. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

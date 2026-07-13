@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<!--
+    111111111111111111111111
+    111111111100111111111111
+    111111110011101011111111
+    111110001110000001110111
+    111000001110000001000111
+    111110000000000010011111
+    111111000000000110011111
+    111100100000001110001111
+    111110000010000111001111
+    111100011111100001101111
+    111001110000000000001111
+    111111110001100000111111
+    111110000001100110000111
+    111101010111111000001111
+    111111111111111010111111
+    111111111111111111111111
+-->
+<!-- Version 1.11 Authorized for public release -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="include_v1.11.xsd"/>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="512" minOccurs="1" name="WOK_Bet_v1.11">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- general -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Record_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Extraction_Date" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Operator_ID" type="stringMedium"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Data_Safe_ID" type="stringMedium"/>
+							<!-- if this is a replacement record: in Replaced_Record_ID, fill in the ID of the record it replaces -->
+							<xs:element maxOccurs="1" minOccurs="0" name="Replaced_Record_ID" type="UID"/>
+                            <!-- specific -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_Start_Datetime" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="0" name="Bet_Cancellation_Reason" type="stringLong"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_Type">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="SINGLE"/>
+                                        <xs:enumeration value="COMBINED"/>
+                                        <xs:enumeration value="XY"/>
+                                        <xs:enumeration value="OTHER"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Bet_XY" type="xs:int"/>
+                            <xs:element minOccurs="0" maxOccurs="1" name="Bet_Commission" type="monetaryAmount"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_Status">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="BET_PLACED"/>
+                                        <xs:enumeration value="BET_UPDATED"/>
+                                        <xs:enumeration value="BET_SETTLED"/>
+                                        <xs:enumeration value="BET_CANCELLED"/>										
+                                        <xs:enumeration value="OTHER"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>							
+                            <xs:element minOccurs="1" maxOccurs="1" name="Bet_Parts">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minOccurs="1" maxOccurs="64" name="Part">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_ID" type="UID"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Event" type="stringMedium"/>
+                                                    <xs:element maxOccurs="1" minOccurs="0" name="Part_Odds" type="xs:decimal"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Sport" type="stringShort"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Live" type="xs:boolean"/>
+                                                    <xs:element maxOccurs="1" minOccurs="0" name="Part_Bank" type="xs:boolean"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Match_Datetime" type="dateTimeUTC"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Prognosis_Result_Type">
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:enumeration value="MATCH ODDS"/>
+                                                                <xs:enumeration value="TOTAL GOALS"/>
+                                                                <xs:enumeration value="OTHER"/>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Prognosis_Value" type="stringMedium"/>
+                                                    <xs:element maxOccurs="1" minOccurs="1" name="Part_Stake" type="monetaryAmount"/>
+                                                    <xs:element maxOccurs="1" minOccurs="0" name="Part_Cancellation_Reason" type="stringLong"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_Total_Stake" type="monetaryAmount"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Bet_Transactions">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minOccurs="1" maxOccurs="unbounded" name="Bet_Transaction">
+                                            <xs:complexType>
+                                                <xs:all>
+                                                    <xs:element name="Transaction_ID" type="UID"/>
+                                                    <xs:element name="Player_Profile_ID" type="stringMedium"/>
+                                                </xs:all>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Et skrabespil består af et antal moduler, som hver især består af et antal blokke. Hver blok indeholder et antal lodder. Denne klasse indeholder informationer om blokke.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:element name="MonopolFysiskSkrabBlokAktiveringDato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Datoen for en forhandlers aktivering af en blok. Efter aktiveringen kan forhandleren sælge lodderne i blokken.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabBlokIndskud"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale indskud i en blok hvis alle lodder sælges. Kan beregnes som lodpris gange antal lodder i blokken.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabBlokAntalLodder" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale antal lodder i en blok. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

@@ -1,0 +1,374 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθεται νέα Λειτουργία Jackpot.
+(1) Whenever new Jackpots are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε υφιστάμενες Λειτουργίες Jackpot (εκτός των τιμών των πεδίων "TotalJackpotAmount" και "TotalJackpotRake").
+(2) Whenever information regarding existing Jackpots, changes (excluding values of the fields "TotalJackpotAmount" and "TotalJackpotRake").
+
+(3) Μηνιαίως κατ' ελάχιστο.
+(3) Minimum, every month.
+
+Σχόλια / Comments:
+(1) Αναφορικά με το διομότιμο (peer to peer) Παίγνιο Πόκερ, το Bad Beat καταγράφεται ως Jackpot.
+(1) Regarding peer to peer Poker Games, the Bad Beat is considered Jackpot.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Jackpot_Parameters" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="JackpotData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="JackpotID" type="mstns:JackpotID" />
+                                                <xs:element name="JackpotProviderID" type="mstns:JackpotID" >
+                                                            <xs:annotation>
+                                                                <xs:documentation>
+                                                                    Κωδικός Λειτουργίας Jackpot τον οποίο αποδίδει ο εκάστοτε jackpot provider:
+Ο μοναδικός κωδικός Λειτουργίας Jackpot. Τον κωδικό αποδίδει ο  jackpot provider.
+
+Jackpot Provider Identifier:
+Unique identifier of the Jackpot Provider, granted by the Jackpot Provider.
+                                                                </xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:element>
+                                                <xs:element name="JackpotName" type="mstns:LongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ονομασία Λειτουργίας Jackpot:
+Η εμπορική ονομασία της Λειτουργίας Jackpot.
+
+Jackpot Name:
+The name given to the Jackpot by the Licensee.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="JackpotType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τύπος Λειτουργίας Jackpot:
+Ο δείκτης κατηγοριοποίησης Λειτουργίας Jackpot: 
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Stand Alone
+(2) = Linked
+(3) = Mystery Stand Alone
+(4) = Mystery Linked
+(5) = Hidden
+(6) = Bad Beat
+(0) = Άλλο
+
+Jackpot Type:
+The type of the Jackpot. Values are granted by HGC. Allowed values:
+(1) = Stand Alone
+(2) = Linked
+(3) = Mystery Stand Alone
+(4) = Mystery Linked
+(5) = Hidden
+(6) = Bad Beat
+(0) = Other
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                            <xs:enumeration value="6" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="JackpotStartDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Έναρξης Λειτουργίας Jackpot:
+Η ημερομηνία και ώρα που τέθηκε σε λειτουργία η Λειτουργία Jackpot (UTC).
+
+Jackpot Creation Date:
+The date and time the Jackpot became available to the Players, through Licensee's systems.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="JackpotStatus">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατάσταση Λειτουργίας Jackpot:
+Η κατάσταση της Λειτουργίας Jackpot. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ενεργό, έχει πραγματοποιηθεί έναρξη Λειτουργίας Jackpot.
+(2) = Ενεργό, έχει πραγματοποιηθεί έναρξη Λειτουργίας Jackpot και μεταφορά ποσού σε άλλη Λειτουργία Jackpot.
+(3) = Ενεργό, έχει πραγματοποιηθεί έναρξη Λειτουργίας Jackpot και μεταφορά ποσού από άλλη Λειτουργία Jackpot.
+(4) = Αποδοθέν, το ποσό της Λειτουργίας Jackpot έχει αποδωθεί.
+(5) = Μεταφερόμενο, έχει γίνει μεταφορά του συνολικού ποσού της Λειτουργίας Jackpot, ύστερα από κατάργηση της.
+(0) = Άλλο.
+
+Jackpot Status:
+The status of the Jackpot. Values are granted by HGC. Allowed values:
+(1) = Jackpot is active.
+(2) = Jackpot is active and an amount has been transferred to another Jackpot.
+(3) = Jackpot is active and an amount has been transferred from another Jackpot.
+(4) = Jackpot has been given
+(5) = jackpot has been transferred (the remaining total amount of the Jackpot has been transferred to another Jackpot), after the Jackpot has ended.
+(0) = Other.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="JackpotEndDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Κατάργησης Λειτουργίας Jackpot:
+Η ημερομηνία και ώρα που καταργήθηκε ή μεταφέρθηκε στο σύνολο της, η Λειτουργία Jackpot (UTC).
+(εάν υφίσταται)
+
+Jackpot End Date:
+The date and time the Jackpot was ended, at Licensee's systems.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ProfitDistributionLevelCount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Επιπέδων Απονομής Κέρδους:
+Το πλήθος (αριθμός) των διαφορετικών επιπέδων απονομής κέρδους της Λειτουργίας Jackpot (πχ 1, 2, 3, 4 κ.λπ.).
+
+Profit Distribution Level Count:
+The number of different levels of profit distribution of a Jackpot (eg 1, 2, 3, 4, etc.).</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:positiveInteger">
+                                                            <xs:minInclusive value="1" />
+                                                            <xs:maxInclusive value="99" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="ProfitDistributionLevelData" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="ProfitDistributionLevelID" type="mstns:GenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κωδικός Επιπέδου Απονομής Κέρδους:
+Ο κωδικός Επιπέδου Απονομής Κέρδους της Λειτουργίας Jackpot, που αποδίδει ο Κάτοχος Άδειας. Μια Λειτουργία Jackpot δύναται να έχει ένα ή περισσότερα επίπεδα απονομής κέρδους.
+
+Profit Distribution Level Identifier:
+The identifier of the profit distribution level of the Jackpot, provided by the Licensee. A Jackpot may have more than one profit distribution levels.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="IncreaseRate" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσοστό Προσαύξησης:
+Το ποσοστό προσαύξησης, ανά Κωδικό Επιπέδου Απονομής Κέρδους, που παραμετροποιείται κατά τη δημιουργία της Λειτουργίας Jackpot και ορίζει το ποσοστό από το ποσό συμμετοχής του Παίκτη που προστίθεται στο συνολικό ποσό προς απόδοση της Λειτουργίας Jackpot, για το συγκεκριμένο πάντα επίπεδο.                                                               
+(εάν υφίσταται)
+                                                                
+Increase Rate:
+The percentage (%) of the amount bet by the Player, that is added to the Jackpot amount (per ProfitDistributionLevelID).
+(if applicable)                                                           </xs:documentation>
+                                                                </xs:annotation>
+                                                                <xs:simpleType>
+                                                                    <xs:restriction base="xs:decimal">
+                                                                        <xs:fractionDigits value="7" />
+                                                                        <xs:minInclusive value="0.0000001" />
+                                                                        <xs:totalDigits value="8" />
+                                                                        <xs:maxInclusive value="1.0000000" />
+                                                                    </xs:restriction>
+                                                                </xs:simpleType>
+                                                            </xs:element>
+                                                            <xs:element name="MinimumWagerAmount" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ελάχιστο Ποσό Συμμετοχής:
+Το ελάχιστο ποσό συμμετοχής (πονταρίσματος) του Παίκτη, ώστε να συμμετάσχει στο συγκεκριμένο επίπεδο απονομής κέρδους.
+(εάν υφίσταται)
+
+Minimum Wager Amount:
+The minimum amount that the Player has to wage, in order to participate in the Jackpot (per ProfitDistributionLevelID).
+(if applicable)                                                           </xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="StartUpAmount" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Εκκίνησης:
+Το ποσό εκκίνησης της Λειτουργίας Jackpot, ανά κωδικό επιπέδου απονομής κέρδους, το οποίο έχει δώσει ο Κάτοχος Άδειας (όχι ποσά από μεταφορά άλλης Λειτουργίας Jackpot).
+
+StartUp Amount:
+The starting amount of the Jackpot, (per ProfitDistributionLevelID), deposited by the Licensee. This amount does not include any amounts transferred from other Jackpots.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="AmountJackpotLimitFloor" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κάτω Όριο Ποσού Λειτουργίας Jackpot:
+Το ελάχιστο ποσό που έχει τεθεί ως όριο για να αποδοθεί σε Παίκτη το ποσό της Λειτουργίας Jackpot, ανά κωδικό επιπέδου απονομής κέρδους.
+(εάν υφίσταται)
+
+Jackpot Limit Floor Amount:
+The minimum amount collected, before a Jackpot can be won by a Player (per ProfitDistributionLevelID). 
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="AmountJackpotLimitCeiling" type="mstns:MonetaryAmount" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Άνω Όριο Ποσού Λειτουργίας Jackpot:
+Το μέγιστο ποσό που έχει τεθεί ως όριο για να αποδοθεί σε Παίκτη το ποσό της Λειτουργίας Jackpot, ανά κωδικό επιπέδου απονομής κέρδους.
+(εάν υφίσταται)
+
+Jackpot Limit Ceiling Amount:
+The maximum amount collected, before a Jackpot can be won by a Player, (per ProfitDistributionLevelID).
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="TimeJackpotLimitCeiling" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>
+                                                               Χρονικό Όριο Λειτουργίας Jackpot:
+Το μέγιστο χρονικό όριο (ώρες) που έχει τεθεί για να αποδοθεί σε Παίκτη το ποσό της Λειτουργίας Jackpot, ανά κωδικό επιπέδου απονομής κέρδους.
+(εάν υφίσταται)
+
+Jackpot Limit Ceiling Time:
+The maximum time limit (hours), a Jackpot can be given to a Player (per ProfitDistributionLevelID).
+(if applicable) 
+</xs:documentation>
+                                                                </xs:annotation>
+                                                                <xs:simpleType>
+                                                                    <xs:restriction base="xs:positiveInteger">
+                                                                        <xs:minInclusive value="1" />
+                                                                        <xs:maxInclusive value="999999" />
+                                                                    </xs:restriction>
+                                                                </xs:simpleType>
+                                                            </xs:element>
+                                                            <xs:element name="TotalJackpotAmount" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Λειτουργίας Jackpot:
+Το συνολικό ποσό που έχει διαμορφωθεί ανά Λειτουργία Jackpot και κωδικό επιπέδου απονομής κέρδους.
+
+Total Jackpot Amount:
+The total amount that has been accumulated for the Jackpot, (per ProfitDistributionLevelID).</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="TotalJackpotRake" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Συνεισφοράς Λειτουργίας Jackpot:
+Το συνολικό ποσό (Jackpot Rake) που έχει διαμορφωθεί από τις καταβολές ποσών από το σύνολο των Παικτών, για την συγκεκριμένη Λειτουργία Jackpot.
+
+Total Jackpot Amount:
+The total rake amount that has been accumulated for the Jackpot, from Players' contributions to the Jackpot, (per ProfitDistributionLevelID).</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="PaytableIDCount" type="xs:positiveInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Κωδικών Πινάκων Πληρωμών Παιγνίων:
+Το πλήθος (αριθμός) των διαφορετικών κωδικών πινάκων πληρωμών παιγνίων που συμμετέχουν στην Λειτουργία Jackpot (πχ 1, 2, 3, 4 κλπ.).
+
+Paytable ID Count:
+The number of the different game paytables identification numbers that contribute (are connected) to a Jackpot (eg 1, 2, 3, 4, etc.).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PaytableID" type="mstns:GenericID" maxOccurs="unbounded">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Πίνακα Πληρωμών Παιγνίου:
+Ο κωδικός του Πίνακα Πληρωμών του Παιγνίου, ο οποίος ισχύει κατά τη διεξαγωγή του Παιγνίου από τον Παίκτη στο πλαίσιο μιας παικτικής συνεδρίας και τον οποίο αναγράφει ο εκάστοτε Οργανισμός Πιστοποίησης στο αντίστοιχο πιστοποιητικό του Παιγνίου.
+
+
+Paytable Identification Number:
+The identification number of the Paytable of the Game, that is related to the Game played by the Player during a game session and it is written in the certification provided by the Certification Body.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="ProfitDistributionLevelCount = count((ProfitDistributionLevelData/ProfitDistributionLevelID))" />
+                                            <xs:assert test="PaytableIDCount = count((PaytableID))" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="JackpotTransfers" minOccurs="0" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="JackpotTransferedAmount" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Μεταφερόμενο Ποσό Λειτουργίας Jackpot:
+Το ποσό που μεταφέρεται από έναν κωδικό επιπέδου απονομής κέρδους της Λειτουργίας Jackpot, σε άλλο κωδικό επιπέδου απονομής κέρδους της ίδιας ή άλλης Λειτουργίας Jackpot.
+
+Jackpot Transferred Amount:
+The amount that was transferred from a profit distribution level of a Jackpot ID, to another profit distribution level of the same or another Jackpot ID.
+
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="OldProfitDistributionLevelID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Παλαιός Κωδικός Επιπέδου Απονομής Κέρδους Λειτουργίας Jackpot:
+Ο κωδικός επιπέδου απονομής κέρδους της Λειτουργίας Jackpot, από τον οποίο μεταφέρεται το ποσό, σε άλλο κωδικό επιπέδου απονομής κέρδους της ίδιας ή άλλης Λειτουργίας Jackpot.
+
+Old Profit Distribution Level Identifier:
+The old Profit Distribution Level ID, that the amount was transferred from.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="NewJackpotID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Νέος Κωδικός Λειτουργίας Jackpot (Jackpot):
+Ο κωδικός Λειτουργίας Jackpot (JackpotID) της νέας Λειτουργίας Jackpot στον οποίο μεταφέρθηκε ποσό από την παλαιά Λειτουργία Jackpot.
+
+New Jackpot Identifier:
+The new Jackpot ID that the amount was transferred to.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="NewProfitDistributionLevelID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Νέος Κωδικός Επιπέδου Απονομής Κέρδους Λειτουργίας Jackpot:
+Ο κωδικός επιπέδου απονομής κέρδους της Λειτουργίας Jackpot, στον οποίο μεταφέρεται το ποσό, από άλλο κωδικό επιπέδου απονομής κέρδους της ίδιας ή άλλης Λειτουργίας Jackpot.
+
+New Profit Distribution Level Identifier:
+The new identifier of the profit distribution level of a Jackpot ID, that the amount was transferred to.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="JackpotTransferredDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Μεταφοράς Λειτουργίας Jackpot:
+Η ημερομηνία και ώρα που μεταφέρθηκε ποσό της Λειτουργίας Jackpot (UTC).
+
+Jackpot End Date:
+The date and time an amount related to Jackpot was transferred, at Licensee's systems.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="Currency" type="mstns:Currency" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Jackpot_Parameters" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

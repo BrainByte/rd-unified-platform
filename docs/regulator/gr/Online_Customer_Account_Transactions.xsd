@@ -1,0 +1,247 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε δύο (2) ώρες κατ' ελάχιστο.
+(1) Minimum, every two (2) hours.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Customer_Account_Transaction" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="TransactionData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="TransactionID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Κίνησης:
+Ο μοναδικός κωδικός κίνησης/συναλλαγής στον Ηλεκτρονικό Λογαριασμό Παίκτη όπως καταγράφεται στα συστήματα του Κατόχου Άδειας.
+
+Transaction Identifier:
+The unique transaction identifier in the Player's account, as recorded in Licensee's systems.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TransactionCategory" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατηγορία Κίνησης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Κατηγορία της εκάστοτε κίνησης που καταγράφεται στον Ηλεκτρονικό Λογαριασμό Παίκτη, όπως καταγράφεται στο σύστημα του Κατόχου Άδειας. 
+
+Transaction Category:
+The categorization of the transaction related to the Player's account, as recorded in Licensee's system.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TransactionDesc" type="mstns:LongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Περιγραφή Κίνησης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Περιγραφή του κωδικού της εκάστοτε κίνησης που καταγράφεται στον Ηλεκτρονικό Λογαριασμό Παίκτη, όπως καταγράφεται στο σύστημα του Κατόχου Άδειας. 
+
+Transaction Description:
+The description of the transaction related to the Player's account, as recorded in Licensee's system.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AdjustmentIndicator" type="xs:boolean">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Δείκτης Εγγραφής Τροποποίησης:
+Ο δείκτης ο οποίος υποδηλώνει εάν η εγγραφή αφορά τροποποίηση υπολοίπου (Adjustment), στον Ηλεκτρονικό Λογαριασμό Παίκτη.
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(false) = Εγγραφή ποσού που τροποποίησε το υπόλοιπο του Ηλεκτρονικού Λογαριασμού Παίκτη, για άλλο λόγο, εκτός Adjustment
+(true) = Εγγραφή ποσού που τροποποίησε το υπόλοιπο του Ηλεκτρονικού Λογαριασμού Παίκτη, λόγω Adjustment
+
+Adjustment Indicator:
+Indicator, whether a transaction in Player's account is related to an adjustment.
+Values are granted by HGC. Allowed values:
+(false) = Transaction recorded in Player's account NOT due to an adjustment.
+(true) = Transaction recorded in Player's account due to an adjustment.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TransactionType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Τύπος Κίνησης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(0) = Χρέωση
+(1) = Πίστωση
+
+Transaction Type:
+Values are granted by HGC. Allowed values:
+(0) = Debit
+(1) = Credit</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="TransactionAmount" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ποσό Κίνησης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Το ποσό της εκάστοτε κίνησης που καταγράφεται στον Ηλεκτρονικό Λογαριασμό Παίκτη.
+
+Transaction Amount:
+The amount of each transaction recorded in Player's account, in Licensee's system.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TransactionDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Κίνησης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Η ημερομηνία και ώρα που καταγράφηκε η εκάστοτε κίνηση στον Ηλεκτρονικό Λογαριασμό Παίκτη (UTC).
+
+Transaction Date:
+Date and time the transaction was recorder in Player's account, in Licensee's system.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TransactionCurrency" type="mstns:Currency">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Νόμισμα Συναλλαγής Παίκτη:
+Ο τριψήφιος ISO (ISO 4217) κωδικός του νομίσματος του Ηλεκτρονικού Λογαριασμού Παίκτη (πχ EUR).
+
+Player's Account Transaction Currency:
+The three digit ISO code (ISO 4217) of the currency of the Player's account transaction (e.g. EUR).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AccountBalance" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Υπόλοιπο Λογαριασμού Παίκτη:
+Το υπόλοιπο του λογαριασμού Παίκτη στο σύστημα του Κατόχου Άδειας, μετά την κίνηση του Ηλεκτρονικού Λογαριασμού Παίκτη με το ποσό του πεδίου "Transaction Amount".
+
+Balance Account:
+The Player's balance account, after the transaction amount has been recorded in the account.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:choice minOccurs="0">
+                                                    <xs:element name="BetID" type="mstns:BetID" />
+                                                    <xs:element name="GameSessionID" type="mstns:GameSessionID" />
+                                                    <xs:element name="PtPGameSessionID" type="mstns:PtPGameSessionID" />
+                                                    <xs:element name="PTTransactionID" type="mstns:PTTransactionID" />
+                                                    <xs:element name="BonusID" type="mstns:BonusID" />
+                                                </xs:choice>
+                                                <xs:element name="PlayerMeanOfPayments" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Μέσο Πληρωμών Παίκτη:
+Το μέσο πληρωμών που χρησιμοποιείται από τον Παίκτη, για να μεταφέρει χρήματα από και προς τον Ηλεκτρονικό Λογαριασμό Παίκτη που τηρείται στα συστήματα του Κατόχου Άδειας. Το πεδίο παίρνει τιμές όταν η κίνηση του Ηλεκτρονικού Λογαριασμού Παίκτη αφορά καταθέσεις ή αναλήψεις ποσών από αυτόν. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Χρεωστική Κάρτα
+(2) = Πιστωτική Κάρτα
+(3) = Επιταγή
+(4) = Τραπεζικός Λογαριασμός
+(5) = Ηλεκτρονικό Πορτοφόλι
+(6) = Προπληρωμένo Κουπόνι
+(0) = Άλλο
+(εάν υφίσταται)
+
+The Player's Mean of Payment:
+The mean of payment used by the Player in order to transfer money into his/hers Player's account. The field gets values when a transaction in Player's account is related to deposits or withdraws amounts.
+Values are granted by HGC. Allowed values:
+(1) = Debit Card
+(2) = Credit Card
+(3) = Checks
+(4) = Bank Transfers
+(5) = eWallets
+(6) = Prepaid Vouchers
+(0) = Other
+(if applicable)
+</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                            <xs:enumeration value="6" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="PlayerPaymentServiceProviderName" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Όνομα Παρόχου Υπηρεσιών Πληρωμών Παίκτη:
+Η ονομασία του Παρόχου Υπηρεσιών Πληρωμών που χρησιμοποιείται από τον Παίκτη, για να μεταφέρει χρήματα από και προς τον Ηλεκτρονικό Λογαριασμό Παίκτη που τηρείται στα συστήματα του Κατόχου Άδειας. Το πεδίο παίρνει τιμές όταν η κίνηση του Ηλεκτρονικού Λογαριασμού Παίκτη αφορά καταθέσεις ή αναλήψεις ποσών από αυτόν. Να χρησιμοποιηθεί η ονομασία που έχει καταχωρηθεί στην Τράπεζα της Ελλάδος. Κεφαλαίοι χαρακτήρες.
+
+Player's Payment Service Provider Name :
+The name of the Payment Service Provider used by the Player in order to deposit or withdraw amount to and from his/hers Player's account. The field gets values when a transaction in Player's account is related to deposits or withdraws amounts. The name registered in the Bank of Greece must be used. Capital letters.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:maxLength value="100" />
+                                                            <xs:minLength value="1" />
+                                                            <xs:pattern value="[\p{Lu} \.'\-]+" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="PlayerPaymentServiceProviderCode" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Παρόχου Υπηρεσιών Πληρωμών Παίκτη:
+Ο κωδικός του Παρόχου Υπηρεσιών Πληρωμών που χρησιμοποιείται από τον Παίκτη, για να μεταφέρει χρήματα από και προς τον Ηλεκτρονικό Λογαριασμό Παίκτη που τηρείται στα συστήματα του Κατόχου Άδειας. Το πεδίο παίρνει τιμές όταν η κίνηση του Ηλεκτρονικού Λογαριασμού Παίκτη αφορά καταθέσεις ή αναλήψεις ποσών από αυτόν. Να χρησιμοποιηθεί ο 11ψήφιος αριθμός BIC.
+
+Player's Payment Service Provider Code:
+The BIC code of the Payment Service Provider used by the Player in order to deposit or withdraw amount to and from his/hers Player's account. The field gets values when a transaction in Player's account is related to deposits or withdraws amounts.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:pattern value="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="PaymentProviderTransactionID" type="mstns:GenericID" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Μοναδικός Κωδικός Συναλλαγής του Παρόχου Υπηρεσιών Πληρωμών Παίκτη:
+Ο μοναδικός κωδικός συναλλαγής που αποδίδει ο πάροχος υπηρεσιών πληρωμών Παίκτη για τη συγκεκριμένη συναλλαγή. (εάν υφίσταται)
+
+Player's Payment Service Provider Transaction Identifier:
+The unique transaction ID given by the Payment Service Provider for the specific player's transaction.
+(if applicable)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PlayerMeanOfPaymentAccountNumber" type="mstns:GenericID" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Λογαριασμός Παίκτη στο Μέσο Πληρωμής:
+Ο μοναδικός αριθμός λογαριασμού Παίκτη στο μέσο πληρωμών που χρησιμοποιείται από αυτόν, για να μεταφέρει χρήματα από και προς τον Ηλεκτρονικό Λογαριασμό Παίκτη που τηρείται στα συστήματα του Κατόχου Άδειας. Το πεδίο παίρνει τιμές όταν η κίνηση του λογαριασμού αφορά καταθέσεις ή αναλήψεις ποσών από αυτόν.
+(εάν υφίσταται)
+
+Player's Mean of Payments Account Number:
+The unique account number of the Player in the related Mean of Payments. The field gets values when a transaction in Player's account is related to deposits or withdraws.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (exists(PlayerMeanOfPayments)) then (exists(PlayerPaymentServiceProviderName) and exists(PaymentProviderTransactionID)) else if (not (exists(PlayerMeanOfPayments))) then (not(exists(PlayerPaymentServiceProviderName)) and not(exists(PlayerPaymentServiceProviderCode)) and not(exists(PaymentProviderTransactionID)) and not(exists(PlayerMeanOfPaymentAccountNumber))) else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Customer_Account_Transaction" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

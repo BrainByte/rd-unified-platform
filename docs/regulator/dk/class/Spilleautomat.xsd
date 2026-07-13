@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:annotation>
+		<xs:documentation>Informationer fra gevinstgivende spilleautomater.   Nogle elementer mapper til samme elementer som kan rapporteres til CSC. Det er anført hvilke dataelementer, der er tale om under hver enkelt attribut.  </xs:documentation>
+	</xs:annotation>
+	<xs:include schemaLocation="../types/Tekst45minLength1Type.xsd"/>
+	<xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+	<xs:include schemaLocation="../types/DatoTidType.xsd"/>
+	<xs:include schemaLocation="../types/TalHelType.xsd"/>
+	<xs:include schemaLocation="../types/ProcentType.xsd"/>
+	<xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+	<xs:include schemaLocation="../types/BeloebPositiv18UdenDecimalerType.xsd"/>
+	<xs:include schemaLocation="../types/SpilleautomatKategoriNavnType.xsd"/>
+	<xs:element name="SpilleautomatFabrikant" type="fase2.1:Tekst45minLength1Type">
+		<xs:annotation>
+			<xs:documentation>Angivelse af fabrikanten af spilleautomaten. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatKategoriNavn" type="fase2.1:SpilleautomatKategoriNavnType">
+		<xs:annotation>
+			<xs:documentation>Automatens nummer. Unikt nummer, der aflæses elektronisk.   Dataelementet mapper til SPIL-AUT-NR. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatNummer" type="fase2.1:Tekst45minLength1Type">
+		<xs:annotation>
+			<xs:documentation>Automatens nummer. Unikt nummer, der aflæses elektronisk.   Dataelementet mapper til SPIL-AUT-NR. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatNavn" type="fase2.1:Tekst45minLength1Type">
+		<xs:annotation>
+			<xs:documentation>Automatnavn (type), eks AOlfert@.  Dataelementet mapper til SPIL-AUT-NVN. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatProgramVersion" type="fase2.1:Tekst45minLength1Type">
+		<xs:annotation>
+			<xs:documentation>Programversion, f.eks. AOlfert2.1  Dataelementet mapper til SPIL-PROG-TXT-VER</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatProgramCheckTekst" type="fase2.1:Tekst45Type">
+		<xs:annotation>
+			<xs:documentation>Programchecksum. Særlig beregningskode som er unik for den pågældende programversion)  Dataelementet mapper til SPIL-PROG-CHECK-TXT.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatUdtrækDatoTid" type="fase2.1:DatoTidType"/>
+	<xs:element name="SpilleautomatUdtraekDatoTid" type="fase2.1:DatoTidType"/>
+	<xs:element name="SpilleautomatUdbetalingProcent" type="fase2.1:ProcentType">
+		<xs:annotation>
+			<xs:documentation>Den udbetalingsprocent som spilleautomaten er indstillet til at udbetale i gevinst.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatSidstÆndret" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Dato og tidspunkt for sidste ændring i automatens software. Aflæses elektronisk.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatSenestAendret" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Dato og tidspunkt for sidste ændring i automatens software. Aflæses elektronisk.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatIndbetalingIndskud" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Værdi af alle indtastede mønter, poletter, sedler og spillemærker (i hele kr).  Dataelementet mapper til SPIL-TOT-IND-BLB. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatUdbetalingGevinst" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Værdi af alle udbetalte mønter, poletter, sedler og spillemærker (i hele kr).  Dataelementet mapper til SPIL-TOT-UDB-BLB. </xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatSpilledeKreditter" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Værdi af spillede kreditter (i hele kr.)  Dataelementet mapper til SPIL-KRED-BLB.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatVundneKreditter" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+		<xs:annotation>
+			<xs:documentation>Værdi af vundne kreditter (i hele kr.)  Dataelementet mapper til SPIL-VUND-KRED-BLB.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilHovedNummer" type="fase2.1:Tekst45minLength1Type">
+		<xs:annotation>
+			<xs:documentation>Spilstedets (J-)nummer</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="KasinoSpilAntalTraek" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Unik ID for spilleautomaten</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="SpilleautomatAntalTraek" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Unik ID for spilleautomaten</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

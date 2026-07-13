@@ -1,0 +1,209 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθενται νέες Κατηγορίες Επιβράβευσης.
+(1) Whenever new Bonus Schemas are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε Κατηγορίες Επιβράβευσης.
+(2) Whenever information regarding Bonus Schemas, changes.
+
+(3) Κάθε 1η και 15η του εκάστοτε μήνα, κατ' ελάχιστο.
+(3) Minimum, every 1st and 15th of each month.
+
+Σχόλια / Comments:
+(1) Επιβραβεύσεις είναι παροχές που δίνονται από τον Κάτοχο στους Παίκτες για τη Συμμετοχή στα παίγνια. Οι επιβραβεύσεις διακρίνονται σε δύο  κατηγορίες: α) Επιβραβεύσεις οι οποίες χορηγούνται για τη Συμμετοχή στο Παίγνιο και δεν καθίστανται αναλήψιμες (non-redeemable) από τον Παίκτη παρά μόνο υπό τον όρο πλήρωσης συγκεκριμένων προϋποθέσεων, βάσει των οποίων χορηγείται η Επιβράβευση (π.χ. free bets, match deposit bonuses, tokens, free spins, bonus εγγραφής κ.λπ.).
+β) Επιβραβεύσεις οι οποίες χορηγούνται ως επιστροφές στον Παίκτη (cash back, rake back κ.λπ.) και είναι άμεσα αναλήψιμες (redeemable). 
+
+
+(1) Bonuses are benefits offered to players for participating in the games. Bonuses are divided in two categories: a) those offered to players for placing bets  and are not instantly redeemable (non-redeemable) by the players (free bets, match deposit bonuses, tokens, free spins, registration bonus etc.) and b) those offered as returns to the players and are instantly redeemable (cash back, rake back etc.).
+    </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Bonus_Schema" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="BonusData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="BonusID" type="mstns:BonusID" />
+                                                <xs:element name="BonusName" type="mstns:LongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Όνομα Κατηγορίας Επιβράβευσης:
+Σύντομη περιγραφή της κατηγορίας επιβράβευσης, όπως εμφανίζεται στους ιστοτόπους/ονόματα χώρου του Κατόχου Άδειας (πχ.: Bonus Εγγραφής 100 Ευρώ, Freespins, free bets, Cash, Tournament token κ.α.)
+
+Bonus Schema Name:
+The name of the bonus schema, as described in the Licensee's web pages. (eg.: Registration Bonus 100 euros, Freespins, free bets, Cash, Tournament token κ.α.)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BonusStartDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Έναρξης Κατηγορίας Επιβράβευσης:
+Η ημερομηνία και ώρα που η κατηγορία επιβράβευσης, έγινε διαθέσιμη στους Παίκτες, μέσα από το σύστημα του Κατόχου Άδειας (UTC).
+
+Bonus Schema Start Date:
+Date and time the bonus schema became available to the Players, in Licensee's systems (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="GivenNumberOfBonusAsOfDate" type="xs:positiveInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Τρέχον Πλήθος Δοθέντων Ποσών Κατηγορίας Επιβράβευσης:
+Το τρέχον πλήθος των επιβραβεύσεων που δόθηκαν στους Παίκτες, από την συγκεκριμένη κατηγορία επιβράβευσης.
+
+Number of Given Bonuses (as of date):
+The total number of times that the related bonus schema has been given to the Players.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="GivenBonusAmountAsOfDate" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τρέχον Δοθέν Ποσό Κατηγορίας Επιβράβευσης:
+Το συνολικό τρέχον ποσό το οποίο έχει δοθεί στους Παίκτες, από την συγκεκριμένη κατηγορία επιβράβευσης.
+
+Given Bonus Schema Amount (as of date):
+The total amount (as of date), given to the Players, from the related bonus schema.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="UsedNumberOfBonusAsOfDate" type="xs:positiveInteger" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Τρέχον Πλήθος Χρησιμοποιηθέντων Ποσών Κατηγορίας Επιβράβευσης:
+Το τρέχον πλήθος των επιβραβεύσεων που χρησιμοποιήθηκαν/πονταρίστηκαν από στους Παίκτες, από την συγκεκριμένη κατηγορία επιβράβευσης.
+
+Number of Used Bonuses (as of date):
+The total number of times that the related bonus schema has been used/wagered by the Players.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="UsedBonusAmountAsOfDate" type="mstns:MonetaryAmount" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τρέχον Χρησιμοποιηθέν Ποσό Κατηγορίας Επιβράβευσης:
+Το συνολικό τρέχον ποσό το οποίο έχει πονταριστεί από στους Παίκτες, από την συγκεκριμένη κατηγορία επιβράβευσης.
+
+Used Bonus Schema Amount (as of date):
+The total amount (as of date), used/wagered by the Players, from the related bonus schema.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BonusEndDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Λήξης Κατηγορίας Επιβράβευσης:
+Η ημερομηνία και ώρα (UTC) που η κατηγορία επιβράβευσης, σταμάτησε να είναι διαθέσιμη στους Παίκτες. Από τη στιγμή αυτή το συγκεκριμένο BonusID δεν αποστέλεται ξανά.
+(εάν υφίσταται)
+
+Bonus Schema End Date:
+Date and time the bonus Schema has ended (UTC). Once a bonus end date for a particular bonus has been submitted, this is the last time this bonus has been reported.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="BonusCategoryA">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Κατηγορία Επιβράβευσης:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(0) = Επιβράβευση που δύναται να εξαργυρωθεί (άμεσα αναλήψιμη)
+(1) = Επιβράβευση που δεν δύναται να εξαργυρωθεί (δεν είναι άμεσα αναλήψιμη)
+
+Bonus Categories:
+The values are granted by HGC. Allowed values:
+(0) = Redeemable bonus schema
+(1) = Non redeemable bonus schema
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="BonusCategoryB" type="mstns:CollapsedGenericID" maxOccurs="unbounded">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Περαιτέρω Κατηγοριοποίηση Επιβραβεύσεων:
+Περαιτέρω κατηγοριοποίηση που καθορίζεται από τον Κάτοχο Άδειας, όπως καταγράφεται στα συστήματά του (π.χ. No Deposit Bonus, Match Deposit Bonus, Referral Bonus, Cash Back Bonus, Rake Back Bonus).
+ 
+Bonus Schema Subcategories:
+A categorization of bonuses, granted by the Licensee (eg. No Deposit Bonus, Match Deposit Bonus, Referral Bonus, Cash Back Bonus, Rake Back Bonus).
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (exists(BonusEndDate)) then (BonusStartDate le BonusEndDate) else if (not(exists(BonusEndDate))) then exists(BonusStartDate) else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="WagerData" minOccurs="0">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="WagerMultiplier" type="xs:positiveInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πολλαπλασιαστής Σχέσης Στοιχηματισμού - Κατηγορίας Επιβράβευσης:
+Πόσες φορές πρέπει να στοιχηματισθεί ένα ποσό (μόνο το ποσό της επιβράβευσης ή/και το ποσό της σχετικής Κατάθεσης που συνδέεται με τη χορήγηση της επιβράβευσης), για να έχει τη δυνατότητα ο Παίκτης να εξαργυρώσει τυχόν κέρδη.
+(εάν υφίσταται)
+
+Wager Required multiplier:
+The number of times an amount (only the bonus amount, or, the Bonus amount plus the deposit amount related to the bonus given) must be wagered, in order to become redeemable by the Player.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AmountWageredIndicator" type="xs:boolean">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Δείκτης Σχέσης Στοιχηματισμού - Κατηγορίας Επιβράβευσης:
+Ο δείκτης που προσδιορίζει κατά πόσο το ποσό που πρέπει να στοιχηματισθεί σε σχέση με την κατηγορία επιβράβευσης, περιλαμβάνει μόνο το ποσό της επιβράβευσης ή/και το ποσό της σχετικής κατάθεσης που συνδέεται με τη χορήγηση του ποσού της επιβράβευσης. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(false) = Μόνο ποσό Επιβράβευσης
+(true) = Ποσό Επιβράβευσης και ποσό Κατάθεσης
+(εάν υφίσταται)
+
+Amount Wagered Indicator:
+An indicator related to whether the amount wagered, must be only the bonus amount, or, it must be the bonus amount, plus the deposit amount related to the bonus amount given. Values are granted by HGC. Allowed values:
+(false) = Bonus amount
+(true) = Bonus amount and Deposit amount
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="OtherWageringRequirements" type="mstns:LongString" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Άλλες Απαιτήσεις Στοιχηματισμού:
+Σύντομη περιγραφή των απαιτήσεων στοιχηματισμού, εφόσον οι ανωτέρω απαιτήσεις (WagerMultiplier, AmountWageredIndicator) δεν εφαρμόζονται.
+(εάν υφίσταται)
+
+Other Wagering Requirements:
+Briefly describe wagering requirements if the above requirements (WagerMultiplier, AmountWageredIndicator) are not applicable for the specific bonus schema.
+(if applicable)
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Bonus_Schema" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

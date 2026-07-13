@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Et puljespil består af mindst en række, hvor hver række indeholder én eller flere kampe.  For fler-uges spil skal tilladelsesindehaver ikke indsende én transaktion, men flere transaktioner. Tilladelsesindehaver skal splitte transaktionen op i det antal uger som transaktionen løber over. Der skal således dannes antal transaktioner som svarer til det antal uger som transaktionen løber over. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:element name="RækkeNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Nummeret på den pågældende række.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="RækkeSpilkombinationer" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>Præcis oplysning om hvilke kombinationer, som er spillet. Systemspil skal være pakket ud og hver række skal gives et rækkenummer.  Den spillede række skal angives på den generelle form i en liste med komma imellem hver kamp i rækken, f.eks. 1,12,2,8.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

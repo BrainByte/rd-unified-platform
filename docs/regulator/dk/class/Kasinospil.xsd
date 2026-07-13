@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Spil hvor spilleren spiller imod en tilladelsesindehaver. Spil er baseret på tilfældighed. For en spiller består et kasinospil af en session hvor spilleren udfører et antal træk. Hvert træk koster et indskud og giver mulighed for gevinst. Indskuddet fra en session i et kasinospil skal beregnes som summen af alle indskud i sessionen.   Eksempel 1: En spiller indsætter 20 kr i en spilleautomat og trækker 3 gange. Hvert træk koster 1 kr og spilleren vinder 1 kr i første træk og 1 kr i tredje træk. I feltet KasinospilIndskudSpil skal angives 3 kr og i KasinospilGevinstSpil skal angives 2 kr for den spillede session.   Eksempel 2:  En spiller indsætter 10 kr i en spilleautomat hvor 0,50 kr af indsatsen går til en progressiv jackpot pulje. Spilleren vinder ved første træk og får en udbetaling på 100 kr. I feltet KasinospilIndskudSpil skal rapporteres 9,50 kr og i feltet KasinospilIndskudJackpot skal rapporteres 0,50 kr. I KasinospilGevinstSpil skal rapporteres 100 kr. Dette felt skal ikke indeholde jackpot gevinster, da jackpot gevinster rapporteres i en anden standard record.    Eksempel 3: 2 spillere (én fra Danmark og én fra et andet land) spiller backgammon mod hinanden. De placerer hver et indskud på 100 EUR, hvorfra Tilladelsesindehaver tager 5 EUR i kommission fra hver. Husk kun at rapportere for danske spillere. Den danske spiller vinder. I feltet KasinospilIndskudSpil skal rapporteres 95 EUR og i feltet KasinospilKommission skal rapporteres 5 EUR. I KasinospilGevinstSpil skal rapporteres 190 EUR.   </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/KasinoSpilKategoriType.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="KasinospilKategori" type="fase2.1:KasinoSpilKategoriType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af underkategori for kasinospil. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="KasinospilAntalTræk" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal træk som indgår i spillerens sessionen. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="KasinospilIndskudSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Andel af spillers indskud i en session som går til selve spillet, eksklusiv eventuelt bidrag til jackpotpulje.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="KasinospilIndskudJackpot"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Andel af spillers indskud i en session som går til en evt. jackpotpulje.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="KasinospilGevinstSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Spillers gevinst i en session (inkl. indskud).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="KasinospilKommission" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den kommission som tilladelsesindehaver har trukket for sessionen.  Denne attribut skal kun indeholde kommission, og er ikke indskud minus gevinst. Kun hvis der indkræves en specifik kommission fra indskuddet, skal dette rapporteres. Kommission kunne f.eks. være ved peer-to-peer spil, hvor to spillere spiller mod hinanden og tilladelsesindehaver tager en kommission for spillet. Værdien af denne attribut kan ikke være negativ.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

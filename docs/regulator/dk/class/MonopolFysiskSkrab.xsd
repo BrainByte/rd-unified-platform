@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Et skrabespil består af et antal moduler, som hver især består af et antal blokke. Hver blok indeholder et antal lodder. Denne klasse indeholder informationer om skrabespil.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:element name="MonopolFysiskSkrabModulAntalTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale antal moduler af det givne skrabespil.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabProduktNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Produktnummeret på skrabespillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabIndskud"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Det faktiske indskud som Danske Spil har modtaget for salg af lodder af det givne skrabespil ved forældelsesdatoen. Kan beregnes som lodpris gange antal lodder i en blok gange antal aktiverede blokke. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabGevinst"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle indløste gevinster af det givne skrabespil ved forældelsesdatoen.   Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabAntalLodder" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal solgte lodder i et skrabespil ved forældelsesdatoen. Kan beregnes som antal lodder i en blok gange antal aktiverede blokke.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabAntalBlokke" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal blokke pr. modul. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabAntalGevinster" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af indløste gevinster af det givne skrabespil ved forældelsesdatoen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabTilbagebetalingProcent" type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Danske Spil beregnede faktiske tilbagebetalingsprocent ved forældelsesdatoen. Kan beregnes som summen af indløste gevinster divideret med  lodpris gange antal lodder i en blok gange antal aktiverede blokke.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabReturneretStjåletAntalBlokke" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal returnerede eller stjålne blokke for skrabespillet ved forældelsesdatoen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabReturneretStjåletAntalLodder" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal returnerede eller stjålne lodder for skrabespillet ved forældelsesdatoen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolFysiskSkrabReturneretStjåletIndskud"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Det totale indskuds beløb for returnerede eller stjålne blokke for skrabespillet ved forældelsesdatoen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

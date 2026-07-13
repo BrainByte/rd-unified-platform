@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Informationer om jackpot puljer for gevinstgivende spilleautomater.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tekst45minLength1Type.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositiv18UdenDecimalerType.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:element name="SpilleautomatJackpotIdentifikation" type="fase2.1:Tekst45minLength1Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Identifikation på jackpotpuljen hos kasinoet. Kasinoet vælger selv en identifikation og elementet skal være unikt for den givne jackpot pulje, der er indbetalt beløb til eller vundet beløb fra.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilleautomatJackpotTilvækstBeløb"
+                     type="fase2.1:BeløbPositiv18UdenDecimalerType">
+               
+               <xs:annotation>
+                  <xs:documentation>Værdi af alle indtastede mønter, sedler, poletter, spillemærker og kreditter (i hele kr.), der er gået til en jackpot pulje.  Beløbet skal være den del af indskuddet i spilleautomaten, der er gået til jackpot puljen siden sidst jackpotpuljen blev vundet og nul-stillet. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilleautomatJackpotUdbetalingGevinst"
+                     type="fase2.1:BeløbPositiv18UdenDecimalerType">
+               
+               <xs:annotation>
+                  <xs:documentation>Værdi af alle udbetalte mønter, sedler, poletter, spillemærker og kreditter (i hele kr.), der kommer fra en jackpot pulje.  Hvis hele puljen udbetales vil UdbetalingGevinst være lig med PuljeTotal på tidspunktet GevinstDatoTid. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilleautomatJackpotUdtrækDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Tidspunktet hvor dataudtrækket er dannet for jackpot puljen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilleautomatJackpotPuljeTotal"
+                     type="fase2.1:BeløbPositiv18UdenDecimalerType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløbet i jackpot puljen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilleautomatJackpotOpstartBeløb"
+                     type="fase2.1:BeløbPositiv18UdenDecimalerType">
+               
+               <xs:annotation>
+                  <xs:documentation>Det beløb som en ny jackpot pulje starter på efter den er nulstillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

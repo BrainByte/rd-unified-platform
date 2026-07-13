@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Disse data rapporteres dagligt i strukturen EndOfDayRapportStruktur. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:include schemaLocation="../types/AntalType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:element name="EndOfDayRapportDato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvilken dato rapporten omhandler.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportAntalSpil" type="fase2.1:AntalType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af spil af pågældende kategori der er spillet i løbet af dagen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportIndskudSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indskud til spil (ikke jackpot) i løbet af dagen af pågældende spilkategori.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportIndskudJackpot"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indskud til jackpot (ikke spil) i løbet af dagen af pågældende spilkategori.  Monopol: Med mindre der findes tværgående jackpots sættes beløbet lig 0.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportIndskudTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Summen af alle indskud til spil og jackpot sammenlagt i løbet af dagen på alle spilkategorier. Annulleringer på dagen er fratrukket.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportGevinster"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Udbetalte gevinster (inkl. indskud) i pågældende kategori i løbet af dagen.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportGevinsterFørAfgift"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Udbetalte gevinster (inkl. indskud) i pågældende kategori i løbet af dagen.   Monopol: Beløbet angives i brutto (dvs. før gevinstafgift er fratrukket) Beløbet er skal rapporteres for Bingo, Netskrab og Fysisk skrab. Beløbet skal ikke rapporteres for Dantoto og Talspil. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportGevinsterJackpot"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Gevinster fra jackpots i løbet af dagen af pågældende spilkategori.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportIndskud"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indskud til spil og jackpot sammenlagt i løbet af dagen af pågældende spilkategori.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportGevinsterAntal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal gevinster i løbet af dagen af pågældende spilkategori.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportGevinsterSpil"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Gevinster fra spil (ikke jackpots) i løbet af dagen af pågældende spilkategori.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket). </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportKommissionRake"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indkrævet kommission eller rake i pågældende kategori i løbet af dagen.   Denne attribut skal kun indeholde kommission, og er ikke indskud minus gevinst. Kun hvis der indkræves en specifik kommission fra indskuddet, skal dette rapporteres. Kommission kunne f.eks. være ved peer-to-peer spil, hvor to spillere spiller mod hinanden og tilladelsesindehaver tager en kommission for spillet. Værdien af denne attribut kan ikke være negativ.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="EndOfDayRapportTotalOmsætning"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Den totale omsætning på dagen (indskud minus annulleringer) for alle spilkategorier.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

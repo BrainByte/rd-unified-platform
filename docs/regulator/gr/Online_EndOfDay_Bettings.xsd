@@ -1,0 +1,300 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE /Frequency:
+(1) Ημερήσια. Στο τέλος της Παικτικής Ημέρας.
+(1) Daily. At the end of the Gaming Day.
+                
+Σχόλια / Comments:
+(1) Εντός δεκαέξι (16) ημερών από το τέλος κάθε ημερολογιακού μήνα, όλες οι ημερήσιες εγγραφές του μήνα αναφοράς οριστικοποιούνται.
+(1) Within sixteen (16) days from the end of the previous calendar month all daily records are finalised.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_EndOfDay_Bettings" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="ReportDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Ημέρα Αναφοράς:
+                                            Η ημερομηνία και ώρα έναρξης της Παικτικής Ημέρας (UTC)
+
+                                            Report Day:
+                                            The start date and time of a Gaming Day (UTC).
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ReportCreationDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Ημερομηνία Δημιουργίας Αναφοράς:
+                                            Η ημερομηνία και η ώρα που δημιουργήθηκε η αναφορά (UTC).
+
+                                            End of Day Report Creation Date:
+                                            Date and time that the report was created (UTC).
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Currency" type="mstns:Currency" />
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                    <xs:element name="BetEventCategoryA" type="mstns:BetEventCategoryA" minOccurs="1" maxOccurs="4">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Κατηγορία Στοιχηματικών Γεγονότων (Α) σύμφωνα με τον Κανονισμό Παιγνίων:
+                                                Πρώτο (Α) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων . Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                                (1) = Αθλητικά Γεγονότα
+                                                (2) = Εικονικά Αθλητικά Γεγονότα
+                                                (3) = Εικονικά Γεγονότα
+                                                (4) = Λοιπά Γεγονότα
+
+                                                Bet Events Category (A):
+                                                First (A) level of bet events categorization in accordance with Gaming Regulation. Values are granted by HGC. Allowed values:
+                                                (1) = Sports Events
+                                                (2) = Fantasy Sports
+                                                (3) = Virtual Events
+                                                (4) = Other Events
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="BetEventCategoryB">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Κατηγορία Στοιχηματικών Γεγονότων (B):
+                                                
+                                            Δεύτερο (B) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                            (1) = Pre Game
+                                            (2) = In Play
+                                            (3) = Pre Game and In Play
+                                            
+                                            Bet Events Category (B):
+                                            Second (B) level of bet events categorization. Values are granted by HGC. Allowed values:
+                                            (1) = Pre Game
+                                            (2) = In Play
+                                            (3) = Pre Game and In Play
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:positiveInteger">
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                                <xs:enumeration value="3" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="BetType">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Τύπος Στοιχήματος:
+                                            Ο δείκτης κατηγοριοποίησης στοιχήματος. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                            (1) = Μονό
+                                            (2) = Παρολί
+                                            (3) = Σύστημα - Πολλαπλό
+                                            (0) = Άλλο
+
+                                            Bet Type:
+                                            The type of the bet. Values are granted by HGC. Allowed values:
+                                            (1) = Single
+                                            (2) = Paroli / parlay
+                                            (3) = Multiples
+                                            (0) = Other
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:nonNegativeInteger">
+                                                <xs:enumeration value="0" />
+                                                <xs:enumeration value="1" />
+                                                <xs:enumeration value="2" />
+                                                <xs:enumeration value="3" />
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberWagers" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Πλήθος Στοιχημάτων:
+                                            Το πλήθος των στοιχημάτων που τοποθετήθηκαν, την ημέρα αναφοράς.
+
+                                            Total Number of Wagers:
+                                            The total number of wagers (BetIDs) placed, within the reporting day.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberWagersSettled" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Πλήθος Στοιχημάτων:
+                                            Το πλήθος των στοιχημάτων που εκκαθαρίστηκαν, την ημέρα αναφοράς.
+
+                                            Total Number of Wagers:
+                                            The total number of wagers (BetIDs) settled, within the reporting day.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberPlayers" type="mstns:NumberOfPlayers">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Πλήθος Παικτών:
+                                            Tο πλήθος των Παικτών που στοιχημάτισαν, την ημέρα αναφοράς.
+
+                                            Total Number of Players:
+                                            The total number of Players that placed bets, within the reporting day.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberPlayersSettled" type="mstns:NumberOfPlayers">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Πλήθος Παικτών:
+                                            Tο πλήθος των Παικτών τα στοιχήματα των οποίων εκκαθαρίστηκαν, την ημέρα αναφοράς.
+
+                                            Total Number of Players:
+                                            The number of Players whose bets have been settled within the reporting day.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberPlayersWon" type="mstns:NumberOfPlayers">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Πλήθος Παικτών στους οποίους αποδόθηκαν κέρδη:
+                                                Tο πλήθος των Παικτών στους οποίους αποδόθηκαν κέρδη, την ημέρα αναφοράς.
+
+                                                Total Number of Winning Players :
+                                                The total number of Players that won at least one bet, within the reporting day.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountWagered" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Πονταρίσματος:
+                                            Το συνολικό ποσό των στοιχημάτων που τοποθετήθηκαν, την ημέρα αναφοράς. Στο ποσό αυτό συμπεριλαμβάνεται το συνολικό ποσό των μη άμεσα αναλήψιμων επιβραβεύσεων που τοποθετήθηκαν σε στοιχήματα από τους Παίκτες.
+
+                                            Total Amount Wagered:
+                                            The total amount of bets (BetIDs) placed, within the reporting day. The total non redeemable bonus amount wagered by the Players (in the BetIDs) is included.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountWageredSettled" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Πονταρίσματος των εκκαθαρισμένων στοιχημάτων:
+                                            Το συνολικό ποσό πονταρίσματος των στοιχημάτων που εκκαθαρίστηκαν την ημέρα αναφοράς. Στο ποσό αυτό συμπεριλαμβάνεται το συνολικό ποσό των μη άμεσα αναλήψιμων επιβραβεύσεων που τοποθετήθηκαν σε στοιχήματα από τους Παίκτες.
+
+                                            Total Amount Wagered in bets settled:
+                                            The total amount wagered in bets settled within the reporting day. The total non redeemable bonus amount wagered by the Players (in the BetIDs) is included.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNonRedeemableBonusAmountWagered" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Πονταρίσματος από Μη Άμεσα Αναλήψιμες Επιβραβεύσεις:
+                                            Tο συνολικό ποσό των μη άμεσα αναλήψιμων επιβραβεύσεων που τοποθετήθηκαν σε στοιχήματα από τους Παίκτες, την ημέρα αναφοράς.
+
+
+                                            Total Non Redeemable Bonus Amount Wagered:
+                                            The total non redeemable bonus amount wagered by the Players (in the BetIDs), within the reporting day.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNonRedeemableBonusAmountWageredSettled" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Πονταρίσματος από Μη Άμεσα Αναλήψιμες Επιβραβεύσεις:
+                                            Tο συνολικό ποσό των πονταρισμάτων με μη άμεσα αναλήψιμες επιβραβεύσεις των στοιχημάτων που εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+                                            Total Non Redeemable Bonus Amount Wagered:
+                                            The total non redeemable bonus amount wagered in bets settled within the reporting day.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountWon" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Κερδηθέν Ποσό:
+                                            Το συνολικό ποσό των στοιχημάτων που κερδήθηκαν από τους Παίκτες, την ημέρα αναφοράς. Στο ποσό αυτό συμπεριλαμβάνεται το συνολικό ποσό των παρακρατούμενων φόρων και το συνολικό ποσό των επιβραβεύσεων, εάν υφίστανται.
+
+                                            Total Amount Won:
+                                            The total amount won by the Players, within the reporting day, including withholding tax amounts and bonus amounts, if any.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNetAmountWon" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Καθαρό Κερδηθέν Ποσό:
+                                            Το συνολικό καθαρό ποσό των στοιχημάτων που κερδήθηκαν από τους Παίκτες, την ημέρα αναφοράς. Στο ποσό αυτό ΔΕΝ συμπεριλαμβάνεται το συνολικό ποσό των παρακρατούμενων φόρων και το συνολικό ποσό των μη άμεσα αναλήψιμων επιβραβεύσεων (non redeemable bonus), εάν υφίστανται.
+
+                                            Total Net Amount Won:
+                                            The total amount won by the Players, within the reporting day, excluding withholding tax amounts and non redeemable bonus amounts, if any.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountWithholdingTax" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Παρακρατούμενου Φόρου:
+                                            Το συνολικό ποσό του παρακρατούμενου φόρου, των στοιχημάτων που κερδήθηκαν από τους Παίκτες, την ημέρα αναφοράς, εάν υφίσταται.
+
+                                            Total Withholding Tax Amount:
+                                            The total withholding tax amount of the bets (BetIDs), won by the Players, within the reporting day, if any.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNonRedeemableBonusAmountWon" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Κέρδη από Μη Άμεσα Αναλήψιμες Επιβραβεύσεις:
+                                            Το συνολικό ποσό των κερδών που προέρχονται απο επιβραβεύσεις που δεν είναι άμεσα αναλήψιμες (non redeemable bonus amounts).
+                                            - Εάν ο Παίκτης δεν κέρδισε το στοίχημα το ποσό αυτό είναι μηδέν (0,00).
+
+                                            Non Redeemable Bonus Amount Won:
+                                            The total amount won from bonus amount wagering that can not be redeemed by the player, within the reporting day.
+                                            - If the Player did not win the bet, this amount equals zero (0,00).
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalRedeemableBonusAmount" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                            Συνολικό Ποσό Άμεσα Αναλήψιμων Επιβραβεύσεων:
+                                            Το συνολικό ποσό των άμεσα αναλήψιμων επιβραβεύσεων, που δόθηκαν στους Παίκτες, την ημέρα αναφοράς, εάν υφίσταται.
+
+                                            Total Amount of Redeemable Bonuses:
+                                            The total amount of redeemable bonuses given to Players, within the reporting day, if any.
+                                        </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                        <xs:assert test="if (not(exists(CancelledRecordData))) then (ReportDate le ReportCreationDate) else if (exists(CancelledRecordData)) then (not(exists(ReportDate)) and not(exists(ReportCreationDate))) else false()" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_EndOfDay_Bettings" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

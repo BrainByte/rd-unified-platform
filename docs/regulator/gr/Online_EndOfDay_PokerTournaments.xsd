@@ -1,0 +1,256 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Ημερήσια. Στο τέλος της Παικτικής Ημέρας.
+(1) Daily. At the end of the Gaming Day.
+
+Σχόλια / Comments:
+(1) Το XML περιέχει στοιχεία παικτικής δραστηριότητας των Παικτών του Κατόχου Άδειας.
+(1) The XML data  are related to Licensee's Players
+            
+(2) Εντός δεκαέξι (16) ημερών από το τέλος κάθε ημερολογιακού μήνα, όλες οι ημερήσιες εγγραφές του μήνα αναφοράς οριστικοποιούνται.
+(2) Within sixteen (16) days from the end of the previous calendar month all daily records are finalised.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_EndOfDay_PokerTournament" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="ReportDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Ημέρα Αναφοράς:
+Η ημερομηνία και ώρα έναρξης της Παικτικής Ημέρας (UTC)
+
+Report Day:
+The start date and time of a Gaming Day (UTC).
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="ReportCreationDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Ημερομηνία Δημιουργίας Αναφοράς:
+Η ημερομηνία και η ώρα που δημιουργήθηκε η αναφορά (UTC).
+
+End of Day Report Creation Date:
+Date and time that the report was created (UTC).
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Currency" type="mstns:Currency" />
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                    <xs:element name="TotalNumberTournaments" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Συνολικό Πλήθος Τουρνουά Πόκερ:
+                                        Το συνολικό πλήθος των Τουρνουά Πόκερ τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+                                        
+                                        Total Number of Poker Tournaments:
+                                        The total number of Poker Tournaments taxed within the reporting day.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberPlayers" type="mstns:NumberOfPlayers">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Συνολικό Πλήθος Συμμετεχόντων:
+Το συνολικό πλήθος συμμετεχόντων Παικτών του Κατόχου Άδειας στα Τουρνουά Πόκερ, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Number of Participants:
+The total number of Licensee's Players participated in Poker Tournaments taxed within the reporting day.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberPlayersWon" type="mstns:NumberOfPlayers">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                                Πλήθος Παικτών στους οποίους αποδόθηκαν κέρδη:
+Tο πλήθος των Παικτών στους οποίους αποδόθηκαν κέρδηστα Τουρνουά Πόκερ, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Number of Winning Players :
+The total number of Players that won Poker Tournament prizes, in Poker Tournaments taxed within the reporting day.
+                                            </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountEntryStake" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Entry Stake Κατόχου Άδειας:
+Το συνολικό ποσό Entry Stake των Παικτών στα Τουρνουά Πόκερ του Κατόχου Άδειας, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Amount of Licensee's Entry Stake:
+The total amount of Entry Stakes the Licensee's Players contributed in Poker Tournaments taxed within the reporting day.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountEntryFee" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Entry Fee Κατόχου Άδειας:
+Το συνολικό ποσό Entry Fee των Παικτών στα Τουρνουά Πόκερ του Κατόχου Άδειας, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Amount of Licensee's Entry Fee:
+The total amount of Entry Fees the Licensee's Players contributed in Poker Tournaments taxed within the reporting day.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountBuyinsAddonsRebuys" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Buyins/Add-ons/Rebuys Κατόχου Άδειας:
+Το συνολικό ποσό Buyins/Add-ons/Rebuys των Παικτών στα Τουρνουά Πόκερ του Κατόχου Άδειας, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Licensee's Buyins Total Amount:
+The total amount of Buyins/Add-ons/Rebuys the Licensee's Players contributed in Poker Tournaments taxed within the reporting day.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountBuyinsAddonsRebuysFees" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Προμήθειας Buyins/Add-ons/Rebuys Κατόχου Άδειας:
+Το συνολικό ποσό προμήθειας για Buyins/Add-ons/Rebuys (rake) στα Τουρνουά Πόκερ του Κατόχου Άδειας, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Amount of Licensee's Buyins/Add-ons/Rebuys Fees:
+The total amount of the Licensee's Buyins/Add-ons/Rebuys fees (rake) the Licensee's Players contributed in Poker Tournaments taxed within the reporting day.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountRedeemableRakeBackBonus" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                      Συνολικό Ποσό Προμήθειας Rake Back Κατόχου Άδειας (Άμεσα Αναλήψιμες Επιβραβεύσεις):
+Το συνολικό ποσό επιστροφής μέρους της προμήθειας (rake back) ή οποιαδήποτε άλλη άμεσα αναλήψιμη επιβράβευση στα Τουρνουά Πόκερ του Κατόχου Άδειας, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Licensee's Total Amount of Rake Back (Redeemable Bonus):
+The total amount of Licensee's rake returned back to the Players (rake back) or any other redeemable bonus amount given to players in Poker Tournaments taxed within the reporting day.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberJackpots" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>Πλήθος Λειτουργιών Jackpot Κατόχου Άδειας:
+Το πλήθος των Λειτουργιών Jackpot που δόθηκαν, σε Παίκτες του Κατόχου Άδειας, στα Τουρνουά Πόκερ την ημέρα αναφοράς.
+
+Licensee's Total Number of Jackpots:
+The total number of Jackpots the Licensee's Players won in Poker Tournaments, within the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountJackpots" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Λειτουργιών Jackpot Κατόχου Άδειας:
+Το συνολικό ποσό των Λειτουργιών Jackpot που δόθηκε, σε Παίκτες του Κατόχου Άδειας, στα Τουρνουά Πόκερ, την ημέρα αναφοράς.
+
+Licensee's Total Amount of Jackpots:
+The total amount of Jackpots the Licensee's Players won in Poker Tournaments, within the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountJackpotRake" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Συνεισφοράς Λειτουργιών Jackpot Κατόχου Άδειας:
+Το συνολικό ποσό συνεισφοράς (rake) για Λειτουργίες Jackpot, των Παικτών του Κατόχου Άδειας, στα Τουρνουά Πόκερ την ημέρα αναφοράς.
+
+Licensee's Total Amount of Jackpot Rake:
+Licensee's total amount of Jackpot rake, the Licensee's Players contributed in Poker Tournaments, within the reporting day.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountNonRedeemableBonusWagered" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        Συνολικό Ποσό Μη Άμεσα Αναλήψιμων Επιβραβεύσεων Παικτών:
+Το συνολικό ποσό επιβραβεύσεων που δεν είναι άμεσα αναλήψιμες (non redeemable bonus amount), το οποίο πονταρίστηκε από τους Παίκτες του Κατόχου Άδειας στα Τουρνουά Πόκερ, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Total Non Redeemable Bonus Amount:
+The total non redeemable bonus amount wagered by the Players, in Poker Tournaments taxed within the reporting day.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalPrizePool" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Επάθλων Κατόχου Άδειας:
+Το συνολικό ποσό επάθλων που αποδόθηκαν σε Παίκτες του Κατόχου Άδειας, στα Τουρνουά Πόκερ, την ημέρα αναφοράς.
+
+Licensee's Total Prize Pool:
+The total amount of Prizes the Licensee's Players won in Poker Tournaments, within the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalExtraFundsPrizePool" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Πρόσθετο Ποσό Επάθλων Κατόχου Άδειας:
+Το σύνολο των πρόσθετων ποσών στα Τουρνουά Πόκερ, που καταβάλλονται από τον εκάστοτε Κάτοχο Άδειας, για να καλυφθεί το χρηματικό ποσό των επάθλων (στην περίπτωση που τα χρηματικά ποσά επάθλων είναι προσυμφωνημένα από τους Κατόχους Άδειας και δεν εξαρτάτε από το ύψος των Buyins, Add-ons και Rebuys).
+
+Total Amount of Licensee's Extra Funds Prize Pool:
+The total amount of all additional poker tournament payouts, paid by the Licensee reporting the data, to cover the prize amounts (in case the prize money is pre-agreed by the Licensees and does not depend on the amount of Buyins, Add-ons and Rebuys), during the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNetAmountWon" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Καθαρό Κερδηθέν Ποσό:
+Το συνολικό καθαρό ποσό που κερδήθηκε από τους Παίκτες του Κατόχου Άδειας στα Τουρνουά Πόκερ, την ημέρα αναφοράς.
+
+Total Net Amount Won:
+The total net amount won by the Licensee's Players, in Poker Tournaments, during the reporting day.
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalWithholdingTax" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Παρακρατούμενος Φόρος:
+Το συνολικό ποσό των παρακρατούμενων φόρων Παικτών του Κατόχου Άδειας στα Τουρνουά Πόκερ, την ημέρα αναφοράς.
+
+Withholding Tax:
+The total amount of withholding tax related to the Licensee's Players winnings, in Poker Tournaments, within the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalNumberIncompleteTransactions" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Πλήθος Ημιτελών Συναλλαγών:
+Το συνολικό πλήθος των ημιτελών συναλλαγών των Παικτών του Κατόχου Άδειας, στα Τουρνουά Πόκερ, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+
+Incomplete Transactions Total Number:
+Total number of incomplete poker tournament transactions, of Licensee's Players, in Poker Tournaments taxed within the reporting day.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalAmountIncompleteTransactions" type="mstns:MonetaryAmount" minOccurs="0">
+                                        <xs:annotation>
+                                            <xs:documentation>Συνολικό Ποσό Ημιτελών Συναλλαγών:
+Το συνολικό ποσό των ημιτελών συναλλαγών των Παικτών του Κατόχου Άδειας, στα Τουρνουά Πόκερ, τα οποία εκκαθαρίστηκαν την ημέρα αναφοράς.
+(εάν υφίσταται)
+
+Incomplete Transactions Total Amount:
+Total amount of incomplete poker tournament transactions, of Licensee's Players, in Poker Tournaments taxed within the reporting day.
+(if applicable))</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                        <xs:assert test="if (not(exists(CancelledRecordData))) then (ReportDate le ReportCreationDate) else if (exists(CancelledRecordData)) then (not(exists(ReportDate)) and not(exists(ReportCreationDate))) else false()" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_EndOfDay_PokerTournament" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

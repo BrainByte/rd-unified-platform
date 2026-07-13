@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:element name="SpillerInformationIdentifikation" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Identifikation af spilleren. Tilladelsesindehaver definerer selv dette, men skal være unik for hver af deres spillere. Kan f.eks. være kundenr eller spillernummer. Må ikke være CPR-nummer, da det er personfølsomt. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

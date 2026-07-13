@@ -1,0 +1,427 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθενται νέοι Παίκτες.
+(1) Whenever new Players are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε δεδομένα Παικτών.
+(2) Whenever information regarding Players, changes.
+</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Customer_Account" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                    <xs:element name="CustomerAccount">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="Username" type="mstns:LongStringPreserve">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Αναγνωριστικό Παίκτη:
+Το μοναδικό αναγνωριστικό του Παίκτη στα συστήματα του Κατόχου Άδειας.
+
+Player's Username:
+The username used by the Player to login in Licensee's systems</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AccountType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τύπος Ηλεκτρονικού Λογαριασμού Παίκτη:
+Κατηγοριοποίηση Ηλεκτρονικών Λογαριασμών Παικτών. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ηλεκτρονικός Λογαριασμός Παίκτη 
+(2) = Ηλεκτρονικός Λογαριασμός Περιαγωγής σε Παίκτες που επισκέπτονται την Ελλάδα
+
+Player Account Type:
+What type account is used by the player. Roaming or regular Greek account.  Values are granted by HGC. Allowed values:
+(1) = Greek Account
+(2) = Roaming Account
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:positiveInteger">
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AccountStatus">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατάσταση του Ηλεκτρονικού Λογαριασμού Παίκτη:
+Η κατάσταση του Ηλεκτρονικού Λογαριασμού Παίκτη. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Προσωρινός
+(2) = Ενεργός
+(3) = Ανενεργός 
+(4) = Σε Φραγή
+(5) = Κλειστός
+(0) = Άλλο 
+
+Player's Status:
+The status of the Player's account. Values are granted by HGC. Allowed Values:
+(1) = Temporary
+(2) = Active
+(3) = Inactive
+(4) = Blocked
+(5) = Closed
+(0) = Other</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AccountStatusDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Κατάστασης Ηλεκτρονικού Λογαριασμού Παίκτη:
+Η ημερομηνία και ώρα που ενεργοποιήθηκε η κατάσταση του Ηλεκτρονικού Λογαριασμού Παίκτη (UTC).
+
+Player's Account Status Date:
+Date and time the status of the Player's account changed (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AccountStatusReason" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Αιτιολογία Κατάστασης του Ηλεκτρονικού Λογαριασμού Παίκτη:
+Η αιτιολογία της κατάστασης του Ηλεκτρονικού Λογαριασμού Παίκτη. Το πεδίο συμπληρώνεται μόνο για τις τιμές στο πεδίο 'AccountStatus' ισούνται με (4) ή (5) ή (0). 
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Αίτηση Παίκτη για κλείσιμο του Λογαριασμού.
+(2) = Μη επιβεβαίωση στοιχείων Παίκτη.
+(3) = Αίτηση Παίκτη για οριστικό αποκλεισμό από τα Παίγνια.
+(4) = Αιτιολογημένες ενδείξεις για αναληθείς ή ανακριβείς πληροφορίες για το άνοιγμα του ΗΛΠ.
+(5) = Για άλλο λόγο που προβλέπεται στη Σύμβαση Προσχώρησης.
+(6) = Ενημέρωση από Ε.Ε.Ε.Π. για οριστικό αποκλεισμό Παίκτη από τα Παίγνια.
+(7) = Κλείσιμο Ηλεκτρονικού Λογαριασμού Περιαγωγής.
+(0) = Άλλο 
+
+Player's Status Reason :
+The reason of the status of the Player's account. Field gets values only when the field 'AccountStatus' gets values equal to (4) or (5) or (0). Values are granted by HGC. Allowed Values:
+(1) = Receipt of an application from Player to close Account.
+(2) = The information the Player has submitted, for completing Player authentication, has not been confirmed.
+(3) = Receipt of an application from the Player for final exclusion from Games.
+(4) = Well-founded indications that information provided by the Player to open the Online Account is untrue or inaccurate.
+(5) = On other grounds specifically cited in the terms of the Standard Form Contract.
+(6) = Informed by HGC to exclude Player from Games.
+(7) = Closing Roaming Account
+(0) = Άλλο  </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                            <xs:enumeration value="6" />
+                                                            <xs:enumeration value="7" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="Gender">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                  Φύλο Παίκτη: 
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Άρρεν
+(2) = Θήλυ
+(0) = Άλλο
+
+Player's Gender:
+The gender of the Player. Values are granted by HGC. Allowed values:
+(1) = Μale
+(2) = Female
+(0) = Other
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="Surname">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Επώνυμο Παίκτη:
+Το επώνυμο (last name) του Παίκτη. Κεφαλαίοι χαρακτήρες.
+
+Player's Surname:
+The surname/last name of the Player (capital letters).</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:minLength value="1" />
+                                                            <xs:maxLength value="40" />
+                                                            <xs:pattern value="[\p{Lu} \.'\-]+" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="MiddleName" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πατρώνυμο Παίκτη:
+Το πατρώνυμο (Father's Name) του Παίκτη. Κεφαλαίοι χαρακτήρες.
+(εάν υφίσταται)
+
+Player's Middle Name:
+The middle name of the Player (capital letters).
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:minLength value="1" />
+                                                            <xs:maxLength value="40" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                            <xs:pattern value="[\p{Lu} \.'\-]+" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="FirstName">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Όνομα Παίκτη:
+Το όνομα (first name) του Παίκτη. Κεφαλαίοι χαρακτήρες.
+
+Player's First Name:
+The first name of the Player (capital letters).</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:minLength value="1" />
+                                                            <xs:maxLength value="40" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                            <xs:pattern value="[\p{Lu} \.'\-]+" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:choice>
+                                                    <xs:element name="IDNumber">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Αριθμός Α.Δ.Τ. Παίκτη:
+ο Αριθμός Δελτίου Ταυτότητας του Παίκτη. Υποχρεωτικά στο αρχείο καταγράφεται είτε ο Α.Δ.Τ είτε ο Αριθμός Διαβατηρίου του Παίκτη. Κεφαλαίοι χαρακτήρες.
+(εάν υφίσταται)
+
+Player's national (Greek) ID Number:
+Player's national (Greek) ID Number. Either this or Player's Passport Number should exist as information in Player's record. Capital letters.
+(if applicable)</xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:pattern value="[\p{Lu}0-9 \-]+" />
+                                                                <xs:minLength value="1" />
+                                                                <xs:maxLength value="20" />
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element name="PassportNumber">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Αριθμός Διαβατηρίου Παίκτη:
+O Αριθμός Διαβατηρίου του Παίκτη. Υποχρεωτικά στο αρχείο καταγράφεται είτε ο Α.Δ.Τ είτε ο Αριθμός Διαβατηρίου του Παίκτη. Κεφαλαίοι Χαρακτήρες.
+(εάν υφίσταται)
+
+Player's Passport Number:
+Player's Passport Number. Either this or Player's national (Greek) ID Number should exist as information in Player's record. Capital letters.
+(if applicable)</xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:pattern value="[\p{Lu}0-9 \-]+" />
+                                                                <xs:maxLength value="20" />
+                                                                <xs:minLength value="1" />
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:element>
+                                                </xs:choice>
+                                                <xs:element name="V.A.T.Number" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Αριθμός Φορολογικού Μητρώου Παίκτη:
+Ο Αριθμός Φορολογικού Μητρώου του Παίκτη. Για την Ελλάδα, το Α.Φ.Μ..
+
+Player's V.A.T Number:
+Players V.A.T number. For Greece, the Α.Φ.Μ. number.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:length value="9" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                            <xs:pattern value="[0-9]{9}" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="A.M.K.A.Number" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Αριθμός Μητρώου Κοινωνικής Ασφάλισης Παίκτη:
+Ο Αριθμός Μητρώου Κοινωνικής Ασφάλισης του Παίκτη. Για την Ελλάδα, ο Α.Μ.Κ.Α..
+
+Player's Social Security Number:
+Player's Social Security number. For Greece, the Player's A.M.K.A..</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:length value="11" />
+                                                            <xs:pattern value="\d{11}" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AddressCountry" type="mstns:CountryCode">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Χώρας Παίκτη:
+Ο τριψήφιος ISO (ISO 3166-1, alpha 3 code) κωδικός της χώρας διαμονής του Παίκτη.
+
+Player's Country Code:
+The ISO (ISO 3166-1, alpha 3 code) code of the Player's country of residence.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PostCode">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ταχυδρομικός Κωδικός Παίκτη:
+Ο Ταχυδρομικός κωδικός της διεύθυνσης που έχει δηλωθεί από τον Παίκτη στα συστήματα του Κατόχου Άδειας.
+
+Players Post Code:
+The post code of Player's address, as it has been declared in Licensee's systems.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:whiteSpace value="preserve" />
+                                                            <xs:maxLength value="15" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="EmailAddress">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Διεύθυνση Ηλεκτρονικού Ταχυδρομείου Παίκτη
+
+Player's email address</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:pattern value="\S+@\S+\.\S+" />
+                                                            <xs:maxLength value="255" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="KYCDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Ταυτοποίησης Παίκτη:
+Η ημερομηνία και ώρα που ταυτοποιήθηκε ο Παίκτης από τον Κάτοχο Άδειας (UTC).
+
+Players KYC Date:
+Date and time that the Player's identity has been confirmed by the Licensee, through a "know your customer" (KYC) process (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PlayerRisk">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                            Κατηρορία Ρίσκου
+Η κατηγορία ρίσκου που έχει χαρακτηριστεί ο παίκτης από τον Κάτοχο Άδειας. Επιτρέπονται ακέραιες τιμές από 1 μέχρι το 4, όπου 1 = Χαμηλό ρίσκο και 4 = Πολύ Υψηλό.
+
+Risk Category
+The risk category that the player has been categorised by the Licensee. Suggested values: Positive integers from 1 to 4, which 1 = Low Risk and 4 = Very Hight Risk.
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:positiveInteger">
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="ExclusionType" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Τύπος Αποκλεισμού:
+Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Αποκλεισμός
+(2) = Αυτοαποκλεισμός
+(0) = Άλλο
+(εάν υφίσταται)
+
+Exclusion Type:
+Values are granted by HGC. Allowed values:
+(1) = Exclusion
+(2) = Self Exclusion
+(0) = Other
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="Currency" type="mstns:Currency" />
+                                                <xs:element name="AffiliateData" minOccurs="0" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="AffiliateID" type="mstns:CollapsedGenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κωδικός Συνεργάτη:
+Ο μοναδικός κωδικός Συνεργάτη που είναι συνδεδεμένος με τον Παίκτη, τον οποίο αποδίδει η Ε.Ε.Ε.Π.. 
+(εάν υφίσταται)
+
+Affiliate Identifier:
+The unique identifier of the affiliate, granted by HGC.
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="AffiliatePlayerRelationDate" type="mstns:dateTimeUTC">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ημερομηνία Ενεργοποίησης σχέσης Συνεργάτη - Παίκτη:
+Η ημερομηνία και ώρα που ενεργοποιήθηκε η σχέση του Συνεργάτη με τον Παίκτη (UTC).
+(εάν υφίσταται)
+
+Affiliate - Player Relation Date:
+Date and time the relationship between the Player and the Affiliate was established (UTC).
+(if applicable)</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (AccountStatus = 1) then not(exists(KYCDate)) else if (AccountStatus = 2 or AccountStatus = 3) then exists(KYCDate) else if (AccountStatus = 0 or AccountStatus = 4 or AccountStatus = 5) then true() else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Customer_Account" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

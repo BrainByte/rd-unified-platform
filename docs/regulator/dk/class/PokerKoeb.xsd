@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>I en poker turnering kan indskud foregå på forskellige måder: BuyIn, AddOn og Rebuy. Denne klasse anvendes til at rapportere de forskellige køb i et pokerspil. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/PokerKoebTypeType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="PokerKøbType" type="fase2.1:PokerKøbTypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af typen af købet. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerKøbBeløb" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløbet for en spillers poker køb. Ved annullering angives det tilbagebetalte beløb med negativt fortegn.  Beløbet skal ikke indeholde eventuelt bidrag til jackpot. Det skal rapporteres separat i et andet felt i transaktionsstrukturen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PokerKøbFee" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Andel af købsbeløbet der går til tilladelsesindehaver og dermed ikke i puljen. Dette er eksklusiv eventuelt jackpotbidrag.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

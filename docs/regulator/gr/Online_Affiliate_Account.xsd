@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθενται νέοι Συνεργάτες.
+(1) Whenever new Affiliates are added.
+
+(2) Κάθε 1η και 15η του εκάστοτε μήνα, κατ' ελάχιστο.
+(2) Minimum, every 1st and 15th of each month.
+</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Affiliate_Account" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="AffiliateData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="AffiliateID" type="mstns:CollapsedGenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Συνεργάτη:
+Ο μοναδικός κωδικός Συνεργάτη, τον οποίο αποδίδει η Ε.Ε.Ε.Π.. 
+
+Affiliate Identifier:
+The unique identifier of the affiliate, granted by HGC.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AffiliateLicenseeID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Συνεργάτη:
+Ο μοναδικός κωδικός Συνεργάτη, τον οποίο αποδίδει ο Κάτοχος Άδειας. 
+
+Affiliate Identifier:
+The unique identifier of the affiliate, granted by the Licensee.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AffiliateStatus">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κατάσταση Συνεργάτη:
+Η κατάσταση λογαριασμού του Συνεργάτη στο σύστημα του Κατόχου Άδειας. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+(1) = Ενεργός
+(2) = Ανενεργός 
+(3) = Σε Αναστολή
+(4) = Κλειστός
+(0) = Άλλο 
+
+Affiliate Status:
+The account status of the affiliate account in Licensee's system. Values are granted by HGC. Allowed values:
+(1) = Active
+(2) = Inactive
+(3) = Dormant
+(4) = Closed
+(0) = Other</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="StatusDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Κατάστασης Συνεργάτη:
+Η ημερομηνία και ώρα που ενεργοποιήθηκε η κατάσταση του Συνεργάτη στο σύστημα του Κατόχου Άδειας (UTC).
+
+Affiliate Status Date:
+Date and Time the status of the affiliate account has changed (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AffiliateAgreementID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Σύμβαση Συνεργασίας:
+Ο μοναδικός κωδικός της Σύμβασης Συνεργασίας του Συνεργάτη με τον Κάτοχο Άδειας, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+Collaboration Agreement Number:
+The unique number of the Collaboration Agreement between the Affiliate and the Licensee.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Affiliate_Account" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Den samlede gevinst til udbetaling kan være opdelt i et antal gevinstpuljer, hvor et givet kriterium skal være opfyldt for at få del i gevinstpuljen. En sådan del-pulje af den totale gevinst til udbetaling er en gevinstpulje.  Gevinster rapporteres altid inklusiv indskud.  Eksempel: For spillet Tips 13 findes der typisk fire gevinstpuljer: 13 rigtige, 12 rigtige, 11 rigtige og 10 rigtige.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:element name="GevinstPuljeIdentifikation" type="fase2.1:Tekst45Type">
+               <xs:annotation>
+                  <xs:documentation>Identifikation af de forskellige gevinstpuljer. Der skal angives det antal rigtige, der udløser en gevinst i den enkelte gevinstpulje. Eksempel (væddemål): For tips 13 vil der således være 4 gevinstpuljeidentifikationer (13, 12, 11 og 10).  Eksempel (monopol): For Lotto vil der være 6 gevinstpuljeidentifikationer, bl.a. 7 vindertal med trumfkort. Se de præcise definitioner i Vejledning til Tekniske Krav.</xs:documentation>
+               </xs:annotation>
+           </xs:element>
+
+    <xs:element name="GevinstPuljeEventIdentifikation" type="fase2.1:Tekst45Type">
+        <xs:annotation>
+            <xs:documentation>Identifikation af de forskellige gevinstpuljer. Der skal angives det antal rigtige, der udløser en gevinst i den enkelte gevinstpulje. Eksempel (væddemål): For tips 13 vil der således være 4 gevinstpuljeidentifikationer (13, 12, 11 og 10).  Eksempel (monopol): For Lotto vil der være 6 gevinstpuljeidentifikationer, bl.a. 7 vindertal med trumfkort. Se de præcise definitioner i Vejledning til Tekniske Krav.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="GevinstPuljeSpilIdentifikation" type="fase2.1:Tekst45Type">
+        <xs:annotation>
+            <xs:documentation>Identifikation af de forskellige gevinstpuljer. Der skal angives det antal rigtige, der udløser en gevinst i den enkelte gevinstpulje. Eksempel (væddemål): For tips 13 vil der således være 4 gevinstpuljeidentifikationer (13, 12, 11 og 10).  Eksempel (monopol): For Lotto vil der være 6 gevinstpuljeidentifikationer, bl.a. 7 vindertal med trumfkort. Se de præcise definitioner i Vejledning til Tekniske Krav.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:element name="GevinstPuljeGevinstProcent" type="fase2.1:ProcentType">
+          <xs:annotation>
+                  <xs:documentation>Hvor mange procent denne gevinstpulje udgør af den samlede gevinstpulje for spillet. Såfremt der spilles i netværk med andre spiludbydere angives total beløb for alle spiludbydere.  Summen af alle puljespillets GevinstPuljeGevinstProcent skal være 100%.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeAntalGevinsterTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal gevinster i gevinstpuljen der er tilgået spillere hos tilladelsesindehaver.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeAntalGevinsterTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Ved samarbejde med anden spiludbyder oplyses gevinstpuljens samlede antal gevinster for alle spillere.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeBeløbTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvor mange penge der er i den enkelte gevinstpulje (inkl. indskud) for spillere hos tilladelsesindehaver.  Monopol: Beløbet angives i brutto (dvs. før gevinstafgift er fratrukket). Beløbet skal være det totale brutto gevinst beløb. Det vil sige at evt. overført primo pulje og tilføjet pulje skal være indeholdt i beløbet, og eventuelt overført ultimo pulje skal være fratrukket.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeBeløbTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Ved samarbejde med anden spiludbyder oplyses hvor mange penge der er i den enkelte gevinstpulje (inkl. indskud) for alle spillere.  Monopol: For talspil angives samme værdi som GevinstPuljeBeløbTillIndh.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeBeløbPerRække"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvor meget hver rigtig række vinder i gevinstpuljen (inkl. indskud).  Eksempel (væddemål): For gevinstpuljen der går til dem med 13 rigtige i tips, skal det angives hvor meget en række med 13 rigtige vinder. Tilsvarende for de andre gevinstpuljer for 12, 11 og 10 rigtige.   Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket). Beløbet skal være det netto beløb pr række, der kommer til udbetaling. Det vil sige, at evt. overført primo pulje og tilføjet pulje skal være indeholdt i beløbet, og eventuelt overført ultimo pulje skal være fratrukket.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeOverførselPrimo"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløb der overføres til gevinstpuljerne fra tidligere puljespil.  Monopol: Beløbet skal angives i brutto (dvs. før gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeOverførselUltimo"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløb der overføres fra gevinst puljerne til fremtidige puljespil.  Monopol: Beløbet skal angives i brutto (dvs. før gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeTilføjetBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløb som tilladelsesindehaver tilføjer til gevinstpuljerne, som ikke kommer fra tidligere uger. Anvendes typisk hvis tilladelsesindehaver garanterer en vis puljestørrelse.  Monopol: Beløbet skal angives i brutto (dvs. før gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeBeskrivelse" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af puljen, f.eks Førstepræmiepulje, Superpulje mv.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeGaranti" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløb som Tilladelsesindehaver garanterer til Gevinstpuljen.  Monopol: Beløbet skal angives i netto (dvs. efter gevinstafgift er fratrukket). Opdateres beløbet efter Tilladelsesindehaver har rapporteret det i startstrukturen, fremsendes en ny startstruktur med korrekt garanti.  </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="GevinstPuljeAntalGevinsterPerLand" type="fase2.1:TalHelType">
+               
+            </xs:element>
+      </xs:schema>

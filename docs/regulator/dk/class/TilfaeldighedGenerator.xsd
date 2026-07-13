@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Maskine eller software til skabelse af tilfældige tal. Også kaldet Random Number Generator. Skal være certificeret.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/PositivNegativHeltalType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:include schemaLocation="../types/SlutdatoType.xsd"/>
+         <xs:element name="TilfældighedGeneratorIndeks" type="fase2.1:PositivNegativHeltalType">
+               
+               <xs:annotation>
+                  <xs:documentation>Et positivt/negativt heltal, der kan repræsentere værdier i intervallet -999.999.999.999.999.999 til 999.999.999.999.999.999</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TilfældighedGeneratorIdentifikation" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Generatorens unikke identifikation givet af certifikatgiver.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TilfældighedGeneratorIdentifikationStartDato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Alle gyldige datoer i den danske kalender.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TilfældighedGeneratorIdentifikatorSlutDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+         <xs:element name="TilfældighedGeneratorSoftwareId" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Identifikation af (certificeret) software der oversætter tal genereret fra tilfældighedsgenerator.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="TilfældighedGeneratorSoftwareIdStartDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+         <xs:element name="TilfældighedsGeneratorSoftwareIdSlutDato" type="fase2.1:SlutdatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Slut datoen for den periode hvor tilfældighedsgeneratoren er valid.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

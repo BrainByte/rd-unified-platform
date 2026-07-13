@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" version="1.0">
+	<xs:simpleType name="SpilKategoriNavnType">
+		<xs:annotation>
+			<xs:documentation>Beskrivelse af hvilken overordnet slags spil der er tale om. </xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="25"/>
+			<xs:enumeration value="Bingospil"/>
+			<xs:enumeration value="Managerspil"/>
+			<xs:enumeration value="Fastoddsspil"/>
+			<xs:enumeration value="FastoddsspilBetexchange"/>
+			<xs:enumeration value="FastoddsspilBeXDkHest"/>
+			<xs:enumeration value="FastoddsspilDanskHest"/>
+			<xs:enumeration value="VirtuelFastOdds"/>
+			<xs:enumeration value="Hesteagtig"/>
+			<xs:enumeration value="HestDK"/>
+			<xs:enumeration value="Puljespil"/>
+			<xs:enumeration value="PokerTurnering"/>
+			<xs:enumeration value="PokerCashGame"/>
+			<xs:enumeration value="KasinospilSinglePlayer"/>
+			<xs:enumeration value="KasinospilMultiPlayer"/>
+			<xs:enumeration value="PuljespilDanskHest"/>
+			<xs:enumeration value="SpreadBetting"/>
+			<xs:enumeration value="PuljeRNG"/>
+			<xs:enumeration value="FortloebendeKombispil"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

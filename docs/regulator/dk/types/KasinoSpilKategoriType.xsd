@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" version="1.0">
+	<xs:simpleType name="KasinoSpilKategoriType">
+		<xs:annotation>
+			<xs:documentation>Angivelse af underkategori for kasinospil.</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="20"/>
+			<xs:enumeration value="bingo"/>
+			<xs:enumeration value="roulette"/>
+			<xs:enumeration value="baccarat"/>
+			<xs:enumeration value="puntobanco"/>
+			<xs:enumeration value="blackjack"/>
+			<xs:enumeration value="poker"/>
+			<xs:enumeration value="spilleautomat"/>
+			<xs:enumeration value="andet"/>
+			<xs:enumeration value="kombinationsspil"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

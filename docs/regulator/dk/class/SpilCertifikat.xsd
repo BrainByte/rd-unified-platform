@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Aftale omkring tilladelse til at udbyde spil.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/SpilCertifikatTilladelsestypeType.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:element name="SpilCertifikatIdentifikation" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Brugernavnet som anvendes til at hente og lukke tokens på TamperToken systemet.  SpilCertifikatIdentifikation mapper til SafeId på et SAFE for en Tilladelsesindehaver. Der kan således kun være én SAFE pr TamperToken brugernavn, men det er muligt at have flere TamperToken brugernavne, der peger på samme SAFE.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilCertifikatTilladelsestype"
+                     type="fase2.1:SpilCertifikatTilladelsestypeType">
+               
+               <xs:annotation>
+                  <xs:documentation>Typen af tilladelse. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilCertifikatGyldigFra" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Alle gyldige datoer i den danske kalender.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilCertifikatGyldigTil" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Alle gyldige datoer i den danske kalender.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

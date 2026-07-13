@@ -1,0 +1,146 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import schemaLocation="http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd" namespace="http://www.w3.org/2000/09/xmldsig#" />
+    <xs:import schemaLocation="http://www.w3.org/TR/2002/REC-xmlenc-core-20021210/xenc-schema.xsd" namespace="http://www.w3.org/2001/04/xmlenc#" />
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="ControlManifest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="licenseholderId" type="mstns:LicenseeID" />
+                <xs:element name="serverId">
+                    <xs:annotation>
+                        <xs:documentation>Αναγνωριστικό, μονοσήμαντο όνομα που αποδίδεται από τον Κάτοχο Άδειας στον εξυπηρετητή στον οποίο αποθηκεύεται το αρχείο 
+
+Unique identifier of the SAFE file server, given by the Licensee.</xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:minLength value="1" />
+                            <xs:maxLength value="10" />
+                            <xs:whiteSpace value="collapse" />
+                            <xs:pattern value="[-_a-z0-9]+" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="generationDate" type="mstns:dateTimeUTC">
+                    <xs:annotation>
+                        <xs:documentation>Ημερομηνία και ώρα (UTC) δημιουργίας του αρχείου ελέγχου.
+
+Creation date and time of the manifest file (UTC).</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element name="manifestSequenceNumber" type="mstns:FileID" />
+                <xs:element name="xsdnumber">
+                    <xs:annotation>
+                        <xs:documentation>Όνομα μοντέλου δεδομένων. Το όνομα του μοντέλου δεδομένων που περιλαβάνεται στο πακέτο δεδομένων. Επιτρεπόμενες τιμές (XSD model name. Values are granted by HGC. Allowed values):
+(1) = Bet Events
+(2) = Bettings
+(3) = Bet Winnings
+(4) = EndofDay Bettings
+(5) = Games
+(6) = EndofDay Games
+(7) = Peer to Peer Games
+(8) = EndofDay PtP Games
+(9) = Poker Tournament Start
+(10) = Poker Tournament Transactions
+(11) = Poker Tournament End
+(12) = EndofDay Poker Tournaments
+(13) = Jackpot Parameters
+(14) = Jackpot Winnings
+(15) = Log In Sessions
+(16) = Bonus Schemas
+(17) = Exclusions
+(18) = Limits
+(19) = Limits Exceeded
+(20) = EndofDay Other
+(21) = Customer Account
+(22) = Customer Account Transactions
+(23) = Affiliate Account
+(24) = Affiliate Account Transactions
+(25) = Contests Draws
+(26) = Taxation Sessions
+
+                </xs:documentation>
+                    </xs:annotation>
+                    <xs:simpleType>
+                        <xs:restriction base="xs:positiveInteger">
+                            <xs:enumeration value="1" />
+                            <xs:enumeration value="2" />
+                            <xs:enumeration value="3" />
+                            <xs:enumeration value="4" />
+                            <xs:enumeration value="5" />
+                            <xs:enumeration value="6" />
+                            <xs:enumeration value="7" />
+                            <xs:enumeration value="8" />
+                            <xs:enumeration value="9" />
+                            <xs:enumeration value="10" />
+                            <xs:enumeration value="11" />
+                            <xs:enumeration value="12" />
+                            <xs:enumeration value="13" />
+                            <xs:enumeration value="14" />
+                            <xs:enumeration value="15" />
+                            <xs:enumeration value="16" />
+                            <xs:enumeration value="17" />
+                            <xs:enumeration value="18" />
+                            <xs:enumeration value="19" />
+                            <xs:enumeration value="20" />
+                            <xs:enumeration value="21" />
+                            <xs:enumeration value="22" />
+                            <xs:enumeration value="23" />
+                            <xs:enumeration value="24" />
+                            <xs:enumeration value="25" />
+                            <xs:enumeration value="26" />
+                            <xs:enumeration value="27" />
+                            <xs:enumeration value="28" />
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element name="metadata" type="mstns:Metadata" />
+                <xs:element ref="xenc:EncryptedKey" maxOccurs="unbounded" />
+                <xs:element ref="xenc:EncryptedData" />
+                <xs:element ref="dsig:Manifest" />
+                <xs:element ref="dsig:Signature" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="Metadata">
+        <xs:sequence>
+            <xs:element name="numberOfRecords" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>Αριθμός εγγραφών που περιέχονται στο αρχείο xml.
+
+Νumber of records contained in the xml file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="datetimeFirstRecord" type="mstns:dateTimeUTC">
+                <xs:annotation>
+                    <xs:documentation>Ημερομηνία και ώρα (UTC) της πρώτης εγγραφής στο αρχείο xml.
+
+Date and time of the first record in the xml file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="datetimeLastRecord" type="mstns:dateTimeUTC">
+                <xs:annotation>
+                    <xs:documentation>Ημερομηνία και ώρα (UTC) της τελευταίας εγγραφής στο αρχείο xml.
+
+Date and time of the last record in the xml file.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="sizeUncompressed" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>Μέγεθος του μη συμπιεσμένου αρχείου δεδομένων xml σε bytes.
+
+Size of the uncompressed xml data file in bytes.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="sizeCompressed" type="xs:nonNegativeInteger">
+                <xs:annotation>
+                    <xs:documentation>Μέγεθος του συμπιεσμένου αρχείου δεδομένων xml σε bytes.
+
+Size of the compressed file xml data file in bytes.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

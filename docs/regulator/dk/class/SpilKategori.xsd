@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Generelle oplysninger om hvilken kategori et spil kan karakteriseres som. Kategorierne er fastsat af Spillemyndigheden. </xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/SpilKategoriNavnType.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:element name="SpilKategoriNavn" type="fase2.1:SpilKategoriNavnType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af hvilken overordnet slags spil der er tale om. Disse grupperinger er defineret af Spillemyndigheden.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilKategoriStartDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+         <xs:element name="SpilKategoriSlutDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+      </xs:schema>

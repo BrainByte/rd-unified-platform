@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Όποτε προστίθενται νέοι Διαγωνισμοί-Κληρώσεις.
+(1) Whenever new  Contests are added.
+
+(2) Όποτε υπάρχουν αλλαγές σε Διαγωνισμούς Κληρώσεις.
+(2) Whenever information regarding Contests, changes.
+
+(3) Κάθε 1η και 15η του εκάστοτε μήνα, κατ' ελάχιστο.
+(3) Minimum, every 1st and 15th of each month.
+
+Σχόλια / Comments:
+(1) Στην έννοια της Επιβράβευσης περιλαμβάνονται και οι διαγωνισμοί – κληρώσεις που διοργανώνονται από τον Κάτοχο, απευθύνονται στους Παίκτες και απονέμουν έπαθλα που συνδέονται με τη διεξαγωγή των Παιγνίων ή/και το κόστος Συμμετοχής.
+
+(1) The concept of Prize includes the contests - draws organized by the Licensee, addressed to the Players and award prizes related to the conduct of the Games and / or the cost of Participation.
+
+    </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Contest_Draw" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="ContestDrawData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="ContestID" type="mstns:ContestID" />
+                                                <xs:element name="ContestName" type="mstns:LongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Όνομα Διαγωνισμού:
+Σύντομη περιγραφή του διαγωνισμού, όπως εμφανίζεται στους ιστοτόπους/ονόματα χώρου του Κατόχου Άδειας (π.χ.: 1000.000€ Μεγάλο Έπαθλο, Κλήρωση Αυτοκινήτου κ.α.)
+
+Name of the Contest:
+The name of the contest, as described in the Licensee's web pages.
+(eg.: 1000.000€ Mega Prize, Car Draw  κ.α..)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ContestStartDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Ημερομηνία Έναρξης Διαγωνισμού:
+Η ημερομηνία και ώρα που ο διαγωνισμός, έγινε διαθέσιμος στους Παίκτες, μέσα από το σύστημα του Κατόχου Άδειας (UTC).
+
+Contest Start Date:
+Date and time the contest became available to the Players, in Licensee's systems (UTC).
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ContestPrizeType">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τύπος Επάθλου:
+                                                    Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                                                    (1) = Χρηματικό Έπαθλο
+                                                    (2) = Είδος/Είδη
+                                                    (3) = Παροχή για Συμμετοχή σε Παίγνιο
+                                                    (4) = Συνδυασμός
+                                                    (0) = Άλλο
+
+                                                    Prize Type:
+                                                    The values are granted by HGC. Allowed values:
+                                                    (1) = Cash Prizes
+                                                    (2) = Item/Items
+                                                    (3) = Prizes that can be used for the participation in Games
+                                                    (4) = Combination
+                                                    (0) = Other
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="0" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="PrizeName" type="mstns:ExtraLongString">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Ονομασία Επάθλου:
+                                                    Αναφέρονται τα έπαθλα του Διαγωνισμού/Κλήρωσης.
+
+                                                    Prize Name:
+                                                    Complete list of Prize names.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ContestCategory" type="mstns:GenericID" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Κατηγοριοποίηση Διαγωνισμών:
+Κατηγοριοποίηση που καθορίζεται από τον Κάτοχο Άδειας, όπως καταγράφεται στα συστήματά του.
+(εάν υφισταται)
+ 
+Contest Categories:
+A categorization of contests, granted by the Licensee.
+(if applicable)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="GivenNumberOfPrizesAsOfDate" type="xs:positiveInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τρέχον Πλήθος Επάθλων Διαγωνισμού:
+Το τρέχον πλήθος των επάθλων που δόθηκαν στους Παίκτες, από τον συγκεκριμένο διαγωνισμό.
+
+Number of Given Prizes (as of date):
+The total number of times that the related contest prize has been given to the Players.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="GivenAmountOfPrizesAsOfDate" type="mstns:MonetaryAmount" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Τρέχον Δοθέν Ποσό Επάθλων Διαγωνισμού:
+Το συνολικό τρέχον ποσό των επάθλων διαγωνισμού που έχει δοθεί στους Παίκτες, από τον συγκεκριμένο διαγωνισμό.
+(εάν υφίσταται)
+
+Given Prize Amount (as of date):
+The total amount (as of date), given to the Players, from the related contest.
+(if applicable)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ContestEndDate" type="mstns:dateTimeUTC" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Ημερομηνία Λήξης Διαγωνισμού:
+Η ημερομηνία και ώρα (UTC) που ο διαγωνισμός, σταμάτησε να είναι διαθέσιμος στους Παίκτες. Από τη στιγμή αυτή το συγκεκριμένο ContestID δεν αποστέλεται ξανά.
+(εάν υφίσταται)
+
+Contest End Date:
+Date and time the contest has ended (UTC). Once a contest end date for a particular contest has been submitted, this is the last time this contest has been reported.
+(if applicable)
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ContestRequirements" type="mstns:LongString" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Απαιτήσεις Διαγωνισμού-Κλήρωσης:
+Σύντομη περιγραφή των απαιτήσεων Διαγωνισμού-Κλήρωσεις, προκειμένου να συμμετέχει κάποιος Παίκτης.
+(εάν υφίσταται)
+
+Competition-Draw Requirements:
+Brief description of the Competition-Draw requirements in order for a Player to participate. 
+(if applicable)
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (exists(ContestEndDate)) then (ContestStartDate le ContestEndDate) else if (not(exists(ContestEndDate))) then exists(ContestStartDate) else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Contest_Draw" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

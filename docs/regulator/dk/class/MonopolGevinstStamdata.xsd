@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder stamdata for Bingospil, Netskrabespil og Fysiske skrabespil.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/TekstKortType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:include schemaLocation="../types/MarkeringType.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:element name="MonopolGevinstStamdataNummer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Nummerering af præmiekategorien. Den højeste gevinst angives som 1, næst-højeste gevinst som 2, osv.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataBeskrivelse" type="fase2.1:TekstKortType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af præmiekategorien.  F.eks. angives for den højeste gevinst 1. præmie, osv. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Gevinstbeløbet en spiller får udbetalt hvis spilleren vinder en gevinst fra den givne præmiekategori.  Monopol: Beløbet angives i netto (dvs. efter gevinstafgift er fratrukket).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataProcent" type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvis beløbet beregnes som procent, angives procenten i dette felt.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataAntal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af gevinster i den givne præmiekategori.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataTeoretiskTilbagebetalingProcent"
+                     type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Danske Spils beregnede teoretiske tilbagebetalingsprocent for et givet spil produkt ved start på salg af produktet. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataPuljespil" type="fase2.1:MarkeringType">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse af om spillet er et puljespil (dvs. multiplayerspil) eller ej (dvs. singleplayerspil). </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataAntalLodder" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal lodder der skal sælges for, at Gevinststrukturen er valid.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataLodPris"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Beløbet det koster at gøre indskud i spillet (købe et lod).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataFørsteSalgsdato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Første dag der kan sælges spil (lodder) af et givet spilprodukt.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataSidsteSalgsdato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Sidste dag der kan sælges spil (lodder) af et givet spilprodukt.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolGevinstStamdataForældelseDato" type="fase2.1:DatoType">
+               
+               <xs:annotation>
+                  <xs:documentation>Sidste dag en spiller kan indløse en gevinst på det givne spilprodukt. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

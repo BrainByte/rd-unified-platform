@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε δύο (2) ώρες κατ' ελάχιστο
+(1) Minimum, every two (2) hours
+
+Σχόλια / Comments:
+(1) Αναφορικά με το διομότιμο (peer to peer) Παίγνιο Πόκερ, το Bad Beat καταγράφεται ως Jackpot.
+(1) Regarding peer to peer Poker Games, the Bad Beat is considered Jackpot.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Jackpot_Winnings" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="JackpotID" type="mstns:JackpotID" />
+                                    <xs:element name="ProfitDistributionLevelID" type="mstns:GenericID">
+                                        <xs:annotation>
+                                            <xs:documentation>Κωδικός Επιπέδου Απονομής Κέρδους:
+Ο κωδικός Επιπέδου Απονομής Κέρδους της Λειτουργίας Jackpot, που αποδίδει ο Κάτοχος Άδειας.
+
+Profit Distribution Level Identifier:
+The identifier of the profit distribution level of the Jackpot, provided by the Licensee.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="JackpotWonDate" type="mstns:dateTimeUTC">
+                                        <xs:annotation>
+                                            <xs:documentation>Ημερομηνία Απόδοσης Ποσού Λειτουργίας Jackpot:
+Η ημερομηνία και ώρα που αποδόθηκε το ποσό της Λειτουργίας Jackpot (UTC).
+
+Jackpot Win Date:
+Date and time the Player won the Jackpot (UTC).</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalJackpotWonAmount" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Ποσό Λειτουργίας Jackpot:
+Το συνολικό ποσό που αποδόθηκε από τη Λειτουργία Jackpot σε έναν ή παραπάνω Παίκτες.
+
+Total Jackpot Wοn Amount:
+The total Jackpot amount won, by one or more Players.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="TotalJackpotRake" type="mstns:MonetaryAmount">
+                                        <xs:annotation>
+                                            <xs:documentation>Ποσό Συνεισφοράς Λειτουργίας Jackpot:
+Το συνολικό ποσό που καταβλήθηκε (jackpot rake) από το σύνολο των Παικτών, για την συγκεκριμένη Λειτουργία Jackpot.
+
+Total Jackpot Rake:
+The total rake amount contributed by the Players for the specific Jackpot.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Currency" type="mstns:Currency" />
+                                    <xs:element name="PlayerData" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="PlayerID" type="mstns:PlayerID" />
+                                                <xs:element name="LogInSessionData" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence>
+                                                            <xs:element name="LogInSessionID" type="mstns:LogInSessionID" />
+                                                            <xs:choice>
+                                                                <xs:element name="PtPGameSessionID" type="mstns:PtPGameSessionID" />
+                                                                <xs:element name="GameSessionID" type="mstns:GameSessionID" />
+                                                                <xs:element name="PokerTournamentID" type="mstns:PokerTournamentID" />
+                                                            </xs:choice>
+                                                            <xs:element name="JackpotPlayerAmount" type="mstns:MonetaryAmount">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Ποσό Λειτουργίας Jackpot, ανά Παίκτη:
+Το ποσό (Jackpot amount) που καταβλήθηκε στον εκάστοτε Παίκτη, από τη συγκεκριμένη Λειτουργία Jackpot.
+
+Jackpot Player Amount:
+The Jackpot amount, each Player won.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Jackpot_Winnings" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

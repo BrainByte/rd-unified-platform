@@ -1,0 +1,345 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Με την ολοκλήρωση του Τουρνουά Πόκερ.
+(1) Whenever a Poker Tournaments ends
+                
+Σχόλια / Comments:
+(1) Αναφορικά με το διομότιμο (peer to peer) Παίγνιο Πόκερ, το Bad Beat καταγράφεται ως Jackpot.
+(1) Regarding peer to peer Poker Games, the Bad Beat is considered Jackpot.
+</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Poker_Tournament_End" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="PokerTournamentData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="PokerTournamentID" type="mstns:PokerTournamentID" />
+                                                <xs:element name="PTEndDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Λήξης Τουρνουά Πόκερ:
+Η ημερομηνία και ώρα λήξης του Τουρνουά Πόκερ στα συστήματα του Κατόχου Άδειας (UTC).
+
+Poker Tournament End Date:
+Date and time Poker Tournament ended in the Licensee's systems (UTC).   </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalNumberPlayers" type="mstns:NumberOfPlayers">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Συμμετεχόντων:
+Το πλήθος συμμετεχόντων στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Number of Participants:
+Number of Poker Tournament participants, cumulative, for all Licensees.                                   </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeNumberPlayers" type="mstns:NumberOfPlayers">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Συμμετεχόντων Κατόχου Άδειας:
+Το πλήθος συμμετεχόντων στο Τουρνουά Πόκερ, του εκάστοτε Κατόχου Άδειας.
+
+Total Number of Participants per Licensee:
+Number of Poker Tournament Participants, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalLicenseeNumberPlayersWon" type="mstns:NumberOfPlayers">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                        Πλήθος Παικτών στους οποίους αποδόθηκαν κέρδη:
+                                                        Tο πλήθος των Παικτών στους οποίους αποδόθηκαν κέρδη.
+                                                        
+                                                        Total Number of Winning Players :
+                                                        The total number of Players that won Poker Tournament prizes.
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PlayersPerCountryOperator" maxOccurs="unbounded">
+                                                    <xs:complexType>
+                                                        <xs:sequence maxOccurs="unbounded">
+                                                            <xs:element name="PTCountry" type="mstns:CountryCode">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κωδικός χώρας:
+Ο μοναδικός κωδικός χώρας βάσει ISO 3166. Ο αριθμός παικτών (PTPlayersNumber) καταγράφεται ανά χώρα και Κάτοχο Άδειας.
+
+Poker Tournament country code: 
+The unique ISO 3166 country code. The number of Players (PTPlayersNumber) is by country and Licensee.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PTOperatorID" type="mstns:GenericID">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Κωδικός αδειοδότησης Κατόχου Άδειας στη χώρα αδειοδότησης:
+Ο μοναδικός κωδικός αδειοδότησης του Κατόχου Άδειας στη χώρα που έχει αδειοδοτηθεί. Ο αριθμός παικτών (PTPlayersNumber) καταγράφεται ανά χώρα και Κάτοχο Άδειας.
+
+Licensee License Code in Licensing Country:
+The Licensee's unique license code in the licensed country. The number of Players (PTPlayersNumber) is by country and Licensee.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                            <xs:element name="PTPlayersNumber" type="mstns:NumberOfPlayers" minOccurs="0">
+                                                                <xs:annotation>
+                                                                    <xs:documentation>Αριθμός παικτών:
+Ο αριθμός παικτών που συμμετείχαν στο Τουρνουά Πόκερ, ανά χώρα και Κάτοχο Άδειας.
+
+Number of players:
+The number of Players participated in the Poker Tournament, reported by country and Licensee.</xs:documentation>
+                                                                </xs:annotation>
+                                                            </xs:element>
+                                                        </xs:sequence>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountEntryStake" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Entry Stake:
+Το συνολικό ποσό Entry Stake στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Entry Stake:
+The total amount of the Entry Stake in the Poker Tournament, cumulative, for all Licensees.
+                                                        </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountEntryStake" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Entry Stake Κατόχου Άδειας:
+Το συνολικό ποσό Entry Stake στο Τουρνουά Πόκερ, του Κατόχου Άδειας.
+
+Total Amount of Licensee's Entry Stake:
+The total amount of Entry Stake in the Poker Tournament, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountEntryFee" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Entry Fee:
+Το συνολικό ποσό Entry Fee στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Entry Fee:
+The total amount of Entry Fee in the Poker Tournament, cumulative, for all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountEntryFee" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Entry Fee Κατόχου Άδειας:
+Το συνολικό ποσό Entry Fee στο Τουρνουά Πόκερ, του Κατόχου Άδειας.
+
+Total Amount of Licensee's Entry Fee:
+The total amount of Entry Fee in the Poker Tournament, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountBuyinsAddonsRebuys" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Buyins/Add-ons/Rebuys:
+Το συνολικό ποσό Buyins/Add-ons/Rebuys στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Buyins/Add-ons/Rebuys:
+The total amount of Buyins/Add-ons/Rebuys in the Poker Tournament, cumulative, for all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountBuyinsAddonsRebuys" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Buyins/Add-ons/Rebuys Κατόχου Άδειας:
+Το συνολικό ποσό Buyins/Add-ons/Rebuys στο Τουρνουά Πόκερ, του Κατόχου Άδειας (συμπεριλαμβάνεται το ποσό προμήθειας).
+
+Licensee's Total Amount of Buyins/Add-ons/Rebuys:
+The total amount of Buyins/Add-ons/Rebuys in the Poker Tournament, for the Licensee reporting the data (fees included).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountBuyinsAddonsRebuysFees" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Προμήθειας Buyins/Add-ons/Rebuys:
+Το συνολικό ποσό προμήθειας για Buyins/Add-ons/Rebuys στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Buyins/Add-ons/Rebuys Fees:
+The total amount of Buyins/Add-ons/Rebuys in the Poker Tournament, cumulative, for all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountBuyinsAddonsRebuysFees" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Προμήθειας Buyins/Add-ons/Rebuys Κατόχου Άδειας:
+Το συνολικό ποσό προμήθειας για Buyins/Add-ons/Rebuys στο Τουρνουά Πόκερ, του Κατόχου Άδειας.
+
+Total Amount of Licensee's Buyins/Add-ons/Rebuys Fees:
+The total amount of the Licensee's Buyins/Add-ons/Rebuys Fees in the Poker Tournament, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalNumberJackpot" type="xs:nonNegativeInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Λειτουργιών Jackpot:
+Το πλήθος Λειτουργιών Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, σε Παίκτες ανεξαρτήτως Κατόχου Άδειας.
+
+Total Number of Jackpot:
+The total number of Jackpot (Bad Beat jackpot) in the Poker Tournament, for players, cumulative, for all Licensees.                                                          </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalNumberJackpot" type="xs:nonNegativeInteger">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πλήθος Λειτουργιών Jackpot Κατόχου Άδειας:
+Το πλήθος Λειτουργιών Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, σε Παίκτες του Κατόχου Άδειας.
+
+Licensee's Total Number of Jackpot:
+Licensee's total number of Jackpot (Bad Beat jackpot) in the Poker Tournament, for players, for the Licensee reporting the data.                     </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountJackpot" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Λειτουργιών Jackpot:
+Το συνολικό ποσό Λειτουργιών Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, σε Παίκτες ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Jackpot:
+The total amount of Jackpot (Bad Beat jackpot) in the Poker Tournament, for players, cumulative, for all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountJackpot" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Λειτουργιών Jackpot Κατόχου Άδειας:
+Το συνολικό ποσό Λειτουργιών Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, σε Παίκτες του Κατόχου Άδειας.
+
+Licensee's Total Amount of Jackpot:
+The total amount of Jackpot (Bad Beat jackpot) in the Poker Tournament, for players, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="TotalAmountJackpotRake" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Συνεισφοράς Λειτουργιών Jackpot:
+Το συνολικό ποσό συνεισφοράς (rake) όλων των Κατόχων Άδειας για Λειτουργίες Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Total Amount of Jackpot Rake:
+The total amount of Jackpot rake (Bad Beat jackpot) in the Poker Tournament, for players, cumulative, for all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountJackpotRake" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Ποσό Συνεισφοράς Λειτουργιών Jackpot Κατόχου Άδειας:
+Το συνολικό ποσό συνεισφοράς (rake) για Λειτουργίες Jackpot (Bad Beat jackpot) στο Τουρνουά Πόκερ, του Κατόχου Άδειας.
+
+Licensee's Total Amount of Jackpot Rake:
+Licensee's total amount of Jackpot rake (Bad Beat jackpot) Fees in the Poker Tournament, for the Licensee reporting the data.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountRedeemableRakeBackBonus" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Συνολικό Ποσό Προμήθειας Rake Back Κατόχου Άδειας (Άμεσα Αναλήψιμες Επιβραβεύσεις):
+Το συνολικό ποσό επιστροφής (rake back amount) στο Τουρνουά Πόκερ ή οποιαδήποτε άλλη άμεσα αναλήψιμη επιβράβευση, του Κατόχου Άδειας.
+
+Licensee's Total Amount of Rake Back (Redeemable Bonus):
+The total return amount of rake (rake back amount) in the Poker Tournament or any other redeemable bonus amount given to players, for the Licensee reporting the data.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeTotalAmountNonRedeemableBonusWagered" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>
+                                                    Συνολικό Ποσό Μη Άμεσα Αναλήψιμων Επιβραβεύσεων Παικτών:
+Το συνολικό ποσό επιβραβεύσεων που δεν είναι άμεσα αναλήψιμες (non redeemable bonus amount) που πονταρίστηκε από τους Παίκτες του Κατόχου Άδειας, κατά τη διάρκεια του Τουρνουά Πόκερ.
+
+Total Non Redeemable Bonus Amount:
+The total non redeemable bonus amount wagered by the Players, during Poker Tournament, for the Licensee reporting the data.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PrizePool" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ποσό Επάθλων:
+Το συνολικό ποσό επάθλων (buyin, rebuy, addon και κάθε ποσό που συμμετέχει στο prize pool) που δόθηκαν στους Παίκτες στο Τουρνουά Πόκερ, ανεξαρτήτως Κατόχου Άδειας.
+
+Prize Pool:
+The total amount of prizes (buyin, rebuy, addon and any amount added to the prize pool) paid out at the end of the Poker Tournament to players of all Licensees.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseePrizePool" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ποσό Επάθλων Κατόχου Άδειας:
+Το συνολικό ποσό επάθλων (buyin, rebuy, addon και κάθε ποσό που συμμετέχει στο prize pool) που δόθηκαν στους Παίκτες στο Τουρνουά Πόκερ, του Κατόχου Άδειας.
+
+Licensee's Prize Pool:
+The total amount of prizes (buyin, rebuy, addon and any amount added to the prize pool) paid out at the end of the Poker Tournament to Licensee's players.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="ExtraFundsPrizePool" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πρόσθετο Ποσό Επάθλων:
+Το σύνολο των πρόσθετων ποσών στο Τουρνουά Πόκερ, που καταβάλλονται από το σύνολο των Κατόχων Άδειας, για να καλυφθεί το χρηματικό ποσό του επάθλου (στην περίπτωση που το χρηματικό ποσό επάθλου είναι προσυμφωνημένο από τους Κατόχους Άδειας και δεν εξαρτάται από το ύψος των Buyins, Add-ons και Rebuys).
+
+Amount of Extra Prizes:
+The total amount of all additional poker tournament payouts, paid by all Licensees to cover the prize amount (in case the prize money is pre-agreed by the Licensees and does not depend on the amount of Buyins, Add-ons and Rebuys).
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenceeExtraFundsPrizePool" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Πρόσθετο Ποσό Επάθλων Κατόχου Άδειας:
+Το σύνολο των πρόσθετων ποσών στο Τουρνουά Πόκερ, που καταβάλλονται από τον εκάστοτε Κάτοχο Άδειας, για να καλυφθεί το χρηματικό ποσό του επάθλου (στην περίπτωση που το χρηματικό ποσό επάθλου είναι προσυμφωνημένο από τους Κατόχους Άδειας και δεν εξαρτάται από το ύψος των Buyins, Add-ons και Rebuys).
+
+Amount of Licensee's Extra Funds Prize Pool:
+The total amount of all additional poker tournament payouts, paid by the Licensee reporting the data, to cover the prize amount (in case the prize money is pre-agreed by the Licensees and does not depend on the amount of Buyins, Add-ons and Rebuys).
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenseeNetAmountWon" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Συνολικό Καθαρό Κερδηθέν Ποσό:                                                    
+Το συνολικό καθαρό ποσό που κερδήθηκε από τους Παίκτες του Κατόχου Άδειας στο Τουρνουά Πόκερ.
+
+Total Net Amount Won:
+The total net amount won by the Licensee's Players, in the Poker Tournament.
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="LicenceeWithholdingTax" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Παρακρατούμενος Φόρος:
+Το συνολικό ποσό του Παρακρατούμενου Φόρου Παικτών του Κατόχου Άδειας, στο Τουρνουά Πόκερ.
+
+Withholding Tax:
+The total amount of withholding tax of Licensee's Players, in the Poker Tournament.
+</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="LicenseeIncompleteTransactionsTotalNumber" type="xs:nonNegativeInteger">
+                                        <xs:annotation>
+                                            <xs:documentation>Πλήθος Ημιτελών Συναλλαγών:
+Το πλήθος των ημιτελών συναλλαγών των Παικτών του Κατόχου Άδειας, σε ένα Τουρνουά Πόκερ.
+
+Incomplete Transactions Total Number:
+Total number of incomplete poker tournament transactions, of Licensee's Players.
+</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="Currency" type="mstns:Currency" />
+                                    <xs:element name="JackpotID" type="mstns:JackpotID" minOccurs="0" maxOccurs="unbounded" />
+                                    <xs:element name="DomainName" type="mstns:DomainName" />
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Poker_Tournament_End" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Generelle oplysninger omkring en tilladelsesindehaver spil produkt. Dette er tilladelsesindehaveren egen navngivning af et spilprodukt.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/TekstKortType.xsd"/>
+         <xs:include schemaLocation="../types/Tal1Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:element name="SpilProduktNavn" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Tilladelsesindehavers navn på spilproduktet, f.eks. Tips13. Skal være undergrupperinger under Spillemyndighedens overordnede grupper specificeret i SpilKategoriNavn. Det er op til Tilladelsesindehaver at angive en logisk navngivning. Navngivningen skal gerne kunne genfindes i Tilladelsesindehavers spilsystem og skal være human-readable.   Denne værdi rapporteres ikke for fastodds spil.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilProduktIdentifikation" type="fase2.1:TekstKortType">
+               
+               <xs:annotation>
+                  <xs:documentation>En Tilladelsesindehavers SpilProduktNavn kan yderligere være opdelt i undergrupper. Kan f.eks. være SpilTypeNavn + dato såfremt spillet maksimalt gennemføres én gang om dagen.   Elementet binder start, transaktion og slutstrukturer sammen for PokerTurnering og Managerspil.  Elementet bindes start, transaktion, end-of-game og slutstrukturer sammen for Puljespil. Elementet rapporteres kun for disse tre spil kategorier. Elementet skal derfor være unikt for hver PokerTurnering, Puljespil og Managerspil.   Eksempelvis kan SpilProduktNavn = Tips13, og SpilProduktIdentifikation = Tips13-uge10.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilProduktÅbentNetværk" type="fase2.1:Tal1Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Angivelse om der spilles på et åbent netværk, dvs. flere udbyderes spillere deltager i turneringen eller cash game. 1 for åbent netværk, 0 for lukket netværk.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="SpilProduktFaktiskSlutDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Faktisk sluttidspunkt for spillet. (UTC)</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

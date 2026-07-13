@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:include schemaLocation="../types/MonopolSpilKategoriNavnType.xsd"/>
+         <xs:include schemaLocation="../types/DatoType.xsd"/>
+         <xs:element name="MonopolSpilKategoriNavn" type="fase2.1:MonopolSpilKategoriNavnType">
+               
+               <xs:annotation>
+                  <xs:documentation>Beskrivelse af hvilken overordnet slags spil der er tale om.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="MonopolSpilKategoriStartDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+         <xs:element name="MonopolSpilKategoriSlutDato" type="fase2.1:DatoType">
+               
+            </xs:element>
+      </xs:schema>

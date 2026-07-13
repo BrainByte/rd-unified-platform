@@ -1,0 +1,180 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation=".\CommonElements.xsd" />
+    <xs:element name="Batch">
+        <xs:annotation>
+            <xs:documentation>Συχνότητα καταγραφής στο SAFE / Frequency:
+(1) Κάθε 1η και 15η του εκάστοτε μήνα, κατ' ελάχιστο.
+(1) Minimum, every 1st and 15th of each month.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="BatchHeader" type="mstns:BatchHeader" />
+                <xs:element name="Online_Affiliate_Account_Transaction" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="RecordID" type="mstns:RecordID" />
+                            <xs:choice>
+                                <xs:element name="CancelledRecordData">
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="CancelledRecordID" type="mstns:RecordID" />
+                                            <xs:element name="CancelledRecordDate" type="mstns:dateTimeUTC" />
+                                            <xs:element name="CancelledRecordReason" type="mstns:LongString" />
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:sequence>
+                                    <xs:element name="ReplacedRecordID" type="mstns:RecordID" minOccurs="0" />
+                                    <xs:element name="AffiliateTransactionData">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="AffiliateID" type="mstns:CollapsedGenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Συνεργάτη:
+Ο μοναδικός κωδικός Συνεργάτη, τον οποίο αποδίδει η Ε.Ε.Ε.Π.. 
+
+Affiliate Identifier:
+The unique identifier of the affiliate, granted by HGC.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PaymentID" type="mstns:GenericID">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Πληρωμής:
+Ο μοναδικός κωδικός πληρωμής Συνεργάτη όπως καταγράφεται στα συστήματα του Κατόχου Άδειας. 
+
+Payment Identifier:
+The unique Payment identifier of a payment to the Affiliate, as recorded in Licensee's systems.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PaymentAmount" type="mstns:MonetaryAmount">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ποσό Πληρωμής Συνεργάτη:
+Το ποσό της εκάστοτε πληρωμής ποσού σε Συνεργάτη.
+
+Payment Amount:
+The amount of each payment to the Affiliate, in Licensee's system.</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PaymentDate" type="mstns:dateTimeUTC">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Ημερομηνία Πληρωμής Συνεργάτη:
+Η ημερομηνία του εντάλματος πληρωμής προς τον Συνεργάτη (UTC).
+
+Payment Date:
+Date of the payment order to the Affiliate (UTC).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="PaymentCurrency" type="mstns:Currency">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Νόμισμα Πληρωμής Συνεργάτη:
+Ο τριψήφιος ISO (ISO 4217) κωδικός του νομίσματος του εντάλματος πληρωμής Συνεργάτη (πχ EUR).
+
+Affiliate's Payment Currency:
+The three digit ISO code (ISO 4217) of the currency of the Affiliate's payment order (e.g. EUR).</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="AffiliateMeanOfPayments" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Μέσο Πληρωμών Συνεργάτη:
+Το Μέσο Πληρωμών που χρησιμοποιείται από τον Συνεργάτη, για να δεχθεί πληρωμές από τον Κάτοχο Άδειας. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π..
+Επιτρεπόμενες Τιμές:
+(1) = Χρεωστική Κάρτα
+(2) = Πιστωτική Κάρτα
+(3) = Επιταγή
+(4) = Τραπεζικός Λογαριασμός
+(5) = Ηλεκτρονικό Πορτοφόλι
+(6) = Προπληρωμένo Κουπόνι
+(0) = Άλλο  
+(εάν υφίσταται)
+
+Mean οf Payments:
+The Mean of Payments used by the Affiliate, in order to receive payments from the Licensee. Values are granted by HGC. Allowed values:
+(1) = Debit Card
+(2) = Credit Card
+(3) = Checks
+(4) = Bank Transfers
+(5) = eWallets
+(6) = Prepaid Vouchers
+(0) = Other
+(if applicable)
+</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:nonNegativeInteger">
+                                                            <xs:enumeration value="0" />
+                                                            <xs:enumeration value="1" />
+                                                            <xs:enumeration value="2" />
+                                                            <xs:enumeration value="3" />
+                                                            <xs:enumeration value="4" />
+                                                            <xs:enumeration value="5" />
+                                                            <xs:enumeration value="6" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AffiliateMeanOfPaymentProviderName" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Όνομα Παρόχου Υπηρεσιών Πληρωμών Συνεργάτη:
+Η ονομασία του Παρόχου Υπηρεσιών Πληρωμών που χρησιμοποιείται από τον Συνεργάτη, για να δεχθεί πληρωμές από τον Κάτοχο Άδειας. Να χρησιμοποιηθεί η ονομασία που έχει καταχωρηθεί στην Τράπεζα της Ελλάδος. Κεφαλαίοι χαρακτήρες.
+(εάν υφίσταται)
+                                                    
+Affiliate's Payment Service Provider Name:
+The name of the Payment Service Provider used by the Affiliate, in order to receive payments from the Licensee. The name registered in the Bank of Greece must be used. Capital letters.
+(if applicable)                                 
+                                                
+                                                </xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:maxLength value="100" />
+                                                            <xs:minLength value="1" />
+                                                            <xs:pattern value="[\p{Lu} \.'\-]+" />
+                                                            <xs:whiteSpace value="collapse" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AffiliatePaymentServiceProviderCode" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Κωδικός Παρόχου Υπηρεσιών Πληρωμών Παίκτη:
+Ο κωδικός του Παρόχου Υπηρεσιών Πληρωμών που χρησιμοποιείται από  τον Συνεργάτη, για να δεχθεί πληρωμές από τον Κάτοχο Άδειας. Να χρησιμοποιηθεί ο 11ψήφιος αριθμός BIC.
+(εάν υφίσταται)
+                                                    
+Affiliate's Payment Service Provider Code:
+The BIC code of the Payment Service Provider usedby the Affiliate, in order to receive payments from the Licensee.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                            <xs:pattern value="[A-Z]{6,6}[A-Z2-9][A-NP-Z0-9]([A-Z0-9]{3,3}){0,1}" />
+                                                        </xs:restriction>
+                                                    </xs:simpleType>
+                                                </xs:element>
+                                                <xs:element name="AffiliateMeanOfPaymentAccountNumber" type="mstns:GenericID" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Λογαριασμός Συνεργάτη στο Μέσο Πληρωμής:
+Ο μοναδικός αριθμός λογαριασμού στο Μέσο Πληρωμών που χρησιμοποιείται από τον Συνεργάτη, για να δεχθεί πληρωμές από τον Κάτοχο Άδειας.
+(εάν υφίσταται)
+
+Affiliate's Mean of Payments Account Number:
+The unique account number of the Mean of Payments used by the Affiliate, in order to receive payments from the Licensee.
+(if applicable)</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:assert test="if (exists(AffiliateMeanOfPayments)) then exists(AffiliateMeanOfPaymentProviderName) else if (not(exists(AffiliateMeanOfPayments))) then (not(exists(AffiliateMeanOfPaymentProviderName)) and not(exists(AffiliatePaymentServiceProviderCode)) and not(exists(AffiliateMeanOfPaymentAccountNumber))) else false()" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:choice>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+        <xs:unique name="UniqueRecord">
+            <xs:selector xpath="mstns:Online_Affiliate_Account_Transaction" />
+            <xs:field xpath="mstns:RecordID" />
+        </xs:unique>
+    </xs:element>
+</xs:schema>

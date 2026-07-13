@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<!--
+    111111111111111111111111
+    111111111100111111111111
+    111111110011101011111111
+    111110001110000001110111
+    111000001110000001000111
+    111110000000000010011111
+    111111000000000110011111
+    111100100000001110001111
+    111110000010000111001111
+    111100011111100001101111
+    111001110000000000001111
+    111111110001100000111111
+    111110000001100110000111
+    111101010111111000001111
+    111111111111111010111111
+    111111111111111111111111
+-->
+<!-- Version 1.11 Authorized for public release -->
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="include_v1.11.xsd"/>
+    <xs:element name="Root">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element maxOccurs="512" minOccurs="1" name="WOK_Intervention_v1.11">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <!-- general -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Record_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Extraction_Date" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Operator_ID" type="stringMedium"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Data_Safe_ID" type="stringMedium"/>
+							<!-- if this is a replacement record: in Replaced_Record_ID, fill in the ID of the record it replaces -->
+							<xs:element maxOccurs="1" minOccurs="0" name="Replaced_Record_ID" type="UID"/>
+                            <!-- specific -->
+                            <xs:element maxOccurs="1" minOccurs="1" name="Player_Profile_ID" type="stringMedium"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Intervention_ID" type="UID"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Intervention_Begin_Datetime" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="0" name="Intervention_End_Datetime" type="dateTimeUTC"/>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Intervention_Type">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="CONVERSATION_V_INFORM"/>
+                                        <xs:enumeration value="CONVERSATION_V_ANNOUNCE"/>
+                                        <xs:enumeration value="CONVERSATION_T_INFORM"/>
+                                        <xs:enumeration value="CONVERSATION_T_ANNOUNCE"/>
+                                        <xs:enumeration value="SET_FLAG"/>
+                                        <xs:enumeration value="SET_LIMIT"/>
+                                        <xs:enumeration value="EXCLUDE"/>
+                                        <xs:enumeration value="INVESTIGATION_FINANCIAL_CONSEQUENCE"/>										
+                                        <xs:enumeration value="OTHER"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Intervention_Cause">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="FRAUD"/>
+                                        <xs:enumeration value="SOCIAL"/>
+                                        <xs:enumeration value="PROBLEM_GAMBLING"/>
+                                        <xs:enumeration value="NET_DEPOSIT_THRESHOLD"/>										
+                                        <xs:enumeration value="HIGH_DEPOSIT_LIMIT"/>										
+                                        <xs:enumeration value="OTHER"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element maxOccurs="1" minOccurs="1" name="Intervention_Owner" type="stringMedium"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

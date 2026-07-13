@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>En jackpot er et ekstraspil, der deltages i ved deltagelse i andre spil. Man kan kun vinde jackpotten ved, at deltage i et andet spil.  Eksempel: Jackpot kan for eksempel være Bad beat jackpotten i poker. Visse borde har en på forhånd bestemt hånd, der giver adgang til en jackpot. Har du en hånd svarende til eller bedre end denne og taber spillet, vinder du jackpotten.  Jackpot kendes også fra slot-maskiner, hvor der kan være en fælles jackpotpulje som kan vindes på et antal slotmaskiner og hvor en del af indskuddet på hver slotmaskine går ind i jackpotpuljen. Jackpotten kan vindes på slotmaskiner hos tilladelsesindehaver samt evt. andre spiludbydere, hvis tilladelsesindehaver er med i et netværk.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:element name="JackpotIdentifikation" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Unik identifikation af jackpotten.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="JackpotGevinst" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Del af jackpot en given spiller vinder.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="JackpotTotalGevinst" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Samlet gevinst af jackpotten, der er vundet af én eller flere spillere.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="JackpotDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Dato og tid for udløsning af jackpotten. (UTC)</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="JackpotKommissionRake"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Del af jackpot som tilladelsesindehaver har taget i kommission eller rake. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

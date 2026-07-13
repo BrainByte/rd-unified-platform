@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>I Puljespil afhænger størrelsen af en spillers gevinster af, hvad der er spillet for i alt samt hvad de andre spillere har spillet på. I puljespillet konkurrerer spillerne om den samlede pulje af indsatser eller en på forhånd fastsat gevinstgaranti.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/ProcentType.xsd"/>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/Tal2Type.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:include schemaLocation="../types/TekstLangType.xsd"/>
+         <xs:element name="PuljespilGevinstPuljeProcent" type="fase2.1:ProcentType">
+               
+               <xs:annotation>
+                  <xs:documentation>Hvor mange procent af det totale indskud vil blive udbetalt, som gevinster.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilAntalResultatPuljer" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af resultatpuljer.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilAntalKampe" type="fase2.1:Tal2Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af kampe der der skal spilles på for, at have dannet en række i puljespillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilRækkePris" type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Pris på at spille på én række i puljespillet.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilAntalRækkerTillIndh" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antallet af samtlige spillede rækker hos tilladelsesindehaver.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilAntalRækkerTotal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Antal rækker der er spillet i alt inkl. rækker fra andre spiludbydere der samarbejdes med.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilEndOfGameDatoTid" type="fase2.1:DatoTidType">
+               
+               <xs:annotation>
+                  <xs:documentation>Dato og tid for lukning af mulighed for at spille og annullere spil. (UTC)</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilIndskudSpilTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Indskuddets totale størrelse for alle spil spillet hos tilladelseshaver.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilIndskudSpilTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Ved samarbejde med anden spiludbyder oplyses puljespillets samlede indskud for alle deltagere til spillet (ikke jackpot).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilIndskudJackpotTillIndh"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Totale indskud til jackpot for tilladelsesindehaveren. </xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilIndskudJackpotTotal"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Total indskud til jackpot for alle tilladelsesindehavere i netværket.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilGevinstPuljeBeløb"
+                     type="fase2.1:BeløbPositivNegativ10Decimaler10Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Samlede beløb der er i gevinstpuljen (inkl. indskud).</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="PuljespilVinderRække" type="fase2.1:TekstLangType">
+               
+               <xs:annotation>
+                  <xs:documentation>Den udtrukkede række skal angives på den generelle form i en liste med komma imellem hver kamp i rækken, f.eks. 1,12,2,8</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+   <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+               xmlns:xs="http://www.w3.org/2001/XMLSchema"
+               targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+               elementFormDefault="qualified"
+               attributeFormDefault="unqualified"
+               version="1.0">
+
+         <xs:annotation>
+               <xs:documentation>
+                  Begivenhedsinformation i forbindelse med væddemål. Træder i kraft den 01. Januar 2025.
+               </xs:documentation>
+         </xs:annotation>
+
+         <xs:include schemaLocation="../types/TekstKortType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:include schemaLocation="../types/Tekst30Type.xsd"/>
+         <xs:include schemaLocation="../types/DatoTidType.xsd"/>
+         <xs:include schemaLocation="../types/BeloebPositivNegativ10Decimaler10Type.xsd"/>
+
+         <xs:element name="Begivenhedsnavn" type="fase2.1:TekstKortType">
+               <xs:annotation>
+                  <xs:documentation>
+                     Et sigende navn til begivenhed.
+                     Dette kan fx. være den enkelte fodboldkamp eller turnering
+                  </xs:documentation>
+               </xs:annotation>
+         </xs:element>
+
+         <xs:element name="ForventetStarttidspunkt" type = "fase2.1:DatoTidType">
+            <xs:annotation>
+               <xs:documentation>
+                  Dato og tid for den forventede start (med tidszone)
+               </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+
+         <xs:element name="BegivenhedsIdentifikation" type = "fase2.1:Tekst45Type">
+            <xs:annotation>
+               <xs:documentation>
+                  ID for begivenheden.
+                  Hvis odds leveres af en leverandør, anbefales, at leverandørs ID bruges.
+                  Såfremt to leverandører leverer odds til samme begivenhed, er det tilladt, at der anvendes forskellige ID'er.
+               </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+
+         <xs:element name="Udfaldsnavn" type = "fase2.1:TekstKortType">
+            <xs:annotation>
+               <xs:documentation>
+                  Et sigende navn til udfald der fx kan være "3-1" eller "rødt kort til Ipswich Town".
+                  Information om begivenheden skal ikke gentages
+               </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+
+         <xs:element name="Udfaldsidentifikation" type = "fase2.1:Tekst45Type">
+            <xs:annotation>
+               <xs:documentation>
+                  ID for udfald.
+                  Hvis odds leveres af
+                  en leverandør, anbefales at leverandørs ID bruges.
+                  Såfremt flere leverandører leverer odds til samme begivenhed, er det tilladt, at der anvendes flere forskellige ID'er.
+               </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+
+         <xs:element name="Begivenhedsodds" type = "fase2.1:BeløbPositivNegativ10Decimaler10Type">
+            <xs:annotation>
+               <xs:documentation>
+                  Odds for denne del af det samlede væddemål - som hvis det var spillet som en single.
+                  Hvis odds er ukendt (fx fordi såkaldt "starting price" anvendes) på tidspunktet for væddemålets indgåelse, udelades dette element.
+               </xs:documentation>
+            </xs:annotation>
+         </xs:element>
+   </xs:schema>

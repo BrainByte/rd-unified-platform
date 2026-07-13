@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/" elementFormDefault="qualified" attributeFormDefault="unqualified" version="1.0">
+	<xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+	<xs:include schemaLocation="../types/TalHelType.xsd"/>
+	<xs:include schemaLocation="../types/TekstKortType.xsd"/>
+	<xs:include schemaLocation="../types/DatoTidType.xsd"/>
+	<xs:include schemaLocation="../types/Tal1Type.xsd"/>
+	<xs:element name="HestDKSpilProduktNavn" type="fase2.1:Tekst45Type">
+		<xs:annotation>
+			<xs:documentation>Tilladelsesindehavers navn på spilproduktet, f.eks. Lotto. Skal være undergrupperinger under Spillemyndighedens overordnede grupper specificeret i HestDKSpilKategoriNavn. Det er op til Tilladelsesindehaver at angive en logisk navngivning. Navngivningen skal gerne kunne genfindes i Tilladelsesindehavers spilsystem og skal være human-readable.  Bingo/Netskrab: Skal være på følgende niveau: GuldBingo, Stjernedrys, Classic, Octo, Mega, Dobbletbogstavjagt, etc.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HestDKSpilProduktNummer" type="fase2.1:TalHelType">
+		<xs:annotation>
+			<xs:documentation>Tilladelsesindehavers nummer på spilproduktet.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HestDKSpilProduktFaktiskSlutDatoTid" type="fase2.1:DatoTidType">
+		<xs:annotation>
+			<xs:documentation>Faktisk sluttidspunkt for spillet. (UTC)   For fysisk skrab angives tidspunktet for generering af slutstrukturen.  For talspil angives tidspunktet for godkendelse af prognosen.</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+	<xs:element name="HestDKSpilProduktÅbentNetværk" type="fase2.1:Tal1Type">
+		<xs:annotation>
+			<xs:documentation>Angivelse om der spilles på et åbent netværk, dvs. flere udbyderes spillere deltager i spillet. 0 for lukket netværk, 1 for åbent netværk, 2 for internationale spil med samarbejdsaftaler (fx. onsdagslotto og eurojackpot).</xs:documentation>
+		</xs:annotation>
+	</xs:element>
+</xs:schema>

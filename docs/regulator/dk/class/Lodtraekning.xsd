@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+      <xs:schema xmlns:fase2.1="http://skat.dk/begrebsmodel/2009/01/15/"
+                 xmlns:xs="http://www.w3.org/2001/XMLSchema"
+                 targetNamespace="http://skat.dk/begrebsmodel/2009/01/15/"
+                 elementFormDefault="qualified"
+                 attributeFormDefault="unqualified"
+                 version="1.0">
+         <xs:annotation>
+               <xs:documentation>Klassen indeholder oplysninger om Lodtrækninger.</xs:documentation>
+            </xs:annotation>
+         <xs:include schemaLocation="../types/TalHelType.xsd"/>
+         <xs:include schemaLocation="../types/Tekst45Type.xsd"/>
+         <xs:element name="LodtrækningSekvensTal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Indeks i kandidatlisten. Sorteringsrækkefølge - den ældste skal have indeks nr. 1.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="LodtrækningVinderTal" type="fase2.1:TalHelType">
+               
+               <xs:annotation>
+                  <xs:documentation>Vinderinformation skal hentes fra WEF og Trækningsresultat skal hentes fra Truegenlog.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+         <xs:element name="LodtrækningAnsvarlig" type="fase2.1:Tekst45Type">
+               
+               <xs:annotation>
+                  <xs:documentation>Initialer på den der var ansvarlig for Lodtrækningen.</xs:documentation>
+               </xs:annotation>
+            </xs:element>
+      </xs:schema>

@@ -1,0 +1,397 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio 2021 (https://www.liquid-technologies.com)-->
+<xs:schema xmlns:vc="http://www.w3.org/2007/XMLSchema-versioning" xmlns:mstns="https://www.gamingcommission.gov.gr" elementFormDefault="qualified" targetNamespace="https://www.gamingcommission.gov.gr" version="1.0" xpathDefaultNamespace="https://www.gamingcommission.gov.gr" vc:minVersion="1.1" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:complexType name="BatchHeader">
+        <xs:sequence>
+            <xs:element name="FileID" type="mstns:FileID" />
+            <xs:element name="LicenseeID" type="mstns:LicenseeID" />
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="dateTimeUTC">
+        <xs:restriction base="xs:dateTime">
+            <xs:pattern value="(19|2).+Z" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="NumberOfPlayers">
+        <xs:restriction base="xs:integer">
+            <xs:minInclusive value="0" />
+            <xs:maxInclusive value="9999999" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="FileID">
+        <xs:annotation>
+            <xs:documentation>Κωδικός Αρχείου XML:
+Ο μοναδικός κωδικός αρχείου XML που εγγράφεται στο SAFE και τον οποίο αποδίδει ο Κάτοχος Άδειας και είναι ίδιος με τον Αύξοντα Αριθμό Πακέτου Δεδομένων των τεχνικών προδιαγραφών.
+
+XML File Identifier:
+Unique identifier of the XML file that is registered in the SAFE and is granted by the Licensee. It is the same number as the sequence number of the data batch described in the technical specifications document.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:positiveInteger">
+            <xs:totalDigits value="40" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LicenseeID">
+        <xs:annotation>
+            <xs:documentation>Κωδικός Παρόχου: 
+Ο μοναδικός κωδικός Κατόχου Άδειας, τον οποίο αποδίδει η Ε.Ε.Ε.Π.: (Ελληνικό Α.Φ.Μ. του Κατόχου Άδειας).
+Έχει την μορφή elXXXXXXXXX όπου Χ αριθμοί από το 0 έως το 9.
+
+Licensee Identifier:
+Unique identifier of Licensee, granted by HGC.: (Greek V.A.T. number of Licensee).
+The structure of the identifier is elXXXXXXXXX where Χ are numbers from 0 to 9</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(el){1}[0-9]{9}" />
+            <xs:whiteSpace value="collapse" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LongString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="200" />
+            <xs:whiteSpace value="collapse" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="LongStringPreserve">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="255" />
+            <xs:whiteSpace value="preserve" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ExtraLongString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="1000" />
+            <xs:whiteSpace value="collapse" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ExtraSmallString">
+        <xs:restriction base="xs:string">
+            <xs:minLength value="1" />
+            <xs:maxLength value="40" />
+            <xs:whiteSpace value="collapse" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="GenericID">
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="preserve" />
+            <xs:minLength value="1" />
+            <xs:maxLength value="40" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CollapsedGenericID">
+        <xs:restriction base="xs:string">
+            <xs:whiteSpace value="collapse" />
+            <xs:minLength value="1" />
+            <xs:maxLength value="40" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="RecordID">
+        <xs:annotation>
+            <xs:documentation>Κωδικός Εγγραφής XML:
+Ο μοναδικός κωδικός της XML εγγραφής που εγγράφεται στο SAFE και τον οποίο αποδίδει ο Κάτοχος Άδειας. Να γίνει χρήση Universally Unique Identifier (UUID).
+
+XML Record ID:
+Unique identifier of the XML record granted by the Licensee. Use of Universally Unique Identifier (UUID).</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12}" />
+            <xs:length value="36" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BonusID">
+        <xs:annotation>
+            <xs:documentation>Κωδικός Κατηγορίας Επιβράβευσης (Bonus Schema):
+Ο μοναδικός κωδικός κατηγορίας επιβράβευσης, ο οποίος παρέχεται από τον Κάτοχο Άδειας.
+
+
+Bonus Schema Identifier:
+Unique identifier of the bonus schema, provided by the Licensee.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="ContestID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Διαγωνισμού (Contest):
+
+                Ο μοναδικός κωδικός διαγωνισμού, ο οποίος διοργανώνεται από τον Κάτοχο Άδειας.
+
+                Contest Identifier:
+                Unique identifier of the contest, organised by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="LogInSessionID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Παικτικής Συνεδρίας:
+                Ο μοναδικός κωδικός Παικτικής Συνεδρίας στο σύστημα του Κατόχου Άδειας, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+                Play Session Identifier:
+                Unique identifier of a Play Session (log in - Log out) in the Licensee's system, granted by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="PlayerID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Ηλεκτρονικού Λογαριασμού Παίκτη:
+                Ο μοναδικός κωδικός του Ηλεκτρονικού Λογαριασμού Παίκτη τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+                Player ID:
+                Unique identifier of Player's Online Account, in Licensee's systems.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="Currency">
+        <xs:annotation>
+            <xs:documentation>
+                Νόμισμα:
+                Ο τριψήφιος ISO (ISO 4217) κωδικός του νομίσματος στο οποίο τοποθετήθηκε το στοίχημα (π.χ.: EUR).
+
+                Currency:
+                The three digit ISO code (ISO 4217) of the currency that the bet was placed (e.g.: EUR).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BetID">
+        <xs:annotation>
+            <xs:documentation>Κωδικός Στοιχήματος:
+Ο μοναδικός κωδικός στοιχήματος, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+Bet Identifier:
+Unique identifier of a bet, granted by the Licensee.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="GameSessionID">
+        <xs:annotation>
+            <xs:documentation>
+                Συνεδρία Παιγνίου:
+                Ο μοναδικός κωδικός συνεδρίας παιγνίου, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+                Η συνεδρία παιγνίου ορίζεται ως το χρονικό διάστημα κατά το οποίο ένας Παίκτης συμμετέχει στη διεξαγωγή ενός Παιγνίου, σε ένα μέσο διεξαγωγής.
+
+                Game Session Identifier:
+                Unique identifier of a game session, granted by the Licensee.
+                A game session is the time a Player participates in a single Game.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="PtPGameSessionID">
+        <xs:annotation>
+            <xs:documentation>
+                Συνεδρία Παιγνίου:
+                Ο μοναδικός κωδικός συνεδρίας διομότιμου παιγνίου, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+                Η συνεδρία παιγνίου ορίζεται ως το χρονικό διάστημα κατά το οποίο ένας Παίκτης συμμετέχει στη διεξαγωγή ενός Παιγνίου, σε ένα μέσο διεξαγωγής.
+
+                Game Session Identifier:
+                Unique identifier of a game session, granted by the Licensee.
+                A game session is the time a Player participates in a single peer to peer Game.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="PTTransactionID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Συναλλαγής Παίκτη σε Τουρνουά Πόκερ:
+                Ο μοναδικός Κωδικός Συναλλαγής του Παίκτη σε Τουρνουά Πόκερ, όπως καταγράφεται στα συστήματα του Κατόχου Άδειας.
+
+                Poker Tournament Transaction ID:
+                Unique identifier of the Player Transaction in a Poker Tournament, recorded by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="PokerTournamentID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Τουρνουά Πόκερ:
+                Ο μοναδικός κωδικός Τουρνουά Πόκερ, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+                Poker Tournament ID:
+                Unique identifier of the Poker Tournament, provided by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="JackpotID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Λειτουργίας Jackpot:
+                Ο μοναδικός κωδικός Λειτουργίας Jackpot. Τον κωδικό αποδίδει ο Κάτοχος Άδειας.
+
+                Jackpot Identifier:
+                Unique identifier of the Jackpot, granted by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="StudioID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Ειδικού Χώρου Διεξαγωγής Παιγνίου:
+                Ο μοναδικός κωδικός του Ειδικού Χώρου (Studio) διεξαγωγής του Παιγνίου, τον οποίο αποδίδει η Ε.Ε.Ε.Π..
+
+                Studio Identification Number:
+                The unique identification number of the Studio the Game was held, ,  provided by HGC.
+                The ID refers to the certification number provided by the HGC's certification decision. A list of all certification numbers will be available via our website.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="TableID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Τραπεζιού Διεξαγωγής Παιγνίου:
+                Ο μοναδικός κωδικός του τραπεζιού διεξαγωγής του Παιγνίου, τον οποίο αποδίδει ο Κάτοχος Άδειας.
+
+                Table Identification Number:
+                The unique identification number of the table the Game was held, provided by the Licensee.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="GameID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Πιστοποίησης Παιγνίου:
+                Ο μοναδικός κωδικός πιστοποίησης του Παιγνίου της συνεδρίας παιγνίου, τον οποίο αποδίδει η Ε.Ε.Ε.Π..
+
+                Game Certification Number:
+                The unique certification number of the Game played by the Player, during a game session,  provided by HGC.
+                The ID refers to the certification number provided by the HGC's certification decision. A list of all certification numbers will be available via our website.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:LongString" />
+    </xs:simpleType>
+    <xs:simpleType name="RNGID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Γεννήτριας Τυχαίων Αριθμών Παιγνίου:
+                Ο κωδικός της γεννήτριας τυχαίων αριθμών (RNG) διεξαγωγής του Παιγνίου, τον οποίο αποδίδει η Ε.Ε.Ε.Π..
+
+                RNG Identification Number:
+                The identification number of the RNG of the Game, provided by HGC.
+                The ID refers to the certification number provided by the HGC's certification decision. A list of all certification numbers will be available via our website.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:CollapsedGenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="RouletteID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Πιστοποίησης Τροχού Ρουλέτας Διεξαγωγής Παιγνίου:
+                Ο κωδικός πιστοποίησης του τροχού της ρουλέτας με τον οποίο διεξάγεται το Παίγνιο, τον οποίο αποδίδει η Ε.Ε.Ε.Π.
+
+                Roulette Certification Number:
+                The certification number of the roulette the Game was held with, provided by HGC. The ID refers to the certification number provided by the HGC's certification decision. A list of all certification numbers will be available via our website.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:CollapsedGenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="PaytableID">
+        <xs:annotation>
+            <xs:documentation>
+                Κωδικός Πίνακα Πληρωμών Παιγνίου:
+                Ο κωδικός του πίνακα πληρωμών του Παιγνίου, ο οποίος ισχύει κατά τη διεξαγωγή του Παιγνίου από τον Παίκτη στο πλαίσιο μιας συνεδρίας παιγνίου και τον οποίο αναγράφει ο εκάστοτε Οργανισμός Πιστοποίησης στο αντίστοιχο πιστοποιητικό του Παιγνίου.
+
+                Paytable Identification Number:
+                The identification number of the paytable of the Game, that is related to the Game played by the Player during a game session and it is written in the game certification provided by the Certification Body.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:LongStringPreserve" />
+    </xs:simpleType>
+    <xs:simpleType name="TaxationSessionID">
+        <xs:annotation>
+            <xs:documentation>
+                Φορολογική Συνεδρία:
+                Ο μοναδικός κωδικός φορολογικής συνεδρίας, τον οποίο αποδίδει ο Κάτοχος Άδειας. Ως φορολογική συνεδρία νοείται η παικτική συνεδρία της παρ. 2 του άρθρου 60 του ν. 2961, δηλαδή το χρονικό διάστημα από τη στιγμή που ο παίκτης συνδέεται με το κεντρικό πληροφοριακό σύστημα (ΚΠΣ) ενός Κατόχου Άδειας, μέχρι τη στιγμή που  αποσυνδέεται από αυτό. Σε κάθε περίπτωση, έκαστη φορολογική  συνεδρία λήγει με την πάροδο 24 ωρών από τη στιγμή που ο παίκτης συνδέεται με το ΚΠΣ διαδικτυακού παρόχου. Κατά τη διάρκεια μίας φορολογικής συνεδρίας, ένας Παίκτης δύναται να συμμετέχει σε ένα ή περισσότερα Παίγνια, στην ίδια ή σε πολλές πλατφόρμες παιγνίων:
+                (1) Παίγνια που διεξάγονται σε ζωντανή μετάδοση (live), σε Ειδικό Χώρο (studio), με ζωντανό γκρουπιέρη (dealer) και το αποτέλεσμα των οποίων δεν εξάγεται από γεννήτρια τυχαίων αριθμών (Random Number Generator).
+                (2) Παίγνια που το αποτέλεσμα των οποίων εξάγεται από γεννήτρια τυχαίων αριθμών (Random Number Generator).
+                (3) Παίγνια που διεξάγονται διομότιμα (peer to peer), σε ζωντανή μετάδοση (live), σε Ειδικό Χώρο (studio), με ζωντανό γκρουπιέρη (dealer) και το αποτέλεσμα των οποίων δεν εξάγεται από γεννήτρια τυχαίων αριθμών (Random Number Generator).
+                (4) Παίγνια που διεξάγονται διομότιμα (peer to peer) και αυτοτελώς (πχ. Πόκερ cash games).
+
+                Taxation Session Identifier:
+                Unique identifier of a taxation session, granted by the Licensee. A taxation session is the time of a Play Session (log in - Log out) in the Licensee's system, as defined in the article 60 of ν.2961/2001. During a taxation session, a Player may participate in one or more Games, of the same or different Game Platforms:
+                (1) Casino games, poker and/or variants thereon, played live, in a studio, with a live dealer and whose outcome is not generated by a Random Number Generator.
+                (2) Casino games, poker and/or variants thereon, whose outcome is generated by a Random Number Generator.
+                (3) Peer to peer games, live, in a studio, with a live dealer and whose output is not extracted by a Random Number Generator.
+                (4) Peer to peer games (eg. poker cash games).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="mstns:GenericID" />
+    </xs:simpleType>
+    <xs:simpleType name="DomainName">
+        <xs:annotation>
+            <xs:documentation>
+                Όνομα Χώρου:
+                Το όνομα χώρου του Κατόχου Άδειας (website), από τον οποίο οι Παίκτες συμμετείχαν στο Παίγνιο (π.χ.: www.sportabet.gr).
+
+                Domain Name:
+                The domain name of the Licensee's webpage where the Players placed their bets or participated in a game (e.g.: www.sportabet.gr).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:minLength value="8" />
+            <xs:maxLength value="40" />
+            <xs:pattern value="([a-z0-9]+(-[a-z0-9]+)*\.)+[a-z]{2,}" />
+            <xs:whiteSpace value="collapse" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="MonetaryAmount">
+        <xs:restriction base="xs:decimal">
+            <xs:fractionDigits value="2" />
+            <xs:maxInclusive value="9999999999.99" />
+            <xs:totalDigits value="13" />
+            <xs:minInclusive value="-9999999999.99" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="PositiveMonetaryAmount">
+        <xs:restriction base="xs:decimal">
+            <xs:totalDigits value="12" />
+            <xs:maxInclusive value="999999999.99" />
+            <xs:fractionDigits value="2" />
+            <xs:minInclusive value="0.00" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="CountryCode">
+        <xs:restriction base="xs:string">
+            <xs:pattern value="[A-Z]{3}" />
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="BetEventCategoryA">
+        <xs:annotation>
+            <xs:documentation>
+                Κατηγορία Στοιχηματικών Γεγονότων (Α) σύμφωνα με τον Κανονισμό Παιγνίων:
+                Πρώτο (Α) επίπεδο κατηγοριοποίησης των στοιχηματικών γεγονότων. Οι τιμές καθορίζονται από την Ε.Ε.Ε.Π.. Επιτρεπόμενες τιμές:
+                (1) = Αθλητικά Γεγονότα
+                (2) = Εικονικά Αθλητικά Γεγονότα
+                (3) = Εικονικά Γεγονότα
+                (4) = Λοιπά Γεγονότα
+
+                Bet Events Category (A):
+                First (A) level of bet events categorization in accordance with Gaming Regulation. Values are granted by HGC. Allowed values:
+                (1) = Sports Events
+                (2) = Fantasy Sports
+                (3) = Virtual Events
+                (4) = Other Events
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:positiveInteger">
+            <xs:enumeration value="1" />
+            <xs:enumeration value="2" />
+            <xs:enumeration value="3" />
+            <xs:enumeration value="4" />
+        </xs:restriction>
+    </xs:simpleType>
+</xs:schema>
