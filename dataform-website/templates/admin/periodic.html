@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Periodic reports{% endblock %}
+{% block content %}
+<h1>Periodic regulator reports</h1>
+<p class="muted">Generates and files a jurisdiction's periodic registers with
+the regulator SAFE on demand — no waiting for a period to close. Spain (DGOJ
+monitoring-system data model) files a daily detailed register (RUD) and a
+monthly totalized register (RUT); each register row totalises one player's
+settled betting activity for the period. Scenario:
+<span class="mono">requirements/dgoj-periodic-reporting/</span> (repo root).</p>
+
+<div class="card" style="max-width:640px">
+  <h3>Generate &amp; file registers</h3>
+  <form method="post" action="{{ url_for('admin_periodic_generate') }}">
+    <label>Market</label>
+    <select name="jurisdiction">
+      {% for mkt, regs in registers.items() %}
+        <option value="{{ mkt }}">{{ mkt }} —
+          {% for r in regs %}{{ r.id }} ({{ r.cadence }}){% if not loop.last %}, {% endif %}{% endfor %}
+        </option>
+      {% endfor %}
+    </select>
+    <label style="margin-top:10px">Cadence</label>
+    <label class="inline"><input type="radio" name="cadence" value="daily" checked> Daily</label>
+    <label class="inline" style="margin-left:14px"><input type="radio" name="cadence" value="monthly"> Monthly</label>
+    <div class="grid-2" style="margin-top:6px">
+      <div>
+        <label>Day (for daily)</label>
+        <input type="date" name="date" value="{{ default_date }}">
+      </div>
+      <div>
+        <label>Month (for monthly)</label>
+        <input type="month" name="month" value="{{ default_month }}">
+      </div>
+    </div>
+    <p style="margin-top:12px"><button class="btn btn-gold">Generate &amp; file</button></p>
+  </form>
+  <p class="muted">Each register row is SOAPed to the SAFE
+  (<span class="mono">/safe/&lt;MKT&gt;/rud</span> or <span class="mono">/rut</span>)
+  and lands as XML under <span class="mono">dataform-safe/&lt;MKT&gt;/</span>.
+  Re-filing the same period supersedes the previous receipt.</p>
+</div>
+
+<h2>Filed registers</h2>
+{% if filings %}
+<table>
+  <tr><th>Register</th><th>Row</th><th>Market</th><th>Receipt</th><th>Filed (UTC)</th></tr>
+  {% for rtype, key, mkt, receipt, ts in filings %}
+    <tr>
+      <td class="mono">{{ rtype | upper }}</td>
+      <td class="mono">{{ key }}</td>
+      <td>{{ mkt }}</td>
+      <td class="mono">{{ receipt }}</td>
+      <td class="muted">{{ ts.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p class="muted">None yet — generate one above.</p>
+{% endif %}
+
+<p><a href="{{ url_for('admin') }}">← Dashboard</a></p>
+{% endblock %}

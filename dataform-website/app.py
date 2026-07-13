@@ -18,6 +18,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import db
 import engine
 import reconciliation as recon
+import submission
 from db import next_id, now
 
 app = Flask(__name__)
@@ -812,6 +813,66 @@ def admin_reconciliation_generate():
         else:
             flash(f"BREAKS FOUND — {line}. See the flagged PDF below.", "error")
     return redirect(url_for("admin_reconciliation"))
+
+
+# ---- periodic regulator registers (DGOJ-style RUD/RUT) ---------------------
+# On-demand trigger so a demo never waits for a period to close.
+# REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-5)
+@app.route("/admin/periodic")
+@admin_required
+def admin_periodic():
+    today = datetime.now(timezone.utc)
+    regs = submission.PERIODIC_REPORTS
+    rtypes = sorted({r["id"].lower() for rs in regs.values() for r in rs})
+    g.cur.execute(f"""SELECT record_type, record_key, jurisdiction, receipt_id, submitted_at
+                      FROM safe_submissions
+                      WHERE record_type IN ({",".join("?" * len(rtypes))})
+                      ORDER BY submitted_at DESC LIMIT 25""", rtypes)
+    filings = g.cur.fetchall()
+    return render_template("admin/periodic.html", registers=regs, filings=filings,
+                           default_date=today.strftime("%Y-%m-%d"),
+                           default_month=today.strftime("%Y-%m"))
+
+
+@app.route("/admin/periodic/generate", methods=["POST"])
+@admin_required
+def admin_periodic_generate():
+    from datetime import date as date_cls
+    mkt = request.form.get("jurisdiction", "")
+    registers = submission.PERIODIC_REPORTS.get(mkt)
+    if not registers:
+        flash("That market files no periodic registers.", "error")
+        return redirect(url_for("admin_periodic"))
+    cadence = request.form.get("cadence", "daily")
+    try:
+        if cadence == "monthly":
+            year, month = map(int, request.form.get("month", "").split("-"))
+            period = date_cls(year, month, 1)
+        else:
+            period = date_cls.fromisoformat(request.form.get("date", ""))
+    except (ValueError, TypeError):
+        flash("Enter a valid day (daily) or month (monthly).", "error")
+        return redirect(url_for("admin_periodic"))
+
+    due = [r for r in registers if r["cadence"] == cadence]
+    if not due:
+        flash(f"{mkt} files no {cadence} register.", "warn")
+        return redirect(url_for("admin_periodic"))
+    filed = 0
+    for reg in due:
+        try:
+            results = submission.submit_periodic(g.cur, mkt, reg, period)
+        except Exception as exc:                      # e.g. SAFE not reachable
+            flash(f"{mkt} {reg['id']}: submission failed ({exc}).", "error")
+            continue
+        if results:
+            filed += len(results)
+            receipts = ", ".join(r for _, r in results)
+            flash(f"{mkt} {reg['id']} ({cadence}) for {period:%Y-%m-%d}: {len(results)} "
+                  f"register row(s) filed with the SAFE — receipts {receipts}.", "ok")
+    if not filed:
+        flash("No settled activity in that period — nothing to file.", "warn")
+    return redirect(url_for("admin_periodic"))
 
 
 @app.route("/admin/reconciliation/file/<mkt>/<filename>")

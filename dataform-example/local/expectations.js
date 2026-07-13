@@ -7,12 +7,12 @@
 
 const expectations = [
   {
-    desc: "lifecycle: 18 slips with correct statuses (incl. DK/BG/GR/NL/DE, BG 2025 resubmission + 5 fault-isolation demo slips)",
+    desc: "lifecycle: 19 slips with correct statuses (incl. DK/BG/GR/NL/DE, BG 2025 resubmission, ES second-day slip + 5 fault-isolation demo slips)",
     sql: `SELECT slip_status, COUNT(*)::INT AS n FROM fct_bet_slip_lifecycle
           GROUP BY slip_status ORDER BY slip_status`,
     expect: [
       { slip_status: "OPEN", n: 1 },
-      { slip_status: "SETTLED", n: 15 }, // 9 + 5 fault-isolation demo + S13 (DE)
+      { slip_status: "SETTLED", n: 16 }, // 9 + 5 fault-isolation demo + S13 (DE) + S14 (ES)
       { slip_status: "VOIDED", n: 2 },
     ],
   },
@@ -32,13 +32,16 @@ const expectations = [
     ],
   },
   {
-    desc: "ES file: exactly S4 — voids and open slips excluded",
-    sql: `SELECT slip_id, sport_code FROM submission_ready_es`,
-    expect: [{ slip_id: "S4", sport_code: "FUT" }],
+    desc: "ES file: exactly S4 + S14 — voids and open slips excluded",
+    sql: `SELECT slip_id, sport_code FROM submission_ready_es ORDER BY slip_id`,
+    expect: [
+      { slip_id: "S14", sport_code: "FUT" },
+      { slip_id: "S4", sport_code: "FUT" },
+    ],
   },
   {
     desc: "nomenclature: messy ' FÚTBOL ' + aliases canonicalised into ES event name",
-    sql: `SELECT event_name FROM submission_ready_es`,
+    sql: `SELECT event_name FROM submission_ready_es WHERE slip_id = 'S4'`,
     expect: [{ event_name: "Real Madrid - Barcelona" }],
   },
   {
@@ -64,6 +67,26 @@ const expectations = [
                  CAST(tax_due AS DOUBLE) AS t
           FROM tax_summary_es WHERE report_date = DATE '2026-07-08'`,
     expect: [{ s: 50, p: 40, t: 2 }],
+  },
+  // ---- PERIODIC REGISTERS (REQ: requirements/dgoj-periodic-reporting) ----
+  {
+    desc: "ES RUD (daily register, REQ-DGOJ-1): A2001 totalised per local day — 07-08 (S4: stake 50, winnings 40) and 07-09 (S14: stake 10, lost)",
+    sql: `SELECT CAST(period_start AS VARCHAR) AS d, bets_settled::INT AS n,
+                 CAST(stake_sum AS DOUBLE) AS s, CAST(winnings_sum AS DOUBLE) AS w,
+                 CAST(ggr_sum AS DOUBLE) AS g
+          FROM submission_rud_es ORDER BY period_start`,
+    expect: [
+      { d: "2026-07-08", n: 1, s: 50, w: 40, g: 10 },
+      { d: "2026-07-09", n: 1, s: 10, w: 0, g: 10 },
+    ],
+  },
+  {
+    desc: "ES RUT (monthly register, REQ-DGOJ-2/3): one row per player-month whose totals equal the sum of the dailies (2 bets, stake 60, winnings 40, GGR 20), player pseudonymised",
+    sql: `SELECT CAST(period_start AS VARCHAR) AS m, bets_settled::INT AS n,
+                 CAST(stake_sum AS DOUBLE) AS s, CAST(winnings_sum AS DOUBLE) AS w,
+                 CAST(ggr_sum AS DOUBLE) AS g, LENGTH(player_ref)::INT AS ref_len
+          FROM submission_rut_es`,
+    expect: [{ m: "2026-07-01", n: 2, s: 60, w: 40, g: 20, ref_len: 64 }],
   },
   {
     desc: "CDC dedupe: replayed S1 PLACED event collapsed to one row",

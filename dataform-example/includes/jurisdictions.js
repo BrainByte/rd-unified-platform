@@ -16,6 +16,15 @@ const commonRules = [
   { id: "COM-005", type: "unique", field: "slip_id", description: "One row per slip per file" },
 ];
 
+// Rules every market's PERIODIC REGISTER files must satisfy. Registers are
+// aggregate-grained (one row per player per period), so only the columns
+// every register carries may appear here.
+// REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-3, REQ-DGOJ-4)
+const commonPeriodicRules = [
+  { id: "P-COM-001", type: "not_null", field: "player_ref", description: "Every register row identifies a player" },
+  { id: "P-COM-002", type: "not_null", field: "period_start", description: "Every register row has a reporting period" },
+];
+
 // Rules every market's GAMING file must satisfy.
 const commonGamingRules = [
   { id: "G-COM-001", type: "not_null", field: "activity_id", description: "Every gaming row identifies an activity" },
@@ -141,6 +150,34 @@ const jurisdictions = {
       defaultSportCode: null,
       eventNameTemplate: "{home} - {away}",
     },
+    // ---- PERIODIC REGISTERS (DGOJ monitoring-system data model) ----
+    // The Modelo de datos (BOE-A-2024-12639) files registers at different
+    // cadences: a daily detailed user register (RUD-style) and a monthly
+    // totalized one (RUT-style). Which registers, cadence, fields and rules
+    // are DATA — any market can adopt registers by adding this key.
+    // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1, REQ-DGOJ-2, REQ-DGOJ-4)
+    periodicReports: [
+      {
+        id: "RUD", cadence: "daily", playerField: "player_dni_hash",
+        fields: ["bets_settled", "stake_sum", "winnings_sum", "ggr_sum"],
+        rules: [
+          { id: "ES-RUD-101", type: "matches", field: "player_ref", pattern: "^[0-9a-f]{64}$",
+            description: "Register identifies the player by lowercase SHA-256 DNI digest" },
+          { id: "ES-RUD-102", type: "non_negative", field: "stake_sum",
+            description: "A day's totalised stakes can never be negative" },
+        ],
+      },
+      {
+        id: "RUT", cadence: "monthly", playerField: "player_dni_hash",
+        fields: ["bets_settled", "stake_sum", "winnings_sum", "ggr_sum"],
+        rules: [
+          { id: "ES-RUT-101", type: "matches", field: "player_ref", pattern: "^[0-9a-f]{64}$",
+            description: "Register identifies the player by lowercase SHA-256 DNI digest" },
+          { id: "ES-RUT-102", type: "non_negative", field: "stake_sum",
+            description: "A month's totalised stakes can never be negative" },
+        ],
+      },
+    ],
     rules: [
       { id: "ES-101", type: "no_voided_slips",
         description: "DGOJ file must never contain a voided slip (checked against lifecycle)" },
@@ -521,4 +558,4 @@ const jurisdictions = {
   },
 };
 
-module.exports = { jurisdictions, commonRules, commonGamingRules };
+module.exports = { jurisdictions, commonRules, commonGamingRules, commonPeriodicRules };

@@ -10,8 +10,8 @@
 #     GET  http://127.0.0.1:5002/safe/<MKT>/<type>?wsdl  minimal WSDL
 #     GET  http://127.0.0.1:5002/                        status page (demo-friendly)
 #
-#     <MKT>  = MT | ES | DK | BG | GR | NL
-#     <type> = bets | payments | players
+#     <MKT>  = MT | ES | DK | BG | GR | NL | DE
+#     <type> = bets | payments | players | gaming | rud | rut
 #
 # Accepted records are stored PRETTY-PRINTED, one XML file per record, in
 #     dataform-safe/<MKT>/<type>/<seq>-<record id>.xml
@@ -31,7 +31,10 @@ PORT = 5002
 JURISDICTIONS = ["MT", "ES", "DK", "BG", "GR", "NL", "DE"]
 # 'gaming' (casino rounds) added with financial reconciliation: GGR for tax
 # spans sports AND gaming, so the reported record set must cover both.
-RECORD_TYPES = ["bets", "payments", "players", "gaming"]
+# 'rud'/'rut' are the DGOJ-style periodic registers (daily detailed /
+# monthly totalized); only markets configured for them submit any.
+# REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-5)
+RECORD_TYPES = ["bets", "payments", "players", "gaming", "rud", "rut"]
 SAFE_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                          "dataform-safe")
 SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"

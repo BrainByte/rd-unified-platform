@@ -71,6 +71,37 @@ const gamingRegistry = {
   },
 };
 
+// ---------------------------------------------------------------------------
+// PERIODIC REGISTER registry (REQ: requirements/dgoj-periodic-reporting,
+// REQ-DGOJ-1/2). Aggregates over settled slips, grouped per player per
+// period. Aliases as the betting registry: b = fct_bet_slip_lifecycle,
+// a = dim_customer_account. Every entry MUST be additive (SUM/COUNT) —
+// the daily->monthly completeness check rolls dailies up with SUM.
+const periodicRegistry = {
+  bets_settled: () => "COUNT(*)",
+  stake_sum:    (j) => `ROUND(SUM(b.stake), ${j.rounding})`,
+  winnings_sum: (j) => `ROUND(SUM(b.payout), ${j.rounding})`,
+  ggr_sum:      (j) => `ROUND(SUM(b.stake - b.payout), ${j.rounding})`,
+};
+
+function periodicFieldSql(name, j) {
+  const fn = periodicRegistry[name];
+  if (!fn) {
+    throw new Error(`Unknown periodic field '${name}' (market ${j.code}). Add it to includes/fields.js.`);
+  }
+  return fn(j);
+}
+
+function selectPeriodicFields(report, j) {
+  return report.fields
+    .map((f) => `${periodicFieldSql(f, j)} AS ${f}`)
+    .join(",\n      ");
+}
+
+function knownPeriodicFields() {
+  return Object.keys(periodicRegistry);
+}
+
 function gamingFieldSql(name, j) {
   const fn = gamingRegistry[name];
   if (!fn) {
@@ -109,4 +140,8 @@ function knownFields() {
   return Object.keys(registry);
 }
 
-module.exports = { fieldSql, selectFields, knownFields, gamingFieldSql, selectGamingFields, knownGamingFields };
+module.exports = {
+  fieldSql, selectFields, knownFields,
+  gamingFieldSql, selectGamingFields, knownGamingFields,
+  periodicFieldSql, selectPeriodicFields, knownPeriodicFields,
+};

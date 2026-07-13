@@ -125,9 +125,15 @@ Whatever the change, the loop is identical. Run all commands from
    mechanism fits.
 
 3. **Seed the proof.** Add rows to `seed/data.js` that exercise the
-   change, and expected outcomes to `local/expectations.js`.
-   ⚠️ *A new market also needs a `cdc_source_watermarks` row — without
-   it, the market sits in `WAITING_DATA` and reports nothing.*
+   change, and expected outcomes to `local/expectations.js`. Adding rows
+   often changes counts that *existing* expectations pin (e.g. "N slips")
+   — update those in the same commit. After any `seed/data.js` change run
+   `npm run seed:generate` (it regenerates `seed/bigquery_setup.sql` and
+   is **not** part of `npm run check`).
+   ⚠️ *A new market needs a `cdc_source_watermarks` row — without it, the
+   market sits in `WAITING_DATA` and reports nothing. Likewise, a new
+   settlement on a **later day** needs the watermark moved past that day,
+   or readiness (fail-closed) quietly excludes the row.*
 
 4. **`npm test`** — unit tests over every generator (~2 s). The
    validator test fails immediately if your config is malformed.
@@ -287,6 +293,15 @@ This is the most involved use case because it introduces a **new kind
 of report file**, not just new content — and that is the one change
 where you write a new query builder and new wiring.
 
+> **This use case has been implemented** — the mechanism below now
+> exists in the codebase, and
+> [`requirements/dgoj-periodic-reporting/`](requirements/dgoj-periodic-reporting/requirements.md)
+> is the worked precedent (its `implementation.md` records every file
+> touched). Read these steps as "how it was done and how you extend it":
+> adding a register to another market is now **config only** (step 2);
+> the code steps (3–7) only apply when you build a further new report
+> *kind*.
+
 **First, understand how periodicity works here.** Reporting is
 *terminal-state driven*: a slip enters a period's file via
 `report_date = localDate(COALESCE(settled_at, voided_at))`
@@ -321,35 +336,50 @@ not different SQL. A daily register is therefore "group by
    the new property (cadence ∈ {daily, monthly}, every field name
    known, ids unique). Invalid config must fail to compile, like
    everything else.
-4. **Field expressions** — add any register-specific columns to the
-   registry in `includes/fields.js` (or the gaming registry if
-   sourced from gaming activity).
-5. **One new builder** — add `periodicReportQuery(ctx, j, report)` to
+4. **Field expressions** — registers are **aggregate-grained** (one row
+   per player per period), so their measures live in their own registry
+   in `includes/fields.js` (`periodicRegistry`: `bets_settled`,
+   `stake_sum`, `winnings_sum`, `ggr_sum`, …), separate from the
+   row-level betting/gaming registries. Keep every entry **additive**
+   (SUM/COUNT) — that is what makes the daily→monthly roll-up provable.
+   `playerField`, by contrast, reuses the ordinary betting registry so a
+   register identifies players exactly as the market's event file does.
+5. **One new builder** — `periodicReportQuery(ctx, j, report)` in
    `includes/queries.js`: select the report's fields, apply the
    standard admissibility filter (from `exceptions.js` — quarantined
-   entities must stay excluded), and group by `report_date` (daily)
-   or `dateTrunc('month', …)` (monthly).
-6. **New wiring** — a new definitions file (e.g.
-   `definitions/30_submissions/periodic.js`) that loops **all**
-   markets and publishes `submission_<reportid>_<mkt>` for each entry
-   in `periodicReports` — today that yields `submission_rud_es`
-   (daily) and `submission_rut_es` (monthly), tagged with their
-   cadence for the scheduler. Add per-report assertions the same way
-   `assertions_from_rules.js` does, plus a completeness rule for
-   REQ-DGOJ-3 (monthly totals = sum of dailies).
+   entities must stay excluded), and group by player + `report_date`
+   (daily) or `dateTrunc('month', …)` (monthly). Its companion
+   `periodicCompletenessQuery` FULL-OUTER-JOINs the monthly register
+   against the SUM-rolled dailies — any mismatch is a violation.
+6. **New wiring** — `definitions/30_submissions/periodic.js` loops
+   **all** markets and publishes `submission_<reportid>_<mkt>` for each
+   entry in `periodicReports` — today that yields `submission_rud_es`
+   (daily) and `submission_rut_es` (monthly), tagged with their cadence
+   for the scheduler. `definitions/90_assertions/periodic_assertions.js`
+   generates the per-register rule assertions (the engine's
+   `violationQuery` takes `{table, keyColumn, dateColumn}` — registers
+   pass `period_start` as the date column) plus the completeness
+   assertion for any market filing both cadences.
 7. **Mirror offline** — add the new models to `local/run.js`
    `buildPlan()` (new tables are the one case where this manual step
-   exists), seed ES rows in `seed/data.js`, and add expectations
-   (e.g. "the RUT March total equals the sum of the March RUDs").
+   exists), seed ES rows in `seed/data.js` **on more than one day of
+   the same month** (or the monthly roll-up proves nothing), and add
+   expectations. Re-read the §3 seed warnings: watermark coverage for
+   any new settlement day, existing expectation counts, and
+   `npm run seed:generate`.
 8. **Rules** — add DGOJ constraints on the register columns as
-   declarative rules in the ES config, ids = the regulator's clause
-   references, so every constraint is a named, testable object.
+   declarative rules on each register entry in the ES config, ids =
+   the regulator's clause references, so every constraint is a named,
+   testable object (`ES-RUD-101` etc.).
 9. **Demo the loop (optional)** — in `dataform-website/`: append the
    new record types to `RECORD_TYPES` in `safe.py` (the SAFE's
-   endpoints, folders and status page expand automatically), and add
-   a `PENDING_*_SQL` + `submit_pending_*` in `submission.py` wired
-   into `run_once()`. Daily/monthly PDF sections can be added in
-   `reconciliation.py` if finance needs to reconcile the registers.
+   endpoints, folders and status page expand automatically) and add a
+   `PERIODIC_REPORTS` entry + `submit_periodic()` in `submission.py`.
+   Periodic registers are filed **on demand** from *Admin → Periodic
+   reports* (pick market, cadence, day/month — receipts are flashed and
+   listed), so a demo never waits for a period to close. Daily/monthly
+   PDF sections can be added in `reconciliation.py` if finance needs to
+   reconcile the registers.
 
 **Done when:** `npm run check` is green; the emitted SQL contains the
 daily and monthly ES register models and *no other market changed*;
@@ -449,7 +479,8 @@ ends with the filled-in requirement → artifact → proven-by table.
 | Unmapped feed value | one line in `nomenclature/aliases.js` | — |
 | New game provider feed | one entry in `providers.js` | source decl + seed |
 | New product / vertical | §5 — canonical + aliases + codes + `models.js` arm + GGR arms | sources/staging + `local/run.js` |
-| New report file / record type | §6 — config property + `queries.js` builder + new definitions loop | validator + `local/run.js` |
+| Periodic register for a market (mechanism exists) | `periodicReports` on the market in `jurisdictions.js` | seed + expectations |
+| New *kind* of report file | §6 — config property + `queries.js` builder + new definitions loop | validator + `local/run.js` |
 | New jurisdiction | §7 — one `jurisdictions.js` object | seed + watermark + demo dicts |
 | Engine-specific SQL | `dialect.js` only (both engines + test) | — |
 

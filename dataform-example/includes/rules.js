@@ -10,9 +10,12 @@
 
 const { allCodes, temporalPredicate } = require("./effective_dating");
 
-function std(ctx, j, rule, table, predicate, keyColumn = "slip_id") {
+// dateColumn: the table's reporting-period column. Event files use the
+// default report_date; periodic registers (aggregate grain) pass
+// period_start. REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-4)
+function std(ctx, j, rule, table, predicate, keyColumn = "slip_id", dateColumn = "report_date") {
   return `
-    SELECT '${rule.id}' AS rule_id, ${keyColumn} AS row_key, report_date
+    SELECT '${rule.id}' AS rule_id, ${keyColumn} AS row_key, ${dateColumn} AS report_date
     FROM ${table}
     WHERE ${predicate}
   `;
@@ -21,12 +24,12 @@ function std(ctx, j, rule, table, predicate, keyColumn = "slip_id") {
 const RULE_TYPES = {
   not_null: {
     validate: (r) => (r.field ? [] : [`${r.id}: not_null requires 'field'`]),
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t, `${r.field} IS NULL`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t, `${r.field} IS NULL`, k, d),
   },
 
   non_negative: {
     validate: (r) => (r.field ? [] : [`${r.id}: non_negative requires 'field'`]),
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t, `${r.field} < 0`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t, `${r.field} < 0`, k, d),
   },
 
   max_value: {
@@ -34,7 +37,7 @@ const RULE_TYPES = {
       r.field && typeof r.value === "number"
         ? []
         : [`${r.id}: max_value requires 'field' and numeric 'value'`],
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t, `${r.field} > ${r.value}`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t, `${r.field} > ${r.value}`, k, d),
   },
 
   in_set: {
@@ -42,14 +45,14 @@ const RULE_TYPES = {
       r.field && Array.isArray(r.values) && r.values.length
         ? []
         : [`${r.id}: in_set requires 'field' and non-empty 'values'`],
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t,
-        `${r.field} NOT IN (${r.values.map((v) => `'${v}'`).join(", ")})`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t,
+        `${r.field} NOT IN (${r.values.map((v) => `'${v}'`).join(", ")})`, k, d),
   },
 
   matches: {
     validate: (r) =>
       r.field && r.pattern ? [] : [`${r.id}: matches requires 'field' and 'pattern'`],
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t, `NOT ${require("./dialect").regexpContains(r.field, r.pattern)}`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t, `NOT ${require("./dialect").regexpContains(r.field, r.pattern)}`, k, d),
   },
 
   // field must be zero when another field equals a value (e.g. payout on voids)
@@ -58,7 +61,7 @@ const RULE_TYPES = {
       r.field && r.whenField && r.equals !== undefined
         ? []
         : [`${r.id}: zero_when requires 'field', 'whenField', 'equals'`],
-    violations: (ctx, j, r, t, k) => std(ctx, j, r, t, `${r.whenField} = '${r.equals}' AND ${r.field} != 0`, k),
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t, `${r.whenField} = '${r.equals}' AND ${r.field} != 0`, k, d),
   },
 
   unique: {
@@ -153,15 +156,24 @@ function marketGamingRules(j, commonGamingRules) {
   return [...commonGamingRules, ...(j.gamingRules || [])];
 }
 
-// opts: { table, keyColumn } — defaults target the betting submission file;
-// gaming assertions pass the gaming file + activity_id.
+// Rules for one periodic register: the common structural rules plus the
+// register's own declarative rules from config.
+// REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-4)
+function periodicRules(report, commonPeriodicRules) {
+  return [...commonPeriodicRules, ...(report.rules || [])];
+}
+
+// opts: { table, keyColumn, dateColumn } — defaults target the betting
+// submission file; gaming assertions pass the gaming file + activity_id;
+// periodic-register assertions pass the register table + player_ref +
+// period_start.
 function violationQuery(ctx, j, rule, opts = {}) {
   const type = RULE_TYPES[rule.type];
   if (!type) {
     throw new Error(`Unknown rule type '${rule.type}' (rule ${rule.id}, market ${j.code})`);
   }
   const table = ctx.ref(opts.table || `submission_ready_${j.code.toLowerCase()}`);
-  return type.violations(ctx, j, rule, table, opts.keyColumn || "slip_id");
+  return type.violations(ctx, j, rule, table, opts.keyColumn || "slip_id", opts.dateColumn || "report_date");
 }
 
-module.exports = { RULE_TYPES, marketRules, marketGamingRules, violationQuery };
+module.exports = { RULE_TYPES, marketRules, marketGamingRules, periodicRules, violationQuery };

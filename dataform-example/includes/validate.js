@@ -4,7 +4,7 @@
 // errors; empty list = config is deployable.
 // ============================================================================
 
-const { knownFields, knownGamingFields } = require("./fields");
+const { knownFields, knownGamingFields, knownPeriodicFields } = require("./fields");
 const { knownExtensions } = require("./extensions");
 const { RULE_TYPES, marketRules, marketGamingRules } = require("./rules");
 const { canonicalSports, canonicalGameTypes } = require("./nomenclature/canonical");
@@ -138,6 +138,66 @@ function validateMarket(j, commonRules, commonGamingRules = []) {
     if (j.gamingTaxRate === undefined) errors.push(where(`gaming domain requires gamingTaxRate`));
     if (!["deduct_contributions", "gross"].includes(j.jackpotPolicy)) {
       errors.push(where(`jackpotPolicy must be 'deduct_contributions' or 'gross', got '${j.jackpotPolicy}'`));
+    }
+  }
+
+  // ---- periodic register checks ----
+  // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-4) — registers are
+  // config; a bad register must fail validation, never compile wrong SQL.
+  if (j.periodicReports !== undefined) {
+    if (!Array.isArray(j.periodicReports) || j.periodicReports.length === 0) {
+      errors.push(where(`periodicReports must be a non-empty array of registers`));
+    } else {
+      const regIds = new Set();
+      for (const r of j.periodicReports) {
+        const rid = r.id || "?";
+        if (!r.id || !/^[A-Za-z][A-Za-z0-9_]*$/.test(r.id)) {
+          errors.push(where(`periodic register id '${rid}' must be alphanumeric (it names the table)`));
+        }
+        if (regIds.has(rid)) errors.push(where(`duplicate periodic register id '${rid}'`));
+        regIds.add(rid);
+        if (!["daily", "monthly"].includes(r.cadence)) {
+          errors.push(where(`register ${rid}: cadence must be 'daily' or 'monthly', got '${r.cadence}'`));
+        }
+        if (!knownFields().includes(r.playerField)) {
+          errors.push(where(`register ${rid}: playerField '${r.playerField}' is not in the field registry`));
+        }
+        if (!Array.isArray(r.fields) || r.fields.length === 0) {
+          errors.push(where(`register ${rid}: fields must be a non-empty array`));
+        } else {
+          for (const f of r.fields) {
+            if (!knownPeriodicFields().includes(f)) {
+              errors.push(where(`register ${rid}: unknown periodic field '${f}' — add it to includes/fields.js`));
+            }
+          }
+        }
+        // register rules: same integrity checks, against the register's columns
+        const regColumns = ["jurisdiction", "register_id", "period_start", "player_ref", ...(r.fields || [])];
+        const rSeen = new Set();
+        for (const rule of r.rules || []) {
+          if (!rule.id) { errors.push(where(`register ${rid} rule without an id: ${JSON.stringify(rule)}`)); continue; }
+          if (rSeen.has(rule.id)) errors.push(where(`register ${rid}: duplicate rule id '${rule.id}'`));
+          rSeen.add(rule.id);
+          if (!rule.description) errors.push(where(`register ${rid} rule ${rule.id} has no description (audit trail requires one)`));
+          const type = RULE_TYPES[rule.type];
+          if (!type) { errors.push(where(`register ${rid} rule ${rule.id} has unknown type '${rule.type}'`)); continue; }
+          errors.push(...type.validate(rule, j).map(where));
+          if (COLUMN_RULE_TYPES.includes(rule.type)) {
+            for (const col of [rule.field, rule.whenField].filter(Boolean)) {
+              if (!regColumns.includes(col)) {
+                errors.push(where(`register ${rid} rule ${rule.id} references '${col}' which is not in that register`));
+              }
+            }
+          }
+        }
+      }
+      // the daily->monthly completeness check joins on player_ref, so a
+      // daily+monthly pair must identify players the same way
+      const daily = j.periodicReports.find((r) => r.cadence === "daily");
+      const monthly = j.periodicReports.find((r) => r.cadence === "monthly");
+      if (daily && monthly && daily.playerField !== monthly.playerField) {
+        errors.push(where(`daily register '${daily.id}' and monthly register '${monthly.id}' must share playerField for the completeness check`));
+      }
     }
   }
 

@@ -72,7 +72,9 @@ const postcodeRegions = [
 const sourceWatermarks = [
   // source, jurisdiction, complete_through
   ["bet_settlement", "MT", "2026-07-09 00:00:00+00"],
-  ["bet_settlement", "ES", "2026-07-09 00:00:00+00"],
+  // 2026-07-10: covers S14's 2026-07-09 settlement day (closed period).
+  // REQ: requirements/dgoj-periodic-reporting
+  ["bet_settlement", "ES", "2026-07-10 00:00:00+00"],
   ["bet_settlement", "DK", "2026-07-09 00:00:00+00"],
   ["bet_settlement", "BG", "2026-07-09 00:00:00+00"],
   ["bet_settlement", "GR", "2026-07-09 00:00:00+00"],
@@ -227,6 +229,9 @@ const betSlips = [
   ["S7004", "A7004", "F1", "sports", "I", "2026-07-10 10:00:00+00"], // settles in a period not yet closed
   ["S7005", "A7005", "F1", "sports", "I", "2026-07-08 10:00:00+00"],
   ["S13", "A9001", "F1", "sports", "I", "2026-07-08 10:00:00+00"], // DE — turnover-tax demo
+  // ES second-day slip: proves the monthly RUT totalises across multiple
+  // RUD days. REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-2/3)
+  ["S14", "A2001", "F2", "sports", "I", "2026-07-08 22:30:00+00"],
 ];
 
 const betSlipEvents = [
@@ -286,6 +291,12 @@ const betSlipEvents = [
   // 5.3% would give 1.06: the expectation proves the tax BASE is stakes).
   ["S13", "PLACED",  "2026-07-08 10:00:00+00", 40.0, null, "I", "2026-07-08 10:00:01+00"],
   ["S13", "SETTLED", "2026-07-08 18:00:00+00", null, 20.0, "I", "2026-07-08 18:00:01+00"],
+  // S14 ES: placed late on 07-08, settled as a loss on the NEXT local day
+  // (2026-07-09 Madrid) — so the July RUT (2 bets, stake 60, winnings 40)
+  // must equal RUD 07-08 (stake 50, winnings 40) + RUD 07-09 (stake 10, 0).
+  // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1/2/3)
+  ["S14", "PLACED",  "2026-07-08 22:30:00+00", 10.0, null, "I", "2026-07-08 22:30:01+00"],
+  ["S14", "SETTLED", "2026-07-09 09:00:00+00", null, 0.0,  "I", "2026-07-09 09:00:01+00"],
 ];
 
 // ---- GAMING domain seed ----

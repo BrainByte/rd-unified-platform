@@ -24,13 +24,14 @@ setDialect("duckdb"); // MUST precede any SQL generation
 const m = require("../includes/models");
 const pp = require("../includes/player_protection");
 const ex = require("../includes/exceptions");
-const { submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery } = require("../includes/queries");
+const { submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery,
+        periodicReportQuery, periodicCompletenessQuery } = require("../includes/queries");
 
 // Fixed "now" for the offline run so the retry state machine is deterministic
 // (Dataform would pass CURRENT_TIMESTAMP()). See includes/exceptions.js.
 const RUN_TS = "TIMESTAMPTZ '2026-07-08 12:00:00+00'";
-const { jurisdictions, commonRules, commonGamingRules } = require("../includes/jurisdictions");
-const { marketRules, marketGamingRules, violationQuery } = require("../includes/rules");
+const { jurisdictions, commonRules, commonGamingRules, commonPeriodicRules } = require("../includes/jurisdictions");
+const { marketRules, marketGamingRules, periodicRules, violationQuery } = require("../includes/rules");
 const { validateAll } = require("../includes/validate");
 const { canonicalSports } = require("../includes/nomenclature/canonical");
 const { sportAliases, participantAliases, gameTypeAliases } = require("../includes/nomenclature/aliases");
@@ -143,6 +144,11 @@ function buildPlan() {
       table(`gaming_submission_ready_${mkt}`, gamingSubmissionQuery(ctx, j));
       table(`gaming_tax_summary_${mkt}`, gamingTaxSummaryQuery(ctx, j));
     }
+    // periodic registers are opt-in per market too
+    // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1, REQ-DGOJ-2)
+    for (const r of j.periodicReports || []) {
+      table(`submission_${r.id.toLowerCase()}_${mkt}`, periodicReportQuery(ctx, j, r));
+    }
   }
 
   // rule assertions: any returned row is a violation
@@ -165,6 +171,33 @@ function buildPlan() {
         }),
         kind: "assertion",
         rule,
+      });
+    }
+  }
+  // periodic-register assertions: config rules per register, plus the
+  // daily<->monthly completeness gate for markets filing both cadences.
+  // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-3, REQ-DGOJ-4)
+  for (const j of Object.values(jurisdictions)) {
+    const reports = j.periodicReports || [];
+    const mkt = j.code.toLowerCase();
+    for (const r of reports) {
+      const t = `submission_${r.id.toLowerCase()}_${mkt}`;
+      for (const rule of periodicRules(r, commonPeriodicRules)) {
+        steps.push({
+          name: `periodic rule ${j.code}/${r.id}/${rule.id}`,
+          sql: violationQuery(ctx, j, rule, { table: t, keyColumn: "player_ref", dateColumn: "period_start" }),
+          kind: "assertion",
+          rule,
+        });
+      }
+    }
+    const daily = reports.find((r) => r.cadence === "daily");
+    const monthly = reports.find((r) => r.cadence === "monthly");
+    if (daily && monthly) {
+      steps.push({
+        name: `periodic completeness: ${j.code} ${monthly.id} = sum of ${daily.id}`,
+        sql: periodicCompletenessQuery(ctx, j, daily, monthly),
+        kind: "assertion",
       });
     }
   }
@@ -392,6 +425,27 @@ function stakeLimitNegativeTests() {
   };
 }
 
+// Periodic-register negative test (REQ: requirements/dgoj-periodic-reporting,
+// REQ-DGOJ-3): inflate every daily stake total in a copy of the ES RUD by 5 —
+// the dailies no longer sum to the monthly RUT, so the completeness gate must
+// fire for the affected player-month.
+function periodicNegativeTests() {
+  const es = jurisdictions.ES;
+  const daily = es.periodicReports.find((r) => r.cadence === "daily");
+  const monthly = es.periodicReports.find((r) => r.cadence === "monthly");
+  const corruptCtx = { ref: (n) => (n === "submission_rud_es" ? "submission_rud_es_corrupt" : n) };
+  return {
+    setup: [
+      `CREATE OR REPLACE TABLE submission_rud_es_corrupt AS
+         SELECT * REPLACE (stake_sum + 5.00 AS stake_sum) FROM submission_rud_es`,
+    ],
+    checks: [
+      { rule: "periodic completeness: inflated RUD dailies no longer sum to the RUT month", expectViolations: 1,
+        sql: periodicCompletenessQuery(corruptCtx, es, daily, monthly) },
+    ],
+  };
+}
+
 // Fault-isolation negative test: force a quarantined account's slip (A7001 /
 // S7001) into a copy of the MT file. The structural isolation gate must catch
 // it — proving the one hard invariant (nothing held/quarantined/incomplete may
@@ -432,6 +486,7 @@ async function main() {
   const woneg = walletOverspendTest();
   const fineg = faultIsolationNegativeTests();
   const slneg = stakeLimitNegativeTests();
+  const pneg = periodicNegativeTests();
 
   if (process.argv.includes("--dry-run")) {
     console.log(`DRY RUN (dialect: duckdb)\n`);
@@ -439,7 +494,7 @@ async function main() {
     for (const s of seed) console.log("  " + s.split("\n")[0]);
     console.log(`\n-- ${plan.length} pipeline steps --`);
     for (const s of plan) console.log(`  [${s.kind}] ${s.name}`);
-    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length} negative tests --`);
+    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
     console.log("\n✔ Plan built cleanly. Run without --dry-run to execute in DuckDB.");
     return;
   }
@@ -492,8 +547,8 @@ async function main() {
     }
   }
 
-  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup]) await run(s);
-  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks]) {
+  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
+  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
     const rows = await run(check.sql);
     if (rows.length === check.expectViolations) {
       console.log(`✔ negative test: ${check.rule} caught the corruption`);

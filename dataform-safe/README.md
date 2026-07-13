@@ -12,7 +12,9 @@ GET  http://127.0.0.1:5002/safe/<MKT>/<type>?wsdl  minimal WSDL
 GET  http://127.0.0.1:5002/                        status page
 ```
 
-`<MKT>` = MT · ES · DK · BG · GR · NL — `<type>` = bets · payments · players.
+`<MKT>` = MT · ES · DK · BG · GR · NL · DE — `<type>` = bets · payments ·
+players · gaming · rud · rut (the DGOJ-style periodic registers — see
+`requirements/dgoj-periodic-reporting/`).
 
 Each accepted record is stored pretty-printed, one XML file per record:
 
@@ -28,8 +30,10 @@ dataform-safe/
 The records arrive **near-realtime** from the submission engine
 (`dataform-website/submission.py`), which polls the demo site's DuckDB every
 few seconds and SOAPs every newly-reportable record: players (re-reported on
-KYC change), completed payments, and settled/voided bets. Both services start
-and stop with the demo app (`python dataform-website/app.py`).
+KYC change), completed payments, settled/voided bets, and gaming rounds.
+Periodic registers (rud/rut) are filed on demand from *Admin → Periodic
+reports*. Both services start and stop with the demo app
+(`python dataform-website/app.py`).
 
 The `*.xml` files are demo output and are **gitignored**; this README pins the
 folder. `reset_db.py` clears them along with the database.

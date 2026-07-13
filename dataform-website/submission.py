@@ -82,6 +82,14 @@ def _log(cur, rtype, key, mkt, receipt):
                 [rtype, key, mkt, receipt, db.now()])
 
 
+def _log_replace(cur, rtype, key, mkt, receipt):
+    # periodic registers may be re-filed (a regenerated register supersedes
+    # the previous filing); keep the latest receipt per register row.
+    # REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-5)
+    cur.execute("INSERT OR REPLACE INTO safe_submissions VALUES (?, ?, ?, ?, ?)",
+                [rtype, key, mkt, receipt, db.now()])
+
+
 # ---- record type: bets (the submission-table analog) -----------------------
 PENDING_BETS_SQL = """
 SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id,
@@ -250,6 +258,81 @@ def submit_pending_gaming(cur):
         print(f"[SUBMIT] {mkt}/gaming {round_id} ({game}) -> {receipt}")
         n += 1
     return n
+
+
+# ---- record types: periodic registers (DGOJ-style RUD daily / RUT monthly) --
+# Which markets file which registers, at which cadence, is DATA (mirrors
+# periodicReports in the pipeline's jurisdictions.js). Registers totalise a
+# player's SETTLED betting activity per period; they are generated ON DEMAND
+# from Admin -> Periodic reports, not by the polling loop, so a demo never
+# has to wait for a period to close.
+# REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1, REQ-DGOJ-2, REQ-DGOJ-5)
+PERIODIC_REPORTS = {
+    "ES": [
+        {"id": "RUD", "cadence": "daily"},
+        {"id": "RUT", "cadence": "monthly"},
+    ],
+}
+
+# Per player: settled bets in [start, end) — voided slips never count.
+PERIODIC_SQL = """
+SELECT a.account_id, a.national_id,
+       COUNT(*) AS bets_settled,
+       SUM(p.stake) AS stake_sum,
+       SUM(COALESCE(s.payout, 0)) AS winnings_sum,
+       SUM(p.stake - COALESCE(s.payout, 0)) AS ggr_sum
+FROM bet_slips b
+JOIN accounts a USING (account_id)
+JOIN bet_slip_events p ON p.slip_id = b.slip_id AND p.event_type = 'PLACED'
+JOIN bet_slip_events s ON s.slip_id = b.slip_id AND s.event_type = 'SETTLED'
+WHERE a.jurisdiction = ?
+  AND NOT EXISTS (SELECT 1 FROM bet_slip_events v
+                  WHERE v.slip_id = b.slip_id AND v.event_type = 'VOIDED')
+  AND s.event_ts >= ? AND s.event_ts < ?
+GROUP BY 1, 2
+ORDER BY 1
+"""
+
+
+def _period_window(register, period_start):
+    """[start, end) UTC datetimes for a register period. period_start is a
+    date: the day itself (daily) or any day in the month (monthly)."""
+    from datetime import datetime, timedelta, timezone as tz
+    if register["cadence"] == "monthly":
+        start = datetime(period_start.year, period_start.month, 1, tzinfo=tz.utc)
+        end = (datetime(period_start.year + 1, 1, 1, tzinfo=tz.utc)
+               if period_start.month == 12
+               else datetime(period_start.year, period_start.month + 1, 1, tzinfo=tz.utc))
+    else:
+        start = datetime(period_start.year, period_start.month, period_start.day, tzinfo=tz.utc)
+        end = start + timedelta(days=1)
+    return start, end
+
+
+def submit_periodic(cur, mkt, register, period_start):
+    """Generate one register (all players with activity in the period) and
+    SOAP each row to the SAFE. Returns [(player_ref, receipt_id), ...]."""
+    start, end = _period_window(register, period_start)
+    rid = register["id"]
+    cur.execute(PERIODIC_SQL, [mkt, start, end])
+    results = []
+    for (account_id, national_id, bets, stake_sum, winnings_sum, ggr_sum) in cur.fetchall():
+        player_ref = _player_ref(mkt, account_id, national_id)
+        rec = ET.Element("Record", {"type": rid.lower(),
+                                    "id": f"{rid}-{start:%Y-%m-%d}-{account_id}"})
+        _el(rec, "RegisterId", rid)
+        _el(rec, "PeriodStart", f"{start:%Y-%m-%d}")
+        _el(rec, "Cadence", register["cadence"])
+        _el(rec, "PlayerRef", player_ref)
+        _el(rec, "BetsSettled", bets)
+        _el(rec, "StakeSum", f"{float(stake_sum):.2f}")
+        _el(rec, "WinningsSum", f"{float(winnings_sum):.2f}")
+        _el(rec, "GgrSum", f"{float(ggr_sum):.2f}")
+        receipt = _soap_submit(mkt, rid.lower(), rec)
+        _log_replace(cur, rid.lower(), f"{rid}|{start:%Y-%m-%d}|{account_id}", mkt, receipt)
+        print(f"[SUBMIT] {mkt}/{rid.lower()} {start:%Y-%m-%d} {account_id} -> {receipt}")
+        results.append((player_ref, receipt))
+    return results
 
 
 def run_once(cur):

@@ -4,7 +4,7 @@
 // No business decisions live here; those are in config, fields, filters.
 // ============================================================================
 
-const { selectFields, selectGamingFields } = require("./fields");
+const { selectFields, selectGamingFields, fieldSql, selectPeriodicFields } = require("./fields");
 const { selectExtensionFields, extensionJoins } = require("./extensions");
 const { rateSql, temporalPredicate } = require("./effective_dating");
 const { statusFilter, jurisdictionFilter, reportDateExpr } = require("./filters");
@@ -71,6 +71,64 @@ function taxSummaryQuery(ctx, j) {
   `;
 }
 
+// ---- PERIODIC REGISTERS (REQ: requirements/dgoj-periodic-reporting) ----
+// One builder for every market and both cadences. A register totalises each
+// player's SETTLED activity per period: daily registers group by the local
+// report date, monthly ones by its month (via the dialect layer). The same
+// admissibility filter as the event files applies — a quarantined/held/
+// incomplete entity never reaches a register either.
+function periodStartExpr(j, report) {
+  const dialect = require("./dialect");
+  const rd = reportDateExpr(j);
+  return report.cadence === "monthly" ? dialect.dateTrunc("month", rd) : rd;
+}
+
+function periodicReportQuery(ctx, j, report) {
+  return `
+    SELECT
+      '${j.code}' AS jurisdiction,
+      '${report.id}' AS register_id,
+      ${periodStartExpr(j, report)} AS period_start,
+      ${fieldSql(report.playerField, j)} AS player_ref,
+      ${selectPeriodicFields(report, j)}
+    FROM ${ctx.ref("fct_bet_slip_lifecycle")} b
+    JOIN ${ctx.ref("dim_customer_account")} a
+      ON b.account_id = a.account_id
+    WHERE ${jurisdictionFilter(j)}
+      AND b.slip_status = 'SETTLED'   -- registers totalise settled activity only
+      AND ${admissibilityFilter(ctx, j)}
+    GROUP BY 1, 2, 3, 4
+  `;
+}
+
+// Structural completeness (REQ-DGOJ-3): for every player and month, the
+// monthly register's totals must equal the sum of that player's daily rows.
+// Any mismatch — or a player-month present on one side only — is a violation
+// that blocks the pipeline before filing. Works because every periodic
+// registry field is additive (SUM/COUNT).
+function periodicCompletenessQuery(ctx, j, daily, monthly) {
+  const dialect = require("./dialect");
+  const mkt = j.code.toLowerCase();
+  const dailyTable = ctx.ref(`submission_${daily.id.toLowerCase()}_${mkt}`);
+  const monthlyTable = ctx.ref(`submission_${monthly.id.toLowerCase()}_${mkt}`);
+  const shared = monthly.fields.filter((f) => daily.fields.includes(f));
+  const mismatch = shared.map((f) => `ABS(m.${f} - d.${f}) > 0.005`).join("\n       OR ");
+  return `
+    SELECT
+      COALESCE(m.player_ref, d.player_ref) AS row_key,
+      COALESCE(m.period_start, d.period_start) AS period_start
+    FROM ${monthlyTable} m
+    FULL OUTER JOIN (
+      SELECT player_ref, ${dialect.dateTrunc("month", "period_start")} AS period_start,
+             ${shared.map((f) => `SUM(${f}) AS ${f}`).join(", ")}
+      FROM ${dailyTable}
+      GROUP BY 1, 2
+    ) d
+      ON m.player_ref = d.player_ref AND m.period_start = d.period_start
+    WHERE m.player_ref IS NULL OR d.player_ref IS NULL${mismatch ? `\n       OR ${mismatch}` : ""}
+  `;
+}
+
 // ---- GAMING domain ----
 function gamingFromClause(ctx, j) {
   return `
@@ -128,4 +186,7 @@ function gamingTaxSummaryQuery(ctx, j) {
   `;
 }
 
-module.exports = { submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery };
+module.exports = {
+  submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery,
+  periodicReportQuery, periodicCompletenessQuery,
+};
