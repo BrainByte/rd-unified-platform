@@ -1,0 +1,11 @@
+<TYPEMONNAIE>
+  <IDOper>4921</IDOper>
+  <DateEvt>210821100100</DateEvt>
+  <IDEvt>495145</IDEvt>
+  <IDCoffre>2</IDCoffre>
+  <IDMonnaie>BAL</IDMonnaie>
+  <Nom>Balle de tennis</Nom>
+  <Desc>Monnaie symbolique nécessaire pour accéder à la gamme de jeu « Tennis à la folie » </Desc>
+  <Valeur>0.04</Valeur>
+  <Info>Pour tout achat de 100 balles de tennis, une balle supplémentaire est offerte</Info>
+</TYPEMONNAIE>

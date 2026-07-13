@@ -1,0 +1,19 @@
+<ACHATMONNAIE>
+  <IDOper>4921</IDOper>
+  <DateEvt>210821100100</DateEvt>
+  <IDEvt>495145</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>948JF95194NBJ2</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <IDRef>123456</IDRef>
+  <Info>Achat de 50 balles de tennis</Info>
+  <SoldeAvant>9</SoldeAvant>
+  <MontantAchat>2</MontantAchat>
+  <SoldeApres>7</SoldeApres>
+  <MonnaieAvant>0</MonnaieAvant>
+  <MontantMonnaie>50</MontantMonnaie>
+  <MonnaieApres>50</MonnaieApres>
+  <Unite>BAL</Unite>
+</ACHATMONNAIE>

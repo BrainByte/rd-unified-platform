@@ -1,0 +1,89 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" version="2.0.0-draft" elementFormDefault="unqualified" targetNamespace="https://det.tech.arjel/2.0.0-draft/common/types">
+  <xs:simpleType name="IPv4">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])\.([01]?\d\d?|2[0-4]\d|25[0-5])"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="publicIPv4">
+    <xs:restriction base="types:IPv4">
+      <xs:pattern value="[^102].*|0([^.].*)?|12([^7].*)?|20([^3].*)?|17([^2].*)?|16([^9].*)?|19([^82].*)?|169([^.].*)?|225([^.].*)?|228([^.].*)?|203([^.].*)?|172([^.].*)?|192([^.].*)?|224([^.].*)?|227([^.].*)?|25.([^.].*)?|10([^0.].*)?|226([^.].*)?|198([^.].*)?|229([^.].*)?|23.([^.].*)?|100([^.].*)?|24.([^.].*)?|169\.([^2].*)?|203\.([^0].*)?|2([^03254].*)?|1([^90276].*)?|22([.0123].*)?|169\.2([^5].*)?|192\.1([^6].*)?|192\.8([^8].*)?|198\.5([^1].*)?|198\.([^15].*)?|203\.0([^.].*)?|192\.0([^.].*)?|198\.1([^98].*)?|198\.51([^.].*)?|172\.18([^.].*)?|172\.19([^.].*)?|172\.2.([^.].*)?|198\.19([^.].*)?|192\.16([^8].*)?|198\.18([^.].*)?|100\.9.([^.].*)?|172\.16([^.].*)?|169\.25([^4].*)?|192\.([^108].*)?|192\.88([^.].*)?|172\.([^132].*)?|172\.3([^10].*)?|172\.17([^.].*)?|100\.8.([^.].*)?|100\.7.([^.].*)?|100\.11.([^.].*)?|100\.1([^102].*)?|203\.0\.([^1].*)?|100\.10.([^.].*)?|100\.12([.89].*)?|192\.0\.2([^.].*)?|100\.6([.0123].*)?|198\.51\.([^1].*)?|100\.([^98176].*)?|192\.88\.([^9].*)?|172\.1([^9876].*)?|192\.0\.0([^.].*)?|203\.0\.1([^1].*)?|192\.0\.([^02].*)?|192\.88\.9([^9].*)?|198\.51\.1([^0].*)?|203\.0\.11([^3].*)?|198\.51\.10([^0].*)?|192\.88\.99([^.].*)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="IPv6">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="((\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([0-9a-f]{1,4}:){7}[0-9a-f]{1,4}|(([0-9a-f]{1,4}:){1,7}:|([0-9a-f]{1,4}:){1,6}:[0-9a-f]{1,4}|([0-9a-f]{1,4}:){1,5}(:[0-9a-f]{1,4}){1,2}|([0-9a-f]{1,4}:){1,4}(:[0-9a-f]{1,4}){1,3}|([0-9a-f]{1,4}:){1,3}(:[0-9a-f]{1,4}){1,4}|([0-9a-f]{1,4}:){1,2}(:[0-9a-f]{1,4}){1,5}|[0-9a-f]{1,4}:((:[0-9a-f]{1,4}){1,6})|:((:[0-9a-f]{1,4}){1,7}|:)))(%[0-9a-z]+)?)"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="publicIPv6">
+    <xs:restriction base="types:IPv6">
+      <xs:pattern value="[^f].*|f([^d].*)?|fd([^0].*)?|fd0([^0].*)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="opId">
+    <xs:restriction base="xs:token">
+      <xs:length value="4"/>
+      <xs:pattern value="\d{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="numId">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="\d+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="sha1">
+    <xs:restriction base="xs:token">
+      <xs:length value="40"/>
+      <xs:pattern value="[0-9A-Z]{40}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="canonical">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z0-9-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="extended">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[A-Z() '-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="reference">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[a-zA-Z0-9._/#-]+"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="IP">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="types:IPv4"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="types:IPv6"/>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="publicIP">
+    <xs:union>
+      <xs:simpleType>
+        <xs:restriction base="types:publicIPv4"/>
+      </xs:simpleType>
+      <xs:simpleType>
+        <xs:restriction base="types:publicIPv6"/>
+      </xs:simpleType>
+    </xs:union>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeDecimal">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="empty">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="date-aammjjhhmmss">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>

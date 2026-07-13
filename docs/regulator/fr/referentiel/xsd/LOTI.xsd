@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="./include/LOTICommon.xsd"/>
+  <xs:element name="LOTIMISE">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="HashJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDSession"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="IPJoueur"/>
+		<xs:element maxOccurs="1" minOccurs="0" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Supervision"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="Tech"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="TechJeu"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Jackpot"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Desc"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Selection"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="MiseAbond"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusNom"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Unite"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Tel"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LOTIANNUL">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="HashJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDSession"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="IPJoueur"/>
+		<xs:element maxOccurs="1" minOccurs="0" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Supervision"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="Tech"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateMise"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Motif"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Unite"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Tel"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LOTIGAIN">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="HashJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDSession"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="IPJoueur"/>
+		<xs:element maxOccurs="1" minOccurs="0" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Supervision"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="Tech"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateMise"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="SoldeApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="GainAbond"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusAvant"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusMouvement"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="BonusApres"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Unite"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+<xs:element name="LOTIBILAN">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="HashJoueur"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDSession"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="IPJoueur"/>
+		<xs:element maxOccurs="1" minOccurs="0" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Supervision"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="Tech"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateMise"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="NombreChoix"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

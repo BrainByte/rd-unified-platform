@@ -1,0 +1,28 @@
+<xs:schema xmlns:cercle="https://det.tech.arjel/2.0.0-draft/features/cercle" xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:fantasy="https://det.tech.arjel/2.0.0-draft/features/fantasy" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" targetNamespace="https://det.tech.arjel/2.0.0-draft/features/fantasy">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/cercle" schemaLocation="./features/cercle/cercle.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="./common/types/types.xsd"/>
+  <xs:complexType name="choice">
+    <xs:sequence>
+      <xs:element name="Nom" type="xs:string"/>
+      <xs:element name="Info" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="game">
+    <xs:complexContent>
+      <xs:extension base="cercle:game">
+        <xs:sequence>
+          <xs:element name="IDCompo" type="types:reference"/>
+          <xs:element name="DateCompo" type="types:date-aammjjhhmmss"/>
+          <xs:element name="Composition">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Choix" type="fantasy:choice" maxOccurs="unbounded"/>
+              </xs:sequence>
+              <!-- <xs:attribute name="limite" type="xs:dateTime"/> -->
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

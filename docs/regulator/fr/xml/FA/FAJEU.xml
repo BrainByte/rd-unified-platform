@@ -1,0 +1,38 @@
+<FAJEU>
+  <IDOper>0099</IDOper>
+  <IDCoffre>1</IDCoffre>
+  <DateEvt>111204101703</DateEvt>
+  <IDEvt>0000001338</IDEvt>
+  <IDJoueur> demo01</IDJoueur>
+  <HashJoueur>A94A8FE5CCB19BA61C4C0873D391E987982FBBD3</HashJoueur>
+  <IPJoueur>192.2.0.42</IPJoueur>
+  <IDSession>demo-session</IDSession>
+  <Inscription>ticket-0</Inscription>
+  <Tech>FAN16-24E876</Tech>
+  <Pool>1</Pool>
+  <Description>Coefficients standards</Description>
+  <IDCompo>FDEE0DB0-DE6C-11E5-9F79-8CB05671DD9F</IDCompo>
+  <DateCompo>111204101703</DateCompo>
+  <Composition>
+    <Choix>
+      <Nom>Bruce Lawton</Nom>
+      <Info>Capitaine</Info>
+    </Choix>
+    <Choix>
+      <Nom>Clark Wayne</Nom>
+      <Info>Défenseur</Info>
+    </Choix>
+    <Choix>
+      <Nom>Barry Kent</Nom>
+      <Info>Attaquant</Info>
+    </Choix>
+    <Choix>
+      <Nom>Harley Allen</Nom>
+      <Info>Attaquant remplaçant</Info>
+    </Choix>
+    <Choix>
+      <Nom>Floyd Quinzel</Nom>
+      <Info>Defenseur remplaçant</Info>
+    </Choix>
+  </Composition>
+</FAJEU>

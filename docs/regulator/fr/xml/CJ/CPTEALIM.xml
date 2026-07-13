@@ -1,0 +1,19 @@
+<CPTEALIM>
+  <IDOper>4921</IDOper>
+  <DateEvt>120620131800</DateEvt>
+  <IDEvt>495018</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <Supervision/>
+  <IDRef>123456</IDRef>
+  <DateDemande>100620120305</DateDemande>
+  <DateEffective>120620131800</DateEffective>
+  <SoldeAvant>15</SoldeAvant>
+  <SoldeMouvement>20</SoldeMouvement>
+  <SoldeApres>35</SoldeApres>
+  <MoyenPaiement>VISA</MoyenPaiement>
+  <TypeMoyenPaiement>CarteBancaire</TypeMoyenPaiement>
+</CPTEALIM>

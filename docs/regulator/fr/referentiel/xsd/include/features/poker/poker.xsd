@@ -1,0 +1,70 @@
+<xs:schema xmlns:poker="https://det.tech.arjel/2.0.0-draft/features/poker" xmlns:player="https://det.tech.arjel/2.0.0-draft/common/player" xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" targetNamespace="https://det.tech.arjel/2.0.0-draft/features/poker">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/player" schemaLocation="../../common/player/player.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="../../common/types/types.xsd"/>
+  <xs:complexType name="finance">
+    <xs:sequence>
+      <xs:element name="Net" type="xs:decimal"/>
+      <xs:element name="Total" type="types:nonNegativeDecimal"/>
+      <xs:element name="CaveAvant" type="types:nonNegativeDecimal"/>
+      <xs:element name="CaveApres" type="types:nonNegativeDecimal"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+      <xs:element name="Rake" type="types:nonNegativeDecimal" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="player">
+    <xs:sequence>
+      <xs:group ref="player:extended-id"/>
+      <xs:element name="Siege" type="types:nonNegativeDecimal"/>
+      <xs:element name="Inscription" type="types:reference"/>
+      <xs:element name="Finance" type="poker:finance"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="betType">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="ante"/>
+      <xs:enumeration value="small blind"/>
+      <xs:enumeration value="big blind"/>
+      <xs:enumeration value="bring-in"/>
+      <xs:enumeration value="bet"/>
+      <xs:enumeration value="call"/>
+      <xs:enumeration value="raise"/>
+      <xs:enumeration value="allin"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="action">
+    <xs:sequence>
+      <xs:element name="Siege" type="xs:nonNegativeInteger"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="actionfold">
+    <xs:sequence>
+      <xs:element name="Siege" type="xs:nonNegativeInteger"/>
+      <xs:element name="Reveal" type="xs:boolean" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>  
+  <xs:complexType name="bet">
+    <xs:complexContent>
+      <xs:extension base="poker:action">
+        <xs:sequence>
+          <xs:element name="Valeur" type="types:nonNegativeDecimal"/>
+        </xs:sequence>
+        <xs:attribute use="required" name="name" type="poker:betType"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="card">
+    <xs:sequence>
+      <xs:element name="Siege" type="xs:nonNegativeInteger" minOccurs="0"/>
+      <xs:element name="Valeur" type="xs:nonNegativeInteger"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="draw">
+    <xs:complexContent>
+      <xs:extension base="poker:card">
+        <xs:attribute use="optional" name="ouverte" type="xs:boolean" default="false"/>
+        <xs:attribute use="optional" name="commune" type="xs:boolean" default="false"/>
+        <xs:attribute use="optional" name="board" type="xs:nonNegativeInteger"/>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

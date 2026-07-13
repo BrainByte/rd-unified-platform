@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:element name="Tirage">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateHeure"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDTirage"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Desc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Clair"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Nom"/>
+        <xs:element maxOccurs="64" minOccurs="1" ref="Tirage"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Selection">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Nombre"/>
+        <xs:element maxOccurs="64" minOccurs="0" ref="Option"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="IDGroupe"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="Motif">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="Tirage"/>
+        <xs:enumeration value="Joueur"/>
+        <xs:enumeration value="Autre"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>

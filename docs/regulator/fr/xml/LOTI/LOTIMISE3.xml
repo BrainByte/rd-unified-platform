@@ -1,0 +1,54 @@
+<LOTIMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>200104101703</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>638604</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>GTRH42REY</Tech>
+  <TechJeu>TREG53ZH</TechJeu>
+  <Desc>
+    <Clair>loterie tirage vendredi</Clair>
+    <Nom>loterie 2020</Nom>
+    <Tirage>
+      <DateHeure>200108102000</DateHeure>
+      <IDTirage>7892541</IDTirage>
+    </Tirage>
+  </Desc>
+  <Selection>
+    <Nombre>1</Nombre>
+  </Selection>
+  <SoldeAvant>43.33</SoldeAvant>
+  <SoldeMouvement>1.8</SoldeMouvement>
+  <SoldeApres>41.53</SoldeApres>
+</LOTIMISE>
+<LOTIMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>200104101703</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>638604</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>HYTZVYRE5</Tech>
+  <TechJeu>TREG53ZH</TechJeu>
+  <Jackpot/>
+  <Desc>
+    <Clair>jackpot tirage vendredi</Clair>
+    <Nom>jackpot 2020</Nom>
+    <Tirage>
+      <DateHeure>200108102000</DateHeure>
+      <IDTirage>7892541</IDTirage>
+    </Tirage>
+  </Desc>
+  <Selection>
+    <Nombre>1</Nombre>
+  </Selection>
+  <SoldeAvant>41.53</SoldeAvant>
+  <SoldeMouvement>0.2</SoldeMouvement>
+  <SoldeApres>41.33</SoldeApres>
+</LOTIMISE>
+

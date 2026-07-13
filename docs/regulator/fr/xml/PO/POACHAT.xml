@@ -1,0 +1,16 @@
+<POACHAT>
+  <IDOper>0099</IDOper>
+  <IDCoffre>1</IDCoffre>
+  <DateEvt>111204101703</DateEvt>
+  <IDEvt>0000001338</IDEvt>
+  <IDJoueur>demo01</IDJoueur>
+  <HashJoueur>A94A8FE5CCB19BA61C4C0873D391E987982FBBD3</HashJoueur>
+  <IPJoueur>192.2.0.42</IPJoueur>
+  <IDSession>demo-session</IDSession>
+  <Inscription>ticket-0</Inscription>
+  <Tech>NPT16</Tech>
+  <Description>Achat de cave (100 jetons)</Description>
+  <SoldeAvant>900.00</SoldeAvant>
+  <SoldeMouvement>20.00</SoldeMouvement>
+  <SoldeApres>880.00</SoldeApres>
+</POACHAT>

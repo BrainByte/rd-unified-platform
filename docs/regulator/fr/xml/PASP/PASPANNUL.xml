@@ -1,0 +1,17 @@
+<PASPANNUL>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206173200</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>8ACEB0TV</Tech>
+  <DateMise>111204101703</DateMise>
+  <Motif>RencontreAnnulee</Motif>  
+  <SoldeAvantRembours>45.83</SoldeAvantRembours>
+  <MontantRembours>1.50</MontantRembours>
+  <SoldeApresRembours>47.33</SoldeApresRembours>
+</PASPANNUL>

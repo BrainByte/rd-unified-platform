@@ -1,0 +1,36 @@
+<PAHIMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>191030102530</DateEvt>
+  <IDEvt>1903700</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>10206000</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>12335652233</Tech>
+  <Desc>
+    <DateHeure>191031120000</DateHeure>
+    <Hippodrome>Vincennes</Hippodrome>
+    <Pays>France</Pays>
+    <Reunion>1</Reunion>
+    <CNom>Prix Constant Hervieu</CNom>
+    <CNum>3</CNum>
+	<Clair>Tiercé de la R1C3</Clair>
+    <PronoPH>      
+     <Type>tiercé</Type>   
+     <Base>5</Base>
+     <Base>10</Base>
+	 <Champ/>
+     <Combinaison/>
+     <Associes>4</Associes>
+     <Associes>7</Associes>
+     <Associes>2</Associes>
+     <MiseBase>2</MiseBase>
+     <Nombre>3</Nombre>    
+    </PronoPH>
+  </Desc>
+  <SoldeAvantMise>27.33</SoldeAvantMise>
+  <Mise>6</Mise>
+  <SoldeApresMise>21.33</SoldeApresMise>
+  <MiseAbond>5</MiseAbond>
+</PAHIMISE>

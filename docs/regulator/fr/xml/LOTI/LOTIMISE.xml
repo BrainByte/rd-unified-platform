@@ -1,0 +1,26 @@
+<LOTIMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>200104101703</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>638604</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>GTRH42REY</Tech>
+  <Desc>
+    <Clair>Special hiver</Clair>
+    <Nom>Bingo</Nom>
+    <Tirage>
+      <DateHeure>200104102000</DateHeure>
+      <IDTirage>123456</IDTirage>
+    </Tirage>
+  </Desc>
+  <Selection>
+    <Nombre>1</Nombre>
+    <Option>joker</Option>
+  </Selection>
+  <SoldeAvant>47.33</SoldeAvant>
+  <SoldeMouvement>1.00</SoldeMouvement>
+  <SoldeApres>46.33</SoldeApres>
+</LOTIMISE>

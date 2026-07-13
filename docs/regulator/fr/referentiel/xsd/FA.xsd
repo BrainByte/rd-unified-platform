@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:cercle="https://det.tech.arjel/2.0.0-draft/features/cercle" xmlns:fantasy="https://det.tech.arjel/2.0.0-draft/features/fantasy" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/cercle" schemaLocation="./include/features/cercle/cercle.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/fantasy" schemaLocation="./include/fantasy.xsd"/>
+  <xs:element name="FAINSCRIT" type="cercle:register2"/>
+  <xs:element name="FAJEU" type="fantasy:game"/>
+  <xs:element name="FAACHAT" type="cercle:special"/>
+  <xs:element name="FAGAIN" type="cercle:special"/>
+  <xs:element name="FABILAN" type="cercle:final2"/>
+  <xs:element name="FAANNUL" type="cercle:cancel2"/>
+</xs:schema>

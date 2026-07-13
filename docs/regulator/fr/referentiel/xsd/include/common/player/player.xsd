@@ -1,0 +1,23 @@
+<xs:schema xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:player="https://det.tech.arjel/2.0.0-draft/common/player" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="https://det.tech.arjel/2.0.0-draft/common/player">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="../types/types.xsd"/>
+  <xs:group name="id">
+    <xs:sequence>
+      <xs:element name="IDJoueur" type="xs:string"/>
+      <xs:element name="HashJoueur" type="types:sha1"/>
+      <xs:element name="IPJoueur" type="types:IP"/>
+      <xs:element name="IDPointDeVente" type="xs:string" minOccurs="0"/>
+      <xs:element name="IDSession" type="xs:string"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="extended-id">
+    <xs:sequence>
+      <xs:choice>
+        <xs:element name="IDOper" type="types:opId"/>
+        <xs:element name="Oper" type="xs:string"/>
+      </xs:choice>
+      <xs:element name="Pays" type="xs:string"/>
+      <xs:element name="IDJoueur" type="xs:string"/>
+      <xs:element name="IPJoueur" type="types:IP"/>
+    </xs:sequence>
+  </xs:group>
+</xs:schema>

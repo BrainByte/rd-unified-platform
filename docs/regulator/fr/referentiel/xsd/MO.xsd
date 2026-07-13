@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="./include/Common.xsd"/>
+  <xs:element name="TYPEMONNAIE">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>     
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDMonnaie"/>
+        <xs:element maxOccurs="1" minOccurs="1" name="Nom" type="string-256"/>
+        <xs:element maxOccurs="1" minOccurs="1" name="Desc" type="xs:string"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Valeur"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

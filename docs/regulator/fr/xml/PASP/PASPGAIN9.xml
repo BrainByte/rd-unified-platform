@@ -1,0 +1,35 @@
+<PASPGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>8ACEB0TV</Tech>
+  <DateMise>111204101703</DateMise>
+  <DateHeure>111206215812</DateHeure>
+  <SoldeAvantGain>45.83</SoldeAvantGain>
+  <Gain>4.59</Gain>
+  <SoldeApresGain>50.42</SoldeApresGain>
+</PASPGAIN>
+<PASPGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>HYT42CDFH</Tech>
+  <DateMise>111204101703</DateMise>
+  <DateHeure>111206215812</DateHeure>
+  <SoldeAvantGain>50.93</SoldeAvantGain>
+  <Gain>41.31</Gain>
+  <SoldeApresGain>92.24</SoldeApresGain>
+</PASPGAIN>
+

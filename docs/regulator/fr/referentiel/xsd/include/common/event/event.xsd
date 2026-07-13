@@ -1,0 +1,17 @@
+<xs:schema xmlns:header="https://det.tech.arjel/2.0.0-draft/common/header" xmlns:player="https://det.tech.arjel/2.0.0-draft/common/player" xmlns:event="https://det.tech.arjel/2.0.0-draft/common/event" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" elementFormDefault="qualified" targetNamespace="https://det.tech.arjel/2.0.0-draft/common/event">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/header" schemaLocation="../header/header.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/player" schemaLocation="../player/player.xsd"/>
+  <xs:complexType name="default">
+    <xs:sequence>
+      <xs:group ref="header:id"/>
+      <xs:group ref="player:id"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="header:state"/>
+  </xs:complexType>
+  <xs:complexType name="anonymous">
+    <xs:sequence>
+      <xs:group ref="header:id"/>
+    </xs:sequence>
+    <xs:attributeGroup ref="header:state"/>
+  </xs:complexType>
+</xs:schema>

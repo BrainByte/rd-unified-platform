@@ -1,0 +1,17 @@
+<POANNUL>
+  <IDOper>0099</IDOper>
+  <IDCoffre>1</IDCoffre>
+  <DateEvt>111204101703</DateEvt>
+  <IDEvt>0000001361</IDEvt>
+  <IDJoueur>demo01</IDJoueur>
+  <HashJoueur>A94A8FE5CCB19BA61C4C0873D391E987982FBBD3</HashJoueur>
+  <IPJoueur>192.2.0.42</IPJoueur>
+  <IDSession>demo-session</IDSession>
+  <Inscription>ticket-0</Inscription>
+  <Tech>NPT16</Tech>
+  <Motif>NombreJoueurs</Motif>
+  <SoldeAvant>900.00</SoldeAvant>
+  <SoldeMouvement>100.00</SoldeMouvement>
+  <SoldeApres>1000.00</SoldeApres>
+  <Info>Annulation Tournoi National Poker Tour 01 janvier 2016</Info>
+</POANNUL>

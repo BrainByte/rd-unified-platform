@@ -1,0 +1,33 @@
+<PASPMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>111204101703</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>638604</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>8ACEB0TV</Tech>
+  <PaSp>
+    <Combi>S</Combi>
+    <LigSp>
+      <Renc>UEFA CHAMPIONS LEAGUE - CHELSEA - VALENCE CF</Renc>
+      <Tech>1234:565:43:99</Tech>
+      <Sport>ABC</Sport>
+      <Evnt>AB123</Evnt>
+      <Genre>H</Genre>
+      <Date>111206194500</Date>
+      <Part>CHELSEA</Part>
+      <Part>VALENCE CF</Part>
+      <PronoSp>
+        <TypeRes>123CD</TypeRes>
+        <Choix>NUL</Choix>
+      </PronoSp>
+      <Cote>3.40</Cote>
+    </LigSp>
+    <MiseBase>1.50</MiseBase>
+  </PaSp>
+  <SoldeAvantMise>47.33</SoldeAvantMise>
+  <Mise>1.50</Mise>
+  <SoldeApresMise>45.83</SoldeApresMise>
+</PASPMISE>

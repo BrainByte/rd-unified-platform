@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="./include/Common.xsd"/>
+  <xs:element name="OUVPOINTDEVENTE">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="DateOuverture" type="date-aaaammjj"/>
+        <xs:element maxOccurs="8" minOccurs="1" ref="Ad"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="CP"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Ville"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Pays"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Taille"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Test"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MODIFPOINTDEVENTE">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="8" minOccurs="1" ref="Ad"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="CP"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Ville"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Pays"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Taille"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Test"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="CLOTUREPOINTDEVENTE">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <!-- Entete -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDOper"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="DateEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDEvt"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDCoffre"/>
+        <!-- Corps -->
+        <xs:element maxOccurs="1" minOccurs="1" ref="IDPointDeVente"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="DateClotureEffective" type="date-aaaammjj"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Info"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

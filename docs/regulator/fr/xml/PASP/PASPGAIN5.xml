@@ -1,0 +1,18 @@
+<PASPGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>G2ZWODAQ</Tech>
+  <DateMise>111204201032</DateMise>
+  <DateHeure>111206215812</DateHeure>
+  <SoldeAvantGain>45.33</SoldeAvantGain>
+  <Gain>250.00</Gain>
+  <SoldeApresGain>295.33</SoldeApresGain>
+</PASPGAIN>
+

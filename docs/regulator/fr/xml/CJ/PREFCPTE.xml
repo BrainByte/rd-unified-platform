@@ -1,0 +1,23 @@
+<PREFCPTE>
+  <IDOper>4921</IDOper>
+  <DateEvt>100412103320</DateEvt>
+  <IDEvt>495018</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>948JF95194NBJ2</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <Compte>
+    <Min>10</Min>
+    <Max>10</Max>
+  </Compte>
+  <MiseMax>
+    <Montant>20</Montant>
+    <TypeAct>PS</TypeAct>
+  </MiseMax>
+  <MiseMax>
+    <Montant>10</Montant>
+    <TypeAct>PH</TypeAct>
+  </MiseMax>
+  <DateDebut>100412103320</DateDebut>
+</PREFCPTE>

@@ -1,0 +1,59 @@
+<PAHIMISE>
+  <IDOper>4512</IDOper>
+  <DateEvt>201030102530</DateEvt>
+  <IDEvt>1903700</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>10206000</IDSession>
+  <IPJoueur>192.0.2.42</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>12335615971</Tech>
+  <Desc>
+    <DateHeure>201031120000</DateHeure>
+    <Hippodrome>Vincennes</Hippodrome>
+    <Pays>France</Pays>
+    <Reunion>1</Reunion>
+    <CNom>Prix Constant Hervieu</CNom>
+    <CNum>3</CNum>
+    <Clair>SG R1C3 31/10/2020</Clair>
+    <PronoPH>
+     <Type>Simple Gagnant</Type>   
+     <Base>5</Base>
+     <MiseBase>1</MiseBase>
+     <Nombre>1</Nombre>    
+    </PronoPH>
+  </Desc>
+  <Desc>
+    <DateHeure>201031123000</DateHeure>
+    <Hippodrome>Vincennes</Hippodrome>
+    <Pays>France</Pays>
+    <Reunion>1</Reunion>
+    <CNom>Prix course 4</CNom>
+    <CNum>4</CNum>
+    <Clair>SG R1C4 31/10/2020</Clair>
+    <PronoPH>
+     <Type>Simple Gagnant</Type>   
+     <Base>1</Base>
+     <MiseBase>1</MiseBase>
+     <Nombre>1</Nombre>    
+    </PronoPH>
+  </Desc>
+  <Desc>
+    <DateHeure>201031130000</DateHeure>
+    <Hippodrome>Vincennes</Hippodrome>
+    <Pays>France</Pays>
+    <Reunion>1</Reunion>
+    <CNom>Prix course 5</CNom>
+    <CNum>5</CNum>
+    <Clair>SG R1C5 31/10/2020</Clair>
+    <PronoPH>
+     <Type>Simple Gagnant</Type>   
+     <Base>9</Base>
+     <MiseBase>1</MiseBase>
+     <Nombre>1</Nombre>    
+    </PronoPH>
+  </Desc>
+  <SoldeAvantMise>27.33</SoldeAvantMise>
+  <Mise>3</Mise>
+  <SoldeApresMise>24.33</SoldeApresMise>
+</PAHIMISE>

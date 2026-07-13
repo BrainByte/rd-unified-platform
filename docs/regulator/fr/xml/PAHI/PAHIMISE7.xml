@@ -1,0 +1,25 @@
+<PAHIMISE> 
+<IDOper>4512</IDOper> 
+<DateEvt>191030102530</DateEvt> 
+<IDEvt>1903700</IDEvt> 
+<IDJoueur>9G3912JF</IDJoueur> <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur> <IDSession>10206000</IDSession> 
+<IPJoueur>192.0.2.42</IPJoueur> 
+<IDCoffre>1</IDCoffre> 
+<Tech>12335652233</Tech> 
+<Desc> 
+<DateHeure>191031120000</DateHeure> 
+<Hippodrome>Vincennes</Hippodrome> 
+<Pays>France</Pays> 
+<Reunion>1</Reunion> 
+<Clair>Duel de jockeys : Franck Nivard contre Yoann Lebourgeois, qui remporte le plus de courses ?</Clair> 
+<PronoPH> 
+<Type>Duel de jockeys</Type>
+<Choix>Franck Nivard</Choix> 
+<MiseBase>10</MiseBase> 
+<Nombre>1</Nombre> 
+</PronoPH> 
+</Desc> 
+<SoldeAvantMise>27.33</SoldeAvantMise> 
+<Mise>10</Mise> 
+<SoldeApresMise>22.33</SoldeApresMise> 
+</PAHIMISE>

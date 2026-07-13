@@ -1,0 +1,26 @@
+<xs:schema xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:finance="https://det.tech.arjel/2.0.0-draft/common/finance" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" targetNamespace="https://det.tech.arjel/2.0.0-draft/common/finance">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="../types/types.xsd"/>
+  <xs:group name="old-balance">
+    <xs:sequence>
+      <xs:element name="SoldeAvant" type="xs:decimal"/>
+      <xs:element name="SoldeMouvement" type="types:nonNegativeDecimal"/>
+      <xs:element name="SoldeApres" type="xs:decimal"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="old-bonus">
+    <xs:sequence>
+      <xs:element name="BonusAvant" type="xs:decimal"/>
+      <xs:element name="BonusMouvement" type="types:nonNegativeDecimal"/>
+      <xs:element name="BonusApres" type="xs:decimal"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="old">
+    <xs:choice>
+      <xs:sequence>
+        <xs:group ref="finance:old-balance"/>
+        <xs:group ref="finance:old-bonus" minOccurs="0"/>
+      </xs:sequence>
+      <xs:group ref="finance:old-bonus"/>
+    </xs:choice>
+  </xs:group>
+</xs:schema>

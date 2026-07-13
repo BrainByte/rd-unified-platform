@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:element name="Desc">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" ref="DateHeure"/>
+        <xs:element maxOccurs="16" minOccurs="1" ref="Hippodrome"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Pays"/>
+        <xs:element maxOccurs="16" minOccurs="1" ref="Reunion"/>
+        <xs:element maxOccurs="16" minOccurs="0" ref="CNom"/>
+        <xs:element maxOccurs="16" minOccurs="0" ref="CNum"/>
+	<xs:element maxOccurs="1" minOccurs="1" ref="Clair"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="PronoPH"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="LigSp">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Renc"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Tech"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Sport"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Cat"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Evnt"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Disc"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Genre"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Date"/>
+        <xs:element maxOccurs="2" minOccurs="0" ref="Part"/>
+        <xs:sequence maxOccurs="64" minOccurs="0">
+          <xs:element maxOccurs="64" minOccurs="1" ref="PronoSp"/>
+          <xs:element maxOccurs="64" minOccurs="0" ref="Cote"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Live" nillable="true"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Banque" nillable="true"/>
+        </xs:sequence>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PaSp">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Combi"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Mutuel"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="X"/>
+        <xs:element maxOccurs="64" minOccurs="1" ref="LigSp"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="MiseBase"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PronoPH">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Type"/>
+        <xs:element maxOccurs="64" minOccurs="0" ref="Base"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Choix"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Champ"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Combinaison"/>
+        <xs:element maxOccurs="64" minOccurs="0" ref="Associes"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Tlo"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="MiseBase"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Nombre"/>
+        <xs:element maxOccurs="64" minOccurs="0" ref="Coef"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="Cote2">
+    <xs:restriction base="nonNegativeDecimal"/>
+  </xs:simpleType>
+  <xs:element name="Cashout">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Rachat"/>
+        <xs:element maxOccurs="1" minOccurs="0" name="Cote" type="Cote2"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="PronoSp">
+    <xs:complexType>
+      <xs:sequence minOccurs="0" maxOccurs="64">
+        <xs:element maxOccurs="1" minOccurs="1" ref="TypeRes"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Choix"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="codeCategorie">
+    <xs:restriction base="code">
+      <xs:minLength value="3"/>
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeDiscipline">
+    <xs:restriction base="code">
+      <xs:minLength value="4"/>
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeEvenement">
+    <xs:restriction base="code">
+      <xs:minLength value="5"/>
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeParticipant">
+    <xs:restriction base="canonique">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="256"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeRencontre">
+    <xs:restriction base="canonique">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="256"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeSport">
+    <xs:restriction base="code">
+      <xs:minLength value="3"/>
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeTypRes">
+    <xs:restriction base="code">
+      <xs:minLength value="5"/>
+      <xs:maxLength value="16"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="BonusApresMise" type="bonus"/>
+  <xs:element name="BonusAvantMise" type="bonus"/>
+  <xs:element name="BonusMise" type="mouvement"/>
+  <xs:element name="Cat" type="codeCategorie"/>
+  <xs:element name="Choix" type="xs:string"/>
+  <xs:element name="Combi">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="S"/>
+        <xs:enumeration value="C"/>
+        <xs:enumeration value="XY"/>
+        <xs:enumeration value="TRIXIE"/>
+        <xs:enumeration value="PATENT"/>
+        <xs:enumeration value="YANKEE"/>
+        <xs:enumeration value="LUCKY15"/>
+        <xs:enumeration value="CANADIAN"/>
+        <xs:enumeration value="LUCKY31"/>
+        <xs:enumeration value="HEINZ"/>
+        <xs:enumeration value="LUCKY63"/>
+        <xs:enumeration value="SUPERHEINZ"/>
+        <xs:enumeration value="GOLIATH"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Cote">
+    <xs:simpleType>
+      <xs:restriction base="nonNegativeDecimal">
+        <xs:minInclusive value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Rachat" type="nonNegativeDecimal"/>
+  <xs:element name="Date" type="date-aammjjhhmmss"/>
+  <xs:element name="Disc" type="codeDiscipline"/>
+  <xs:element name="Evnt" type="codeEvenement"/>
+  <xs:element name="Genre">
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="H"/>
+        <xs:enumeration value="M"/>
+        <xs:enumeration value="F"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:element name="Mise" type="mouvement"/>
+  <xs:element name="MiseBase" type="nonNegativeDecimal"/>
+  <xs:element name="Part" type="codeParticipant"/>
+  <xs:element name="Renc" type="codeRencontre"/>
+  <xs:element name="SoldeApresMise" type="solde"/>
+  <xs:element name="SoldeAvantMise" type="solde"/>
+  <xs:element name="Sport" type="codeSport"/>
+  <xs:element name="Type" type="string-64"/>
+  <xs:element name="Base" type="string-64"/>
+  <xs:element name="Champ" type="empty"/>
+  <xs:element name="Combinaison" type="empty"/>
+  <xs:element name="Tlo" type="empty"/>
+  <xs:element name="Associes" type="string-64"/>
+  <xs:element name="Coef" type="nonNegativeDecimal"/>
+  <xs:element name="TypeRes" type="codeTypRes"/>
+  <xs:element name="X">
+    <xs:simpleType>
+      <xs:restriction base="xs:integer">
+        <xs:minInclusive value="1"/>
+        <xs:maxInclusive value="64"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+</xs:schema>

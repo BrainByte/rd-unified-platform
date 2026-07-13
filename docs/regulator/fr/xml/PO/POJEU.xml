@@ -1,0 +1,268 @@
+<POJEU>
+  <IDOper>0099</IDOper>
+  <IDCoffre>1</IDCoffre>
+  <DateEvt>111204101703</DateEvt>
+  <IDEvt>0000001360</IDEvt>
+  <Tech>WW-94703142</Tech>
+  <Pool>1</Pool>
+  <Participants>
+    <Joueur>
+      <IDOper>0100</IDOper>
+      <IDJoueur>999-test-999</IDJoueur>
+      <Pays>FR</Pays>
+      <IPJoueur>2001:db8::1</IPJoueur>
+      <Siege>7</Siege>
+      <Inscription>inscript-0</Inscription>
+      <Finance>
+        <Net>-0.04</Net>
+        <Total>0.04</Total>
+        <CaveAvant>1.52</CaveAvant>
+        <CaveApres>1.48</CaveApres>
+      </Finance>
+    </Joueur>
+    <Joueur>
+      <IDOper>0100</IDOper>
+      <IDJoueur>000-test-001</IDJoueur>
+      <IPJoueur>2001:db8::2</IPJoueur>
+      <Siege>8</Siege>
+      <Inscription>inscript-1</Inscription>
+      <Finance>
+        <Net>-0.02</Net>
+        <Total>0.02</Total>
+        <CaveAvant>3.55</CaveAvant>
+        <CaveApres>3.53</CaveApres>
+      </Finance>
+    </Joueur>
+    <Joueur>
+      <IDOper>0100</IDOper>
+      <IDJoueur>000-test-002</IDJoueur>
+      <IPJoueur>2001:db8::3</IPJoueur>
+      <Siege>10</Siege>
+      <Inscription>inscript-2</Inscription>
+      <Finance>
+        <Net>-0.04</Net>
+        <Total>0.04</Total>
+        <CaveAvant>1.90</CaveAvant>
+        <CaveApres>1.86</CaveApres>
+      </Finance>
+    </Joueur>
+    <Joueur>
+      <Oper>Hyper Poker (IT)</Oper>
+      <IDJoueur>HP-0013232002234234</IDJoueur>
+      <Pays>IT</Pays>
+      <IPJoueur>2001:db8::4</IPJoueur>
+      <Siege>2</Siege>
+      <Inscription>inscript-3</Inscription>
+      <Finance>
+        <Net>-0.05</Net>
+        <Total>2.41</Total>
+        <CaveAvant>2.41</CaveAvant>
+        <CaveApres>2.36</CaveApres>
+        <Rake>0.12</Rake>
+      </Finance>
+    </Joueur>
+    <Joueur>
+      <IDOper>0100</IDOper>
+      <IDJoueur>123-test-456</IDJoueur>
+      <IPJoueur>2001:db8::5</IPJoueur>
+      <Siege>3</Siege>
+      <Inscription>inscript-4</Inscription>
+      <Finance>
+        <Net>-0.05</Net>
+        <Total>2.41</Total>
+        <CaveAvant>6.18</CaveAvant>
+        <CaveApres>6.13</CaveApres>
+        <Rake>0.12</Rake>
+      </Finance>
+    </Joueur>
+    <Joueur>
+      <IDOper>0100</IDOper>
+      <IDJoueur>325-test-667</IDJoueur>
+      <IPJoueur>2001:db8::6</IPJoueur>
+      <Siege>5</Siege>
+      <Inscription>inscript-5</Inscription>
+      <Finance>
+        <Net>-0.04</Net>
+        <Total>0.04</Total>
+        <CaveAvant>1.72</CaveAvant>
+        <CaveApres>1.68</CaveApres>
+      </Finance>
+    </Joueur>
+  </Participants>
+  <Regle>THNL</Regle>
+  <Description>Texas Hold'Em No Limit (0.02-0.04)</Description>
+  <Jeu>
+    <Tour name="blinds">
+      <Timestamp>111204101703</Timestamp>
+      <Bet name="small blind">
+        <Siege>8</Siege>
+        <Valeur>0.02</Valeur>
+      </Bet>
+      <Bet name="big blind">
+        <Siege>10</Siege>
+        <Valeur>0.04</Valeur>
+      </Bet>
+      <Total>0.06</Total>
+    </Tour>
+    <Tour name="preflop">
+      <Timestamp>111204101703</Timestamp>
+      <Draw>
+        <Siege>2</Siege>
+        <Valeur>32</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>2</Siege>
+        <Valeur>26</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>3</Siege>
+        <Valeur>33</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>3</Siege>
+        <Valeur>38</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>5</Siege>
+        <Valeur>14</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>5</Siege>
+        <Valeur>23</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>7</Siege>
+        <Valeur>10</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>7</Siege>
+        <Valeur>19</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>8</Siege>
+        <Valeur>16</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>8</Siege>
+        <Valeur>13</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>10</Siege>
+        <Valeur>5</Valeur>
+      </Draw>
+      <Draw>
+        <Siege>10</Siege>
+        <Valeur>8</Valeur>
+      </Draw>
+      <Bet name="call">
+        <Siege>2</Siege>
+        <Valeur>0.04</Valeur>
+      </Bet>
+      <Bet name="call">
+        <Siege>3</Siege>
+        <Valeur>0.04</Valeur>
+      </Bet>
+      <Bet name="call">
+        <Siege>5</Siege>
+        <Valeur>0.04</Valeur>
+      </Bet>
+      <Bet name="call">
+        <Siege>7</Siege>
+        <Valeur>0.04</Valeur>
+      </Bet>
+      <Fold>
+        <Siege>8</Siege>
+      </Fold>
+      <Check>
+        <Siege>10</Siege>
+      </Check>
+      <Total>0.16</Total>
+    </Tour>
+    <Tour name="flop">
+      <Timestamp>111204101703</Timestamp>
+      <Draw ouverte="true" commune="true">
+        <Valeur>39</Valeur>
+      </Draw>
+      <Draw ouverte="true" commune="true">
+        <Valeur>43</Valeur>
+      </Draw>
+      <Draw ouverte="true" commune="true">
+        <Valeur>25</Valeur>
+      </Draw>
+      <Check>
+        <Siege>10</Siege>
+      </Check>
+      <Bet name="bet">
+        <Siege>2</Siege>
+        <Valeur>0.16</Valeur>
+      </Bet>
+      <Bet name="call">
+        <Siege>3</Siege>
+        <Valeur>0.16</Valeur>
+      </Bet>
+      <Fold>
+        <Siege>5</Siege>
+      </Fold>
+      <Fold>
+        <Siege>7</Siege>
+      </Fold>
+      <Fold>
+        <Siege>10</Siege>
+      </Fold>
+      <Total>0.32</Total>
+    </Tour>
+    <Tour name="turn">
+      <Timestamp>111204101703</Timestamp>
+      <Draw ouverte="true" commune="true">
+        <Valeur>44</Valeur>
+      </Draw>
+      <Bet name="bet">
+        <Siege>2</Siege>
+        <Valeur>0.28</Valeur>
+      </Bet>
+      <Bet name="call">
+        <Siege>3</Siege>
+        <Valeur>0.28</Valeur>
+      </Bet>
+      <Total>0.56</Total>
+    </Tour>
+    <Tour name="river">
+      <Timestamp>111204101703</Timestamp>
+      <Draw ouverte="true" commune="true">
+        <Valeur>29</Valeur>
+      </Draw>
+      <Bet name="bet">
+        <Siege>2</Siege>
+        <Valeur>0.56</Valeur>
+      </Bet>
+      <Bet name="raise">
+        <Siege>3</Siege>
+        <Valeur>2.78</Valeur>
+      </Bet>
+      <Bet name="allin">
+        <Siege>2</Siege>
+        <Valeur>1.37</Valeur>
+      </Bet>
+      <Total>3.86</Total>
+    </Tour>
+    <Tour name="reveal">
+      <Timestamp>111204101703</Timestamp>
+      <Reveal>
+        <Siege>2</Siege>
+        <Valeur>32</Valeur>
+      </Reveal>
+      <Reveal>
+        <Siege>2</Siege>
+        <Valeur>26</Valeur>
+      </Reveal>
+      <Reveal>
+        <Siege>3</Siege>
+        <Valeur>33</Valeur>
+      </Reveal>
+      <Reveal>
+        <Siege>3</Siege>
+        <Valeur>38</Valeur>
+      </Reveal>
+    </Tour>
+  </Jeu>
+</POJEU>

@@ -1,0 +1,11 @@
+<xs:schema xmlns:poker="https://det.tech.arjel/2.0.0-draft/features/poker" xmlns:cercle="https://det.tech.arjel/2.0.0-draft/features/cercle" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/poker" schemaLocation="../features/poker/poker.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/cercle" schemaLocation="../features/cercle/cercle.xsd"/>
+  <xs:element name="Joueur" type="poker:player"/>
+  <xs:element name="Bet" type="poker:bet" substitutionGroup="cercle:Action"/>
+  <xs:element name="Draw" type="poker:draw" substitutionGroup="cercle:Action"/>
+  <xs:element name="Discard" type="poker:card" substitutionGroup="cercle:Action"/>
+  <xs:element name="Reveal" type="poker:card" substitutionGroup="cercle:Action"/>
+  <xs:element name="Check" type="poker:action" substitutionGroup="cercle:Action"/>
+  <xs:element name="Fold" type="poker:actionfold" substitutionGroup="cercle:Action"/>
+</xs:schema>

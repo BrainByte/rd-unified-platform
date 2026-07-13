@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:simpleType name="ajustement">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="bonus">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="date-aammjj">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{6}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="date-aaaammjj">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{8}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="date-aammjjhhmm">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{10}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="date-aammjjhhmmss">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{12}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="canonique">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z' -]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="code">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[#0-9A-Z-]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="fr">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Za-zÀÂÄÇÉÈÊËÎÏÔÖÙÛÜŸàâäçéèêëîïôöùûüÿÆŒæœ€#$'()*+,./:;=?!@_ -]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="IP">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})|(([0-9a-fA-F]{1,4}|0)(:([0-9a-fA-F]{1,4}|0)){7})"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="mouvement">
+    <xs:restriction base="nonNegativeDecimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeDecimal">
+    <xs:restriction base="xs:decimal">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="nonNegativeInteger">
+    <xs:restriction base="xs:integer">
+      <xs:minInclusive value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="operator">
+    <xs:restriction base="xs:string">
+      <xs:length value="4"/>
+      <xs:pattern value="\d{4}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="postal">
+    <xs:restriction base="xs:string">
+      <xs:length value="5"/>
+      <xs:pattern value="(([0-8][0-9AB])|(9[0-9AB]|99))[0-9]{3}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="sha1">
+    <xs:restriction base="xs:string">
+      <xs:length value="40"/>
+      <xs:pattern value="[0-9A-Z]{40}"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="solde">
+    <xs:restriction base="xs:decimal"/>
+  </xs:simpleType>
+  <xs:simpleType name="string-8">
+    <xs:restriction base="fr">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="8"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="string-32">
+    <xs:restriction base="fr">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="32"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="string-64">
+    <xs:restriction base="fr">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="string-256">
+    <xs:restriction base="fr">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="256"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="string-1024">
+    <xs:restriction base="fr">
+      <xs:minLength value="0"/>
+      <xs:maxLength value="1024"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="empty">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="reference2">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[a-zA-Z0-9._/#-]+"/>
+    </xs:restriction>
+  </xs:simpleType>  
+  <xs:element name="Ajustement" type="ajustement"/>
+  <xs:element name="BonusAjust" type="ajustement"/>
+  <xs:element name="BonusApresGain" type="bonus"/>
+  <xs:element name="BonusAvantGain" type="bonus"/>  
+  <xs:element name="BonusApres" type="bonus"/>
+  <xs:element name="BonusAvant" type="bonus"/>
+  <xs:element name="BonusMouvement" type="mouvement"/>
+  <xs:element name="BonusNom" type="xs:string"/>
+  <xs:element name="Clair" type="string-256"/>
+  <xs:element name="DateEvt" type="date-aammjjhhmmss"/>
+  <xs:element name="DateHeure" type="date-aammjjhhmmss"/>
+  <xs:element name="DateMise" type="date-aammjjhhmmss"/>
+  <xs:element name="GainAbond" type="mouvement"/>
+  <xs:element name="Gain" type="mouvement"/>
+  <xs:element name="HashJoueur" type="sha1"/>
+  <xs:element name="IDCoffre" type="xs:nonNegativeInteger"/>
+  <xs:element name="IDEvt" type="xs:nonNegativeInteger"/>
+  <xs:element name="IDJoueur" type="string-64"/>
+  <xs:element name="IDMonnaie" type="string-64"/>
+  <xs:element name="IDOper" type="operator"/>
+  <xs:element name="IDSession" type="string-256"/>
+  <xs:element name="IDRef" type="string-256"/>
+  <xs:element name="Info" type="xs:string"/>
+  <xs:element name="NombreChoix" type="xs:integer"/>
+  <xs:element name="IPJoueur" type="IP"/>
+  <xs:element name="Login" type="string-64"/>
+  <xs:element name="MiseAbond" type="mouvement"/>
+  <xs:element name="MontAbond" type="mouvement"/>
+  <xs:element name="MontantRembours" type="mouvement"/>
+  <xs:element name="Mouvement" type="mouvement"/>
+  <xs:element name="Nom" type="xs:string"/>
+  <xs:element name="Nom2" type="string-64"/>
+  <xs:element name="Nom256" type="string-256"/>
+  <xs:element name="Pseudo" type="string-64"/>
+  <xs:element name="IDTirage" type="string-64"/>
+  <xs:element name="IDGroupe" type="string-64"/>
+  <xs:element name="SoldeApres" type="solde"/>
+  <xs:element name="SoldeApresGain" type="solde"/>
+  <xs:element name="SoldeApresRembours" type="solde"/>
+  <xs:element name="SoldeAvantGain" type="solde"/>
+  <xs:element name="SoldeAvantRembours" type="solde"/>
+  <xs:element name="SoldeAvant" type="solde"/>
+  <xs:element name="MonnaieAvant" type="solde"/>
+  <xs:element name="MonnaieApres" type="solde"/>
+  <xs:element name="MontantMonnaie" type="mouvement"/>
+  <xs:element name="Unite" type="xs:string"/>
+  <xs:element name="SoldeMouvement" type="mouvement"/>
+  <xs:element name="MontantAchat" type="mouvement"/>
+  <xs:element name="Tech" type="string-256"/>
+  <xs:element name="TechJeu" type="xs:string"/>
+  <xs:element name="Option" type="xs:string"/>
+  <xs:element name="Supervision" type="empty"/>
+  <xs:element name="Jackpot" type="empty"/>
+  <xs:element name="Mutuel" type="empty"/>
+  <xs:element name="Test" type="empty"/>
+  <xs:element name="Tel" type="empty"/>
+  <xs:element name="Retransmission" type="empty"/>
+  <xs:element name="Hippodrome" type="xs:string"/>
+  <xs:element name="Pays" type="string-64"/>
+  <xs:element name="Reunion" type="xs:integer"/>
+  <xs:element name="Nombre" type="xs:integer"/>
+  <xs:element name="CNom" type="xs:string"/>
+  <xs:element name="CNum" type="xs:integer"/>
+  <xs:element name="Description" type="xs:string"/>
+  <xs:element name="Classement" type="xs:integer"/>
+  <xs:element name="IDPointDeVente" type="string-64"/>
+  <xs:element name="Ad" type="string-256"/>
+  <xs:element name="CP" type="postal"/>
+  <xs:element name="Ville" type="string-64"/>
+  <xs:element name="Taille" type="nonNegativeDecimal"/>
+  <xs:element name="Taille2" type="string-64"/>
+  <xs:element name="Valeur" type="nonNegativeDecimal"/>
+  <xs:element name="Oper" type="xs:string"/>
+</xs:schema>

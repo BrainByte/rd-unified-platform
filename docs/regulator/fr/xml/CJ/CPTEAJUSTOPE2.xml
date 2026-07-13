@@ -1,0 +1,17 @@
+<CPTEAJUSTOPE>
+  <IDOper>4921</IDOper>
+  <DateEvt>100622121030</DateEvt>
+  <IDEvt>495145</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <Supervision/>
+  <IDRef>123456</IDRef>
+  <Info>Refus retrait du 21/06/2010</Info>
+  <TypeAjust>Retrait</TypeAjust>
+  <SoldeAvant>32</SoldeAvant>
+  <Ajustement>25.5</Ajustement>
+  <SoldeApres>57.5</SoldeApres>
+</CPTEAJUSTOPE>

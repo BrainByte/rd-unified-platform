@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:include schemaLocation="Common.xsd"/>
+  <xs:element name="Compte">
+    <xs:complexType>
+      <xs:sequence maxOccurs="1" minOccurs="1">
+        <xs:element maxOccurs="1" minOccurs="0" ref="Min"/>
+        <xs:element maxOccurs="1" minOccurs="0" ref="Max"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="DepotMax" type="nonNegativeDecimal"/>
+  <xs:element name="TempsMax" type="nonNegativeInteger"/>
+  <xs:element name="LotN">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Nom"/>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Valeur"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="MiseMax">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="1" minOccurs="1" ref="Montant"/>
+        <xs:element maxOccurs="1" minOccurs="1" type="TypeAct" name="TypeAct"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:simpleType name="TypeAct">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PS"/>
+      <xs:enumeration value="PH"/>
+      <xs:enumeration value="PO"/>
+      <xs:enumeration value="LO"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="departement">
+    <xs:restriction base="xs:string">
+      <xs:minLength value="2"/>
+      <xs:maxLength value="3"/>
+      <xs:pattern value="[0-9][0-9AB][0-9]?"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="civil">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="Mme"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="NatureVerification">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="PieceIdentite"/>
+      <xs:enumeration value="Electronique"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="periode">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="H"/>
+      <xs:enumeration value="J"/>
+      <xs:enumeration value="S"/>
+      <xs:enumeration value="M"/>
+      <xs:enumeration value="A"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="CauseRefus" type="xs:string"/>
+  <xs:element name="Civilite" type="civil"/>
+  <xs:element name="DateDemande" type="date-aammjjhhmmss"/>
+  <xs:element name="DateEffective" type="date-aammjjhhmmss"/>
+  <xs:element name="DateDebut" type="date-aammjjhhmmss"/>
+  <xs:element name="DateFin" type="date-aammjjhhmmss"/>
+  <xs:element name="DateModif" type="date-aammjjhhmmss"/>
+  <xs:element name="DateN" type="date-aaaammjj"/>
+  <xs:element name="DptN" type="departement"/>
+  <xs:element name="Duree">
+    <xs:simpleType>
+      <xs:restriction base="xs:integer">
+        <xs:minInclusive value="1"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+  <xs:simpleType name="cib">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\d{5}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="iban">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="Email" type="string-64"/>
+  <xs:element name="Max" type="nonNegativeDecimal"/>
+  <xs:element name="Min" type="nonNegativeDecimal"/>
+  <xs:element name="Montant" type="nonNegativeDecimal"/>
+  <xs:element name="Moyen" type="string-64"/>
+  <xs:element name="MoyenPaiement" type="xs:string"/>
+  <xs:element name="PaysN" type="string-64"/>
+  <xs:element name="Prenom" type="xs:string"/>
+  <xs:element name="VilleN" type="string-64"/>
+  <xs:element name="TelFixe" type="string-32"/>
+  <xs:element name="TelMob" type="string-32"/>
+  <xs:element name="SoldeClos" type="solde"/>
+  <xs:element name="PspCib"     type="cib" />
+  <xs:element name="PspLib"     type="string-256" />
+  <xs:element name="PspCpteRef" type="string-256" />
+  <xs:element name="PspIban"    type="iban" />
+  <xs:element name="Nature" type="xs:string"/>
+  <xs:element name="Motif" type="xs:string"/>
+  <xs:element name="SoldeDemande" type="nonNegativeDecimal"/>
+</xs:schema>

@@ -1,0 +1,18 @@
+<PASPGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>ABLSTJEK</Tech>
+  <DateMise>111206200000</DateMise>
+  <DateHeure>111206215149</DateHeure>
+  <SoldeAvantGain>45.83</SoldeAvantGain>
+  <Gain>8.20</Gain>
+  <SoldeApresGain>59.03</SoldeApresGain>
+  <GainAbond>5.00</GainAbond>
+</PASPGAIN>

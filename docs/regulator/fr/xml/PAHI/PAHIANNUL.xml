@@ -1,0 +1,17 @@
+<PAHIANNUL>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>12335652233</Tech>
+  <DateMise>091030102530</DateMise>
+  <Motif>CourseAnnulee</Motif>
+  <SoldeAvantRembours>45.83</SoldeAvantRembours>
+  <MontantRembours>5</MontantRembours>
+  <SoldeApresRembours>50.83</SoldeApresRembours>
+</PAHIANNUL>

@@ -1,0 +1,18 @@
+<xs:schema xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:header="https://det.tech.arjel/2.0.0-draft/common/header" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" targetNamespace="https://det.tech.arjel/2.0.0-draft/common/header">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="../types/types.xsd"/>
+  <xs:group name="id">
+    <xs:sequence>
+      <xs:element name="IDOper" type="types:opId"/>
+      <!-- <xs:element name="IDCoffre" type="types:numId"/> -->
+      <xs:element name="IDCoffre" type="xs:nonNegativeInteger"/>
+      <xs:element name="DateEvt" type="types:date-aammjjhhmmss"/>
+      <!-- <xs:element name="IDEvt" type="types:numId"/> -->
+      <xs:element name="IDEvt" type="xs:nonNegativeInteger"/>
+      <xs:element name="Supervision" type="types:empty" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:attributeGroup name="state">
+    <xs:attribute name="retransmission" type="xs:boolean" use="optional" default="false"/>
+    <xs:attribute name="test" type="xs:boolean" use="optional" default="false"/>
+  </xs:attributeGroup>
+</xs:schema>

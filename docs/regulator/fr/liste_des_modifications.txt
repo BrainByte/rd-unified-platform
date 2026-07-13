@@ -1,0 +1,24 @@
+
+Dernières modifications : 
+
+15/06/2026 :
+	./referentiel/xsd/include/CJCommon.xsd :
+		- <xs:element name="Prenom" type="string-256"/> est remplacé par <xs:element name="Prenom" type="xs:string"/> (ligne 99)
+
+01/06/2026 :
+	./referentiel/xsd/CJ.xsd :
+		- <xs:element maxOccurs="1" minOccurs="1" name="Nom" type="string-64"/> est remplacé par <xs:element maxOccurs="1" minOccurs="1" ref="Nom"/> (ligne 21)
+
+02/06/2025 :
+	./referentiel/xsd/include/common/types/types.xsd : 
+		- Modification de la REGEX validant les adresses IPv6 (ligne 14)
+		- Suppression du simpleType nommé "IP2"
+
+	./referentiel/xsd/include/common/player/player.xsd
+		- Modification du type du champ IPJoueur (ligne 7) : "types:IP2" devient "types:IP"
+		- Modification du type du champ IPJoueur (ligne 20) : "types:IP2" devient "types:IP"
+
+05/05/2025 :
+	./referentiel/xsd/include/features/cercle/cercle.xsd :
+		- Ajout d'un type au champ joueur (ligne 40) : type="poker:player"
+

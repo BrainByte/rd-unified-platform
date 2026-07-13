@@ -1,0 +1,262 @@
+<xs:schema xmlns:types="https://det.tech.arjel/2.0.0-draft/common/types" xmlns:event="https://det.tech.arjel/2.0.0-draft/common/event" xmlns:finance="https://det.tech.arjel/2.0.0-draft/common/finance" xmlns:cercle="https://det.tech.arjel/2.0.0-draft/features/cercle" xmlns:xs="http://www.w3.org/2001/XMLSchema" version="2.0.0-draft" targetNamespace="https://det.tech.arjel/2.0.0-draft/features/cercle">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/types" schemaLocation="../../common/types/types.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/event" schemaLocation="../../common/event/event.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/common/finance" schemaLocation="../../common/finance/finance.xsd"/>
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/poker" schemaLocation="../../features/poker/poker.xsd"/>
+  <xs:group name="id">
+    <xs:sequence>
+      <xs:element name="Inscription" type="types:reference"/>
+      <xs:element name="Tech" type="types:reference"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="id-final">
+    <xs:sequence>
+      <xs:element name="Inscription" type="types:reference"/>
+      <xs:element name="Tech" type="types:reference"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Classement" type="xs:nonNegativeInteger"/>      
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="id-final2">
+    <xs:sequence>
+      <xs:element name="Inscription" type="types:reference"/>
+      <xs:element name="Tech" type="types:reference"/>
+      <xs:element maxOccurs="1" minOccurs="0" name="Classement" type="xs:nonNegativeInteger"/>
+      <xs:element name="Points" type="xs:nonNegativeInteger"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="pool-id">
+    <xs:sequence>
+      <xs:group ref="cercle:id"/>
+      <xs:element name="Pool" type="types:reference"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="sv-pool-id">
+    <xs:sequence>
+      <xs:element name="Tech" type="types:reference"/>
+      <xs:element name="Pool" type="types:reference"/>
+      <xs:element name="Participants">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Joueur" type="poker:player" minOccurs="2" maxOccurs="unbounded"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+  <xs:group name="description">
+    <xs:sequence>
+      <xs:element name="Description" type="xs:string"/>
+      <xs:element name="Format" type="cercle:format"/>
+    </xs:sequence>
+  </xs:group>
+  <xs:simpleType name="format">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="(CG|T(DV)?(/[AGMS]+)?)|(\d+/\d+/\d+(/[SAG]+)?)"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="code">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z-]*"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="register">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id"/>
+          <xs:group ref="cercle:description"/>
+          <xs:group ref="finance:old"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>  
+  <xs:simpleType name="codeSport">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z-]*"/>
+      <xs:length value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeCategorie">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z-]*"/>
+      <xs:length value="3"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeDiscipline">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z-]*"/>
+      <xs:length value="4"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="codeEvenement">
+    <xs:restriction base="xs:token">
+      <xs:pattern value="[0-9A-Z-]*"/>
+      <xs:minLength value="5"/>
+      <xs:maxLength value="64"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="empty">
+    <xs:restriction base="xs:string">
+      <xs:maxLength value="0"/>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="register2">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id"/>
+          <xs:element name="Description" type="xs:string"/>
+          <!-- xs:group ref="cercle:description"/ -->
+          <xs:element maxOccurs="1" minOccurs="1" name="Sport" type="cercle:codeSport"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Cat" type="cercle:codeCategorie"/>
+          <xs:element maxOccurs="1" minOccurs="1" name="Evnt" type="cercle:codeEvenement"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Disc" type="cercle:codeDiscipline"/>
+          <xs:element name="Format" type="cercle:format"/>
+          <xs:group ref="finance:old"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+          <xs:element name="Tel" type="cercle:empty" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="Action">
+  </xs:element>
+  <xs:complexType name="round">
+    <xs:sequence>
+      <xs:element name="Timestamp" type="types:date-aammjjhhmmss"/>
+      <xs:element ref="cercle:Action" maxOccurs="unbounded"/>
+      <xs:element name="Total" type="types:nonNegativeDecimal" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute use="required" name="name" type="xs:string"/>
+  </xs:complexType>
+  <xs:complexType name="game">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:pool-id"/>
+          <xs:element name="Description" type="xs:string"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="sv-game">
+    <xs:complexContent>
+      <xs:extension base="event:anonymous">
+        <xs:sequence>
+          <xs:group ref="cercle:sv-pool-id"/>
+          <xs:element name="Regle" type="types:canonical"/>
+          <xs:element name="Description" type="xs:string"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+          <xs:element name="Jeu">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="Tour" type="cercle:round" minOccurs="1" maxOccurs="unbounded"/>
+              </xs:sequence>
+            </xs:complexType>
+            <xs:unique name="round_name">
+              <xs:selector xpath="Tour"/>
+              <xs:field xpath="@name"/>
+            </xs:unique>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:group name="motif-old">
+    <xs:choice>
+      <xs:element name="Description" type="xs:string"/>
+      <xs:element name="Motif" type="xs:string"/>
+    </xs:choice>
+  </xs:group>
+  <xs:complexType name="special">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id"/>
+          <xs:group ref="cercle:motif-old"/>
+          <xs:group ref="finance:old"/>
+	  <xs:element name="Info" type="xs:string" minOccurs="0"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>	  
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="final">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id-final"/>
+          <xs:group ref="finance:old"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="final2">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id-final2"/>
+          <xs:group ref="finance:old"/>
+          <xs:element name="Info" type="xs:string" minOccurs="0"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>          
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="cancel">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id"/>          
+          <xs:element name="Motif">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="NombreJoueurs"/>
+					<xs:enumeration value="Joueur"/>
+					<xs:enumeration value="Deconnexion"/>
+					<xs:enumeration value="Autre"/>
+				</xs:restriction>
+			</xs:simpleType>
+		  </xs:element> 
+          <xs:group ref="finance:old"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+	  <xs:element name="Info" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="cancel2">
+    <xs:complexContent>
+      <xs:extension base="event:default">
+        <xs:sequence>
+          <xs:group ref="cercle:id"/>          
+          <xs:element name="Motif">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="NonConforme"/>
+					<xs:enumeration value="MSE"/>
+					<xs:enumeration value="RencontreAnnulee"/>
+					<xs:enumeration value="Resultat"/>
+					<xs:enumeration value="NombreJoueur"/>
+					<xs:enumeration value="Joueur"/>
+					<xs:enumeration value="Autre"/>
+				</xs:restriction>
+			</xs:simpleType>
+		  </xs:element> 
+          <xs:group ref="finance:old"/>
+          <xs:element maxOccurs="1" minOccurs="0" name="Unite" type="xs:string"/>
+          <xs:element name="Tel" type="cercle:empty" minOccurs="0"/>
+	  <xs:element name="Info" type="xs:string" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  
+</xs:schema>

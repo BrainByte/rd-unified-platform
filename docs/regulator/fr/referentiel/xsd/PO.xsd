@@ -1,0 +1,10 @@
+<xs:schema xmlns:cercle="https://det.tech.arjel/2.0.0-draft/features/cercle" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="https://det.tech.arjel/2.0.0-draft/features/cercle" schemaLocation="include/features/cercle/cercle.xsd"/>
+  <xs:include schemaLocation="include/poker/poker.xsd"/>
+  <xs:element name="POINSCRIT" type="cercle:register"/>
+  <xs:element name="POJEU" type="cercle:sv-game"/>
+  <xs:element name="POACHAT" type="cercle:special"/>
+  <xs:element name="POGAIN" type="cercle:special"/>
+  <xs:element name="POBILAN" type="cercle:final"/>
+  <xs:element name="POANNUL" type="cercle:cancel"/>
+</xs:schema>

@@ -1,0 +1,17 @@
+<CPTEAJUSTOPE>
+  <IDOper>4921</IDOper>
+  <DateEvt>120621100100</DateEvt>
+  <IDEvt>495145</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <Supervision/>
+  <IDRef>123456</IDRef>
+  <Info>Refus alimentation du 20/06/2012</Info>
+  <TypeAjust>Alimentation</TypeAjust>
+  <SoldeAvant>10</SoldeAvant>
+  <Ajustement>-20</Ajustement>
+  <SoldeApres>-10</SoldeApres>
+</CPTEAJUSTOPE>

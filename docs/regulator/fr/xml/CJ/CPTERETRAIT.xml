@@ -1,0 +1,16 @@
+<CPTERETRAIT>
+  <IDOper>4921</IDOper>
+  <DateEvt>100621121030</DateEvt>
+  <IDEvt>495018</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>948JF95194NBJ2</IDSession>
+  <IPJoueur>192.168.0.3</IPJoueur>
+  <IDCoffre>2</IDCoffre>
+  <IDRef>123456</IDRef>
+  <DateDemande>100621120930</DateDemande>
+  <SoldeDemande>25.5</SoldeDemande> 
+  <SoldeAvant>51</SoldeAvant>
+  <SoldeMouvement>25.5</SoldeMouvement>
+  <SoldeApres>25.5</SoldeApres>
+</CPTERETRAIT>

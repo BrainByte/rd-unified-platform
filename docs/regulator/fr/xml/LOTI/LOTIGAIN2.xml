@@ -1,0 +1,32 @@
+<LOTIGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>GTRH42REY</Tech>
+  <DateMise>200104101703</DateMise>
+  <SoldeAvant>45.83</SoldeAvant>
+  <SoldeMouvement>10000</SoldeMouvement>
+  <SoldeApres>10045.83</SoldeApres>
+</LOTIGAIN>
+<LOTIGAIN>
+  <IDOper>4512</IDOper>
+  <DateEvt>111206220000</DateEvt>
+  <IDEvt>1903810</IDEvt>
+  <IDJoueur>9G3912JF</IDJoueur>
+  <HashJoueur>9853E488E24120BC18F9A650AED9CEE0FF72B09E</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>192.168.1.1</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision/>
+  <Tech>HYTZVYRE5</Tech>
+  <DateMise>200104101703</DateMise>
+  <SoldeAvant>10045.83</SoldeAvant>
+  <SoldeMouvement>40000</SoldeMouvement>
+  <SoldeApres>50045.83</SoldeApres>
+</LOTIGAIN>
