@@ -245,7 +245,13 @@ credentials** — no per-market code on the happy path.
    four record types and their branches.
 4. Add the XSD validation gate to CI using the schemas in this folder.
 5. Convert ES/GR; decide DK case-by-case (spec vs template) given its
-   quirks.
+   quirks. **ES done** — `specs/es_v3_3.py` covers all six record types
+   including the two-registro periodic Lotes; the conversion required
+   only spec-vocabulary additions to the engine (element attributes for
+   `xsi:type`, per-record envelope values, list iteration for register
+   rows, element variants for the Depositos/Retiradas split, string
+   templates, and the ES lexical codecs), proven by `test_es_spec.py`
+   (10/10 byte-identical to `es.py`) with the NL suite still green.
 6. Lift specs + engine into `dataform-starter/submission-service/` as the
    adapter layer; the demo website imports the same engine thereafter.
 

@@ -44,9 +44,10 @@
 # docs/regulator/translation-architecture.md for that design and the
 # migration path from these modules to it.
 #
-# NL is the first market converted (migration step 3): it now serialises
-# through engine.py + specs/nl_v1_11.py, and test_nl_spec.py proves the
-# spec byte-identical to the retained hand-written oracle nl.py.
+# NL and ES are converted (migration steps 3 and 5): they serialise
+# through engine.py + specs/nl_v1_11.py / specs/es_v3_3.py, and
+# test_nl_spec.py / test_es_spec.py prove each spec byte-identical to its
+# retained hand-written oracle (nl.py / es.py).
 #
 # Formats are keyed (jurisdiction, record_type). Jurisdictions whose schemas
 # are sampled under docs/regulator/ get their stipulated format:
@@ -67,8 +68,8 @@
 # cannot source — full KYC identity, IPs, device ids — are omitted or
 # defaulted, and each module says so where it does it.
 # ============================================================================
-from . import dk, engine, es, generic, gr, nl  # noqa: F401  (nl = test oracle)
-from .specs import nl_v1_11
+from . import dk, engine, es, generic, gr, nl  # noqa: F401  (es/nl = test oracles)
+from .specs import es_v3_3, nl_v1_11
 
 # (jurisdiction, record_type) -> formatter(canonical dict) -> xml.etree Element
 FORMATTERS = {
@@ -77,12 +78,14 @@ FORMATTERS = {
     ("DK", "gaming"):   dk.gaming,
     # DK has no standard record for account movements -> payments fall back
 
-    ("ES", "bets"):     es.bet,
-    ("ES", "payments"): es.payment,
-    ("ES", "players"):  es.player,
-    ("ES", "gaming"):   es.gaming,
-    ("ES", "rud"):      es.periodic_rud,
-    ("ES", "rut"):      es.periodic_rut,
+    # ES runs on the mapping-driven engine; es.py remains as the byte-
+    # identity oracle exercised by test_es_spec.py
+    ("ES", "bets"):     engine.bind(es_v3_3.SPEC, "bets"),
+    ("ES", "payments"): engine.bind(es_v3_3.SPEC, "payments"),
+    ("ES", "players"):  engine.bind(es_v3_3.SPEC, "players"),
+    ("ES", "gaming"):   engine.bind(es_v3_3.SPEC, "gaming"),
+    ("ES", "rud"):      engine.bind(es_v3_3.SPEC, "rud"),
+    ("ES", "rut"):      engine.bind(es_v3_3.SPEC, "rut"),
 
     ("GR", "bets"):     gr.bet,
     ("GR", "payments"): gr.payment,
