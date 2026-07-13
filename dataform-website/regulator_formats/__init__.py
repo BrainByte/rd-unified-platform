@@ -18,9 +18,24 @@
 #
 # The submission engine therefore stays thin (it never touches an element
 # name), and the SAFE stays a faithful stand-in for the external, regulator-
-# operated store we would really be writing to. In the production pipeline
-# this layer is the serialisation stage fed by the Dataform submission
-# views: same canonical rows in, per-jurisdiction files out.
+# operated store we would really be writing to.
+#
+# DEPLOYMENT: nothing in this package is website code. It imports only the
+# Python standard library — no Flask, no DuckDB, no db.py — precisely so it
+# lifts straight into the production submission service
+# (dataform-starter/submission-service/, the Cloud Run engine that reads
+# BigQuery `submission_ready_{mkt}` after each Dataform run and delegates
+# to per-market adapters). The mapping at cutover:
+#
+#   demo (this repo, local)              production (BigQuery + Cloud Run)
+#   submission.py SQL over DuckDB    ->  Dataform submission_ready_{mkt} views
+#   submission.py engine loop        ->  submission-service/engine/engine.py
+#   regulator_formats/{mkt}.py       ->  submission-service/adapters/{mkt}.py
+#   safe.py + dataform-safe/         ->  the regulator's real SAFE/CDB/endpoint
+#
+# The canonical record dict is the contract at the seam: a BigQuery row
+# from submission_ready_{mkt} carries the same fields the demo dicts do,
+# so these modules serialise either source unchanged.
 #
 # Formats are keyed (jurisdiction, record_type). Jurisdictions whose schemas
 # are sampled under docs/regulator/ get their stipulated format:

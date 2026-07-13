@@ -9,6 +9,13 @@ Flow per invocation (triggered by Workflows after Dataform run succeeds):
 
 Adapters contain ONLY envelope/protocol quirks (~50 lines each).
 All selection/shaping logic already happened in Dataform.
+
+Worked per-regulator adapters exist in the demo:
+dataform-website/regulator_formats/ serialises canonical rows into the
+formats stipulated by the schemas sampled in docs/regulator/ (DK
+Standard Records, ES DGOJ Lotes, GR HGC Batches, NL KSA CDB records).
+The package is stdlib-only and slots in here as adapters/{market}.py —
+see the architecture note in its __init__.py.
 """
 
 import importlib
