@@ -35,8 +35,10 @@ settled betting activity for the period. Scenario:
     </div>
     <p style="margin-top:12px"><button class="btn btn-gold">Generate &amp; file</button></p>
   </form>
-  <p class="muted">Each register row is SOAPed to the SAFE
+  <p class="muted">Each generation files ONE regulator batch to the SAFE
   (<span class="mono">/safe/&lt;MKT&gt;/rud</span> or <span class="mono">/rut</span>)
+  covering every player active in the period — for Spain a single DGOJ
+  <span class="mono">&lt;Lote&gt;</span> in the monitoring-system 3.3 format —
   and lands as XML under <span class="mono">dataform-safe/&lt;MKT&gt;/</span>.
   Re-filing the same period supersedes the previous receipt.</p>
 </div>
@@ -44,7 +46,7 @@ settled betting activity for the period. Scenario:
 <h2>Filed registers</h2>
 {% if filings %}
 <table>
-  <tr><th>Register</th><th>Row</th><th>Market</th><th>Receipt</th><th>Filed (UTC)</th></tr>
+  <tr><th>Register</th><th>Filing</th><th>Market</th><th>Receipt</th><th>Filed (UTC)</th></tr>
   {% for rtype, key, mkt, receipt, ts in filings %}
     <tr>
       <td class="mono">{{ rtype | upper }}</td>

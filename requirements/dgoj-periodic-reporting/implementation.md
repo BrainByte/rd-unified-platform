@@ -84,12 +84,16 @@ brought up to date (they also predated DE and `gaming`).
 **B2. Submission engine.** `submission.py`: `PERIODIC_REPORTS` config
 (mirrors the pipeline's `periodicReports`; ES → RUD daily, RUT monthly);
 `PERIODIC_SQL` totalising each player's settled bets in a [start, end)
-window; `submit_periodic()` builds one `<Record>` per player (RegisterId,
-PeriodStart, Cadence, pseudonymised PlayerRef, BetsSettled, StakeSum,
-WinningsSum, GgrSum) and SOAPs it to `/safe/<MKT>/<register>`;
-`_log_replace()` (INSERT OR REPLACE) so a re-filed register supersedes
-the previous receipt. Registers are filed **on demand**, not by the
-polling loop.
+window; `submit_periodic()` builds one canonical filing (register id,
+cadence, period, one row per pseudonymised player with BetsSettled /
+StakeSum / WinningsSum / GgrSum), hands it to
+`regulator_formats/` for serialisation — for ES a single DGOJ `<Lote>`
+in the monitoring-system 3.3 format (RUD filings pair a `RegistroRUD`
+with a `RegistroCJD Diaria` carrying the per-player money; RUT filings a
+`RegistroRUT` totals record with a `RegistroCJD Mensual`) — and SOAPs
+the batch to `/safe/<MKT>/<register>`; `_log_replace()` (INSERT OR
+REPLACE) so a re-filed register supersedes the previous receipt.
+Registers are filed **on demand**, not by the polling loop.
 
 **B3. Admin trigger (REQ-DGOJ-5).** `app.py`: `GET /admin/periodic`
 (form + filed-registers table) and `POST /admin/periodic/generate`

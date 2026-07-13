@@ -861,15 +861,15 @@ def admin_periodic_generate():
     filed = 0
     for reg in due:
         try:
-            results = submission.submit_periodic(g.cur, mkt, reg, period)
+            rows, receipt = submission.submit_periodic(g.cur, mkt, reg, period)
         except Exception as exc:                      # e.g. SAFE not reachable
             flash(f"{mkt} {reg['id']}: submission failed ({exc}).", "error")
             continue
-        if results:
-            filed += len(results)
-            receipts = ", ".join(r for _, r in results)
-            flash(f"{mkt} {reg['id']} ({cadence}) for {period:%Y-%m-%d}: {len(results)} "
-                  f"register row(s) filed with the SAFE — receipts {receipts}.", "ok")
+        if rows:
+            filed += rows
+            flash(f"{mkt} {reg['id']} ({cadence}) for {period:%Y-%m-%d}: one filing "
+                  f"covering {rows} player(s) deposited with the SAFE in the "
+                  f"regulator's format — receipt {receipt}.", "ok")
     if not filed:
         flash("No settled activity in that period — nothing to file.", "warn")
     return redirect(url_for("admin_periodic"))

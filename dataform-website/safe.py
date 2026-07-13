@@ -13,8 +13,14 @@
 #     <MKT>  = MT | ES | DK | BG | GR | NL | DE
 #     <type> = bets | payments | players | gaming | rud | rut
 #
-# Accepted records are stored PRETTY-PRINTED, one XML file per record, in
-#     dataform-safe/<MKT>/<type>/<seq>-<record id>.xml
+# The SAFE stands in for the EXTERNAL, regulator-operated store the operator
+# writes to — so it translates NOTHING. What arrives inside SubmitRecord is
+# already in the regulator's own format (a DK Standard Record, an ES DGOJ
+# Lote, a GR HGC Batch, an NL KSA CDB Root — built by regulator_formats/),
+# accompanied by a RecordKey: the name the operator files the deposit under.
+# Accepted payloads are stored AS RECEIVED (pretty-printed, receipt as a
+# leading comment), one XML file per deposit, in
+#     dataform-safe/<MKT>/<type>/<seq>-<RecordKey>.xml
 #
 # Started automatically (daemon thread) by app.py; also runs standalone:
 #     python safe.py
@@ -64,9 +70,20 @@ def _find_local(root, name):
     return None
 
 
-def _pretty(element):
+# deposits are stored under <seq>-<RecordKey>.xml; keep keys filesystem-safe
+_KEY_RE = re.compile(r"^[A-Za-z0-9._-]{1,120}$")
+
+
+def _pretty(element, comment=None):
+    """Pretty-print the payload exactly as received; the SAFE's own receipt
+    metadata rides in a leading XML comment so the stored document stays in
+    the regulator's schema."""
     raw = ET.tostring(element, encoding="unicode")
-    return minidom.parseString(raw).toprettyxml(indent="  ")
+    pretty = minidom.parseString(raw).toprettyxml(indent="  ")
+    if comment:
+        first_newline = pretty.index("\n") + 1     # after the <?xml ...?> line
+        pretty = pretty[:first_newline] + f"<!--{comment}-->\n" + pretty[first_newline:]
+    return pretty
 
 
 def _soap(body_xml):
@@ -150,7 +167,9 @@ class SafeHandler(BaseHTTPRequestHandler):
             return self._send(200, "<html><body style='font-family:sans-serif'>"
                                    "<h2>BetNova demo SAFE — fictitious regulator record store</h2>"
                                    "<p>One SOAP endpoint per jurisdiction per record type; accepted "
-                                   "records are stored as pretty-printed XML under "
+                                   "deposits are stored AS RECEIVED — in the regulator's own format "
+                                   "(DK Standard Records, ES DGOJ Lotes, GR HGC Batches, NL KSA CDB "
+                                   "records), pretty-printed under "
                                    "<code>dataform-safe/&lt;MKT&gt;/&lt;type&gt;/</code>.</p>"
                                    f"<table border='1' cellpadding='6'>"
                                    f"<tr><th>Jurisdiction</th>{head}</tr>{rows}</table>"
@@ -174,23 +193,42 @@ class SafeHandler(BaseHTTPRequestHandler):
         except Exception as exc:
             return self._send(500, _fault("Client", f"Malformed SOAP envelope: {exc}"))
 
-        record = _find_local(envelope, "Record")
-        if record is None or not record.get("id"):
-            return self._send(500, _fault("Client", "SubmitRecord requires a <Record id=...> element"))
+        submit = _find_local(envelope, "SubmitRecord")
+        if submit is None:
+            return self._send(500, _fault("Client", "Body must carry a SubmitRecord operation"))
+        # the operation carries the operator's RecordKey (the name the
+        # deposit is filed under) and ONE payload element in whatever format
+        # the depositing operator's regulator stipulates — the SAFE does not
+        # interpret it, it stores it as received.
+        record_key, payload = None, None
+        for child in submit:
+            if _local(child.tag) == "RecordKey":
+                record_key = (child.text or "").strip()
+            else:
+                payload = child
+        if payload is None:
+            return self._send(500, _fault("Client", "SubmitRecord requires a payload element"))
+        record_key = record_key or payload.get("id")
+        if not record_key:
+            return self._send(500, _fault("Client", "SubmitRecord requires a <RecordKey> "
+                                                    "(or a payload with an id attribute)"))
+        if not _KEY_RE.match(record_key):
+            return self._send(500, _fault("Client", f"RecordKey '{record_key}' is not a valid file key"))
 
         with _receipt_lock:
+            # store the payload under its own default namespace (not an ns0:
+            # prefix), so the file reads like the regulator's own examples
+            if payload.tag.startswith("{"):
+                ET.register_namespace("", payload.tag[1:].split("}", 1)[0])
             seq = _record_count(mkt, rtype) + 1
             receipt = f"{mkt}-{rtype.upper()}-{seq:06d}"
-            # wrap the submitted record with the SAFE's own receipt metadata
-            wrapper = ET.Element("SafeRecord", {"xmlns": f"urn:betnova:safe:{mkt}:{rtype}"})
-            ET.SubElement(wrapper, "Receipt").text = receipt
-            ET.SubElement(wrapper, "ReceivedAt").text = datetime.now(timezone.utc).isoformat()
-            wrapper.append(record)
-            fname = f"{seq:06d}-{record.get('id')}.xml"
+            received = datetime.now(timezone.utc).isoformat()
+            fname = f"{seq:06d}-{record_key}.xml"
             with open(os.path.join(_type_dir(mkt, rtype), fname), "w", encoding="utf-8") as fh:
-                fh.write(_pretty(wrapper))
+                fh.write(_pretty(payload, comment=f" SAFE receipt {receipt} — received {received} "))
 
-        print(f"[SAFE] {mkt}/{rtype} accepted record {record.get('id')} -> {receipt}")
+        print(f"[SAFE] {mkt}/{rtype} accepted deposit {record_key} "
+              f"({_local(payload.tag)}) -> {receipt}")
         return self._send(200, _soap(f"<SubmitRecordResponse>"
                                      f"<ReceiptId>{receipt}</ReceiptId>"
                                      f"<Status>ACCEPTED</Status></SubmitRecordResponse>"))

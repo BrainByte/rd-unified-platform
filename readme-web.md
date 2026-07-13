@@ -127,9 +127,11 @@ To wipe everything back to the seed state:
   called the SAFE). Endpoints: `POST /safe/<MKT>/<type>` for `<MKT>` in
   MT/ES/DK/BG/GR/NL/DE and `<type>` in `bets` / `payments` / `players`, plus
   `?wsdl` per endpoint and a browsable status page at
-  **http://127.0.0.1:5002/**. Every accepted record is stored pretty-printed,
-  one XML file per record, under `dataform-safe/<MKT>/<type>/` with a
-  per-endpoint receipt sequence. Unknown jurisdictions/types get a SOAP Fault.
+  **http://127.0.0.1:5002/**. Every accepted deposit is stored **as received,
+  in the regulator's own format**, pretty-printed one XML file per deposit
+  under `dataform-safe/<MKT>/<type>/` with a per-endpoint receipt sequence.
+  The SAFE translates nothing — it stands in for the external store each
+  regulator operates. Unknown jurisdictions/types get a SOAP Fault.
 - `submission.py` — the near-realtime submission engine: every ~3 seconds it
   pulls newly-reportable records (new/KYC-changed **players**, **completed
   payments**, **settled or voided bets**) and delivers each one as a SOAP
@@ -137,6 +139,13 @@ To wipe everything back to the seed state:
   sent twice. Market variance is data here too: MT/DK report voids with a
   status column, ES/BG/GR/NL never do and pseudonymise the player
   (SHA-256 of the national id).
+- `regulator_formats/` — the translation layer between the two: the engine
+  builds one canonical dict per reportable record and this package serialises
+  it into the format each regulator stipulates (from the schemas sampled in
+  `docs/regulator/`): DK Spillemyndigheden Standard Records, ES DGOJ
+  `Lote`/`Registro` batches, GR HGC `Batch` data models, NL KSA CDB
+  `WOK_*_v1.11` records — MT/BG/DE keep the neutral BetNova `<Record>`. The
+  engine never touches an element name; the SAFE never translates.
 - Watch it live: place a bet, and within ~45 seconds the settlement lands as
   XML in `dataform-safe/` — the admin dashboard shows delivered counts and
   receipts, and links to the SAFE's own status page.
@@ -186,11 +195,13 @@ dataform-website/
   db.py             DuckDB schema + connection + wallet ledger
   safe.py           the fictitious regulator SAFE (SOAP, port 5002)
   submission.py     near-realtime submission engine (polls -> SOAP)
+  regulator_formats/  canonical record -> regulator-stipulated XML (DK/ES/GR/NL)
   reset_db.py       rebuild data/betnova.duckdb from seed (+ clear the SAFE)
   templates/ static/  the UI
   data/betnova.duckdb  the persistent database (committed to git)
-dataform-safe/      records the SAFE has accepted (pretty-printed XML,
-                    one folder per jurisdiction per record type; gitignored)
+dataform-safe/      deposits the SAFE has accepted, in each regulator's own
+                    format (one folder per jurisdiction per record type;
+                    gitignored)
 ```
 
 - **Single-user demo**: Flask dev server on `127.0.0.1:5001`, one process.

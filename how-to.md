@@ -209,10 +209,13 @@ the settlement channel (web / mobile / retail).*
 
 ### Don't forget the demo (optional but recommended)
 
-To see the field on the wire: add one element to the relevant
-`<Record>` builder in `dataform-website/submission.py`
-(e.g. `submit_pending_bets`), restart the app, place a bet, and read
-the XML in `dataform-safe/MT/bets/`.
+To see the field on the wire: add the field to the canonical dict in
+the relevant `dataform-website/submission.py` builder (e.g.
+`submit_pending_bets`), map it in `dataform-website/regulator_formats/`
+(the generic `<Record>` shape for MT/BG/DE picks up listed fields;
+DK/ES/GR/NL each need the element the regulator's schema names for it),
+restart the app, place a bet, and read the XML in
+`dataform-safe/MT/bets/`.
 
 **Done when:** `npm run check` is green, the emitted
 `submission_ready_mt` SQL shows the new column, and (if demoed) the

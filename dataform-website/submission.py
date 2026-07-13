@@ -8,6 +8,13 @@
 # record is sent exactly once (a bet that is later voided is re-reported as
 # a VOIDED record; a player whose KYC status changes is re-reported).
 #
+# The engine deliberately does as LITTLE as possible: it decides WHAT is
+# reportable (the SQL below), builds a canonical dict per record, and hands
+# it to the regulator_formats package, which owns HOW each regulator wants
+# it said — DK Standard Records, ES DGOJ Lotes, GR HGC Batches, NL KSA CDB
+# records (see regulator_formats/__init__.py for the architecture note).
+# The engine never touches an element name; the SAFE never translates.
+#
 # Market variance is DATA here too (same principle as the pipeline):
 #   - MT/DK report voided bets with a status column; ES/BG/GR/NL never do.
 #   - ES/BG/GR/NL pseudonymise the player (sha256 of national id);
@@ -25,6 +32,7 @@ import urllib.error
 import xml.etree.ElementTree as ET
 
 import db
+import regulator_formats
 
 SAFE_BASE = "http://127.0.0.1:5002/safe"
 POLL_SECONDS = 3
@@ -47,19 +55,18 @@ def _player_ref(mkt, account_id, national_id):
     return account_id
 
 
-def _el(parent, name, value):
-    if value is None:
-        return
-    ET.SubElement(parent, name).text = str(value)
-
-
-def _soap_submit(mkt, rtype, record_el):
-    """POST one <Record> to the SAFE; returns the ReceiptId (raises on fault)."""
+def _soap_submit(mkt, rtype, record_key, payload_el):
+    """POST one regulator-format record to the SAFE; returns the ReceiptId
+    (raises on fault). The SOAP body carries the operator's record key —
+    the name the deposited file is stored under, as a real operator names
+    the files it writes to a regulator's safe — plus the payload exactly
+    as the regulator's schema stipulates it."""
     envelope = (
         '<?xml version="1.0" encoding="utf-8"?>'
         '<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">'
         "<soap:Body><SubmitRecord>"
-        + ET.tostring(record_el, encoding="unicode") +
+        f"<RecordKey>{record_key}</RecordKey>"
+        + ET.tostring(payload_el, encoding="unicode") +
         "</SubmitRecord></soap:Body></soap:Envelope>"
     )
     req = urllib.request.Request(
@@ -77,6 +84,12 @@ def _soap_submit(mkt, rtype, record_el):
     return receipt
 
 
+def _submit(mkt, rtype, record_key, rec):
+    """Translate one canonical record and deliver it."""
+    payload = regulator_formats.format_record(mkt, rtype, rec)
+    return _soap_submit(mkt, rtype, record_key, payload)
+
+
 def _log(cur, rtype, key, mkt, receipt):
     cur.execute("INSERT INTO safe_submissions VALUES (?, ?, ?, ?, ?)",
                 [rtype, key, mkt, receipt, db.now()])
@@ -84,7 +97,7 @@ def _log(cur, rtype, key, mkt, receipt):
 
 def _log_replace(cur, rtype, key, mkt, receipt):
     # periodic registers may be re-filed (a regenerated register supersedes
-    # the previous filing); keep the latest receipt per register row.
+    # the previous filing); keep the latest receipt per register filing.
     # REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-5)
     cur.execute("INSERT OR REPLACE INTO safe_submissions VALUES (?, ?, ?, ?, ?)",
                 [rtype, key, mkt, receipt, db.now()])
@@ -92,7 +105,7 @@ def _log_replace(cur, rtype, key, mkt, receipt):
 
 # ---- record type: bets (the submission-table analog) -----------------------
 PENDING_BETS_SQL = """
-SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id,
+SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id, b.fixture_id,
        f.sport, f.competition, f.home, f.away, b.selection, b.odds,
        p.stake,
        CASE WHEN v.slip_id IS NOT NULL THEN 'VOIDED' ELSE 'SETTLED' END AS status,
@@ -117,8 +130,9 @@ ORDER BY terminal_at
 def submit_pending_bets(cur):
     cur.execute(PENDING_BETS_SQL)
     n = 0
-    for (slip_id, mkt, account_id, national_id, sport, comp, home, away,
-         selection, odds, stake, status, payout, reason, placed_at, terminal_at) in cur.fetchall():
+    for (slip_id, mkt, account_id, national_id, fixture_id, sport, comp, home,
+         away, selection, odds, stake, status, payout, reason, placed_at,
+         terminal_at) in cur.fetchall():
         meta = MARKETS.get(mkt)
         if meta is None:
             continue
@@ -127,22 +141,25 @@ def submit_pending_bets(cur):
             # don't re-examine the slip every poll
             _log(cur, "bets", f"{slip_id}|VOIDED", mkt, "SUPPRESSED-VOID")
             continue
-        rec = ET.Element("Record", {"type": "bet", "id": slip_id})
-        _el(rec, "SlipId", slip_id)
-        _el(rec, "PlayerRef", _player_ref(mkt, account_id, national_id))
-        _el(rec, "Sport", sport)
-        _el(rec, "Event", f"{home} v {away} ({comp})")
-        _el(rec, "Selection", selection)
-        _el(rec, "Odds", f"{float(odds):.2f}")
-        _el(rec, "Stake", f"{float(stake):.2f}")
-        _el(rec, "Payout", f"{float(payout):.2f}")
-        if meta["include_voided"]:
-            _el(rec, "Status", status)
-        if status == "VOIDED":
-            _el(rec, "VoidReason", reason or "voided")
-        _el(rec, "PlacedAt", placed_at.isoformat())
-        _el(rec, "SettledAt", terminal_at.isoformat() if terminal_at else None)
-        receipt = _soap_submit(mkt, "bets", rec)
+        rec = {
+            "record_key": slip_id,
+            "slip_id": slip_id,
+            "player_ref": _player_ref(mkt, account_id, national_id),
+            "fixture_id": fixture_id,
+            "sport": sport,
+            "event": f"{home} v {away} ({comp})",
+            "selection": selection,
+            "odds": odds,
+            "stake": stake,
+            "payout": payout,
+            # which fields a market reports is canonical-layer variance:
+            # only void-reporting markets carry the status/void reason
+            "status": status if meta["include_voided"] else None,
+            "void_reason": (reason or "voided") if status == "VOIDED" else None,
+            "placed_at": placed_at,
+            "terminal_at": terminal_at,
+        }
+        receipt = _submit(mkt, "bets", slip_id, rec)
         _log(cur, "bets", f"{slip_id}|{status}", mkt, receipt)
         print(f"[SUBMIT] {mkt}/bets {slip_id} ({status}) -> {receipt}")
         n += 1
@@ -169,14 +186,19 @@ def submit_pending_payments(cur):
          method, completed_ts) in cur.fetchall():
         if mkt not in MARKETS:
             continue
-        rec = ET.Element("Record", {"type": "payment", "id": payment_id})
-        _el(rec, "PaymentId", payment_id)
-        _el(rec, "PlayerRef", _player_ref(mkt, account_id, national_id))
-        _el(rec, "Direction", direction)
-        _el(rec, "Amount", f"{float(amount):.2f}")
-        _el(rec, "Method", method)
-        _el(rec, "CompletedAt", completed_ts.isoformat())
-        receipt = _soap_submit(mkt, "payments", rec)
+        rec = {
+            "record_key": payment_id,
+            "payment_id": payment_id,
+            "player_ref": _player_ref(mkt, account_id, national_id),
+            "direction": direction,
+            "amount": amount,
+            "method": method,
+            "completed_at": completed_ts,
+            # GR reports the balance after each wallet movement; the demo
+            # supplies the current balance (its ledger has no as-of view)
+            "balance": db.balance(cur, account_id),
+        }
+        receipt = _submit(mkt, "payments", payment_id, rec)
         _log(cur, "payments", payment_id, mkt, receipt)
         print(f"[SUBMIT] {mkt}/payments {payment_id} ({direction}) -> {receipt}")
         n += 1
@@ -185,7 +207,8 @@ def submit_pending_payments(cur):
 
 # ---- record type: players (re-reported when KYC status changes) -------------
 PENDING_PLAYERS_SQL = """
-SELECT a.account_id, a.jurisdiction, a.national_id, a.kyc_status, a.opened_at
+SELECT a.account_id, a.jurisdiction, a.national_id, a.kyc_status,
+       a.opened_at, a.date_of_birth
 FROM accounts a
 WHERE NOT a.is_admin
   AND NOT EXISTS (SELECT 1 FROM safe_submissions ss
@@ -198,15 +221,21 @@ ORDER BY a.opened_at
 def submit_pending_players(cur):
     cur.execute(PENDING_PLAYERS_SQL)
     n = 0
-    for (account_id, mkt, national_id, kyc_status, opened_at) in cur.fetchall():
+    for (account_id, mkt, national_id, kyc_status, opened_at,
+         date_of_birth) in cur.fetchall():
         if mkt not in MARKETS:
             continue
-        rec = ET.Element("Record", {"type": "player", "id": account_id})
-        _el(rec, "PlayerRef", _player_ref(mkt, account_id, national_id))
-        _el(rec, "Jurisdiction", mkt)
-        _el(rec, "KycStatus", kyc_status)
-        _el(rec, "OpenedAt", opened_at.isoformat())
-        receipt = _soap_submit(mkt, "players", rec)
+        rec = {
+            "record_key": account_id,
+            "player_ref": _player_ref(mkt, account_id, national_id),
+            "jurisdiction": mkt,
+            "kyc_status": kyc_status,
+            "opened_at": opened_at,
+            # the NL profile record wants DOB and end-of-day balance
+            "date_of_birth": date_of_birth,
+            "balance": db.balance(cur, account_id),
+        }
+        receipt = _submit(mkt, "players", account_id, rec)
         _log(cur, "players", f"{account_id}|{kyc_status}", mkt, receipt)
         print(f"[SUBMIT] {mkt}/players {account_id} ({kyc_status}) -> {receipt}")
         n += 1
@@ -236,24 +265,26 @@ def submit_pending_gaming(cur):
          session_id, round_ts) in cur.fetchall():
         if mkt not in MARKETS:
             continue
-        rec = ET.Element("Record", {"type": "gaming", "id": round_id})
-        _el(rec, "RoundId", round_id)
-        _el(rec, "PlayerRef", _player_ref(mkt, account_id, national_id))
-        _el(rec, "Game", game)
-        # the configurable magic number: operator-jackpot rounds are
-        # deducible from the gaming data alone.
-        # REQ: requirements/operator-jackpots (REQ-OJ-8)
-        _el(rec, "GameType", GAME_TYPE_CODES.get(game))
-        _el(rec, "Stake", f"{float(stake):.2f}")
-        _el(rec, "Payout", f"{float(payout):.2f}")
-        # bonus-funded play is visible to the regulator:
-        # REQ: requirements/golden-chips (REQ-GC-6)
-        _el(rec, "Funding", funding)
-        # the gaming session this play belonged to.
-        # REQ: requirements/operator-jackpots (REQ-OJ-2)
-        _el(rec, "SessionId", session_id)
-        _el(rec, "PlayedAt", round_ts.isoformat())
-        receipt = _soap_submit(mkt, "gaming", rec)
+        rec = {
+            "record_key": round_id,
+            "round_id": round_id,
+            "player_ref": _player_ref(mkt, account_id, national_id),
+            "game": game,
+            # the configurable magic number: operator-jackpot rounds are
+            # deducible from the gaming data alone.
+            # REQ: requirements/operator-jackpots (REQ-OJ-8)
+            "game_type_code": GAME_TYPE_CODES.get(game),
+            "stake": stake,
+            "payout": payout,
+            # bonus-funded play is visible to the regulator:
+            # REQ: requirements/golden-chips (REQ-GC-6)
+            "funding": funding,
+            # the gaming session this play belonged to.
+            # REQ: requirements/operator-jackpots (REQ-OJ-2)
+            "session_id": session_id,
+            "played_at": round_ts,
+        }
+        receipt = _submit(mkt, "gaming", round_id, rec)
         _log(cur, "gaming", round_id, mkt, receipt)
         print(f"[SUBMIT] {mkt}/gaming {round_id} ({game}) -> {receipt}")
         n += 1
@@ -265,7 +296,8 @@ def submit_pending_gaming(cur):
 # periodicReports in the pipeline's jurisdictions.js). Registers totalise a
 # player's SETTLED betting activity per period; they are generated ON DEMAND
 # from Admin -> Periodic reports, not by the polling loop, so a demo never
-# has to wait for a period to close.
+# has to wait for a period to close. One filing = ONE regulator batch (for
+# ES a single DGOJ Lote carrying the register records for every player).
 # REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1, REQ-DGOJ-2, REQ-DGOJ-5)
 PERIODIC_REPORTS = {
     "ES": [
@@ -276,7 +308,7 @@ PERIODIC_REPORTS = {
 
 # Per player: settled bets in [start, end) — voided slips never count.
 PERIODIC_SQL = """
-SELECT a.account_id, a.national_id,
+SELECT a.account_id, a.national_id, a.opened_at,
        COUNT(*) AS bets_settled,
        SUM(p.stake) AS stake_sum,
        SUM(COALESCE(s.payout, 0)) AS winnings_sum,
@@ -289,7 +321,7 @@ WHERE a.jurisdiction = ?
   AND NOT EXISTS (SELECT 1 FROM bet_slip_events v
                   WHERE v.slip_id = b.slip_id AND v.event_type = 'VOIDED')
   AND s.event_ts >= ? AND s.event_ts < ?
-GROUP BY 1, 2
+GROUP BY 1, 2, 3
 ORDER BY 1
 """
 
@@ -310,29 +342,38 @@ def _period_window(register, period_start):
 
 
 def submit_periodic(cur, mkt, register, period_start):
-    """Generate one register (all players with activity in the period) and
-    SOAP each row to the SAFE. Returns [(player_ref, receipt_id), ...]."""
+    """Generate one register filing (all players with activity in the
+    period) and SOAP it to the SAFE as a single batch in the regulator's
+    format. Returns (rows_filed, receipt_id) — (0, None) when the period
+    holds no activity."""
     start, end = _period_window(register, period_start)
     rid = register["id"]
     cur.execute(PERIODIC_SQL, [mkt, start, end])
-    results = []
-    for (account_id, national_id, bets, stake_sum, winnings_sum, ggr_sum) in cur.fetchall():
-        player_ref = _player_ref(mkt, account_id, national_id)
-        rec = ET.Element("Record", {"type": rid.lower(),
-                                    "id": f"{rid}-{start:%Y-%m-%d}-{account_id}"})
-        _el(rec, "RegisterId", rid)
-        _el(rec, "PeriodStart", f"{start:%Y-%m-%d}")
-        _el(rec, "Cadence", register["cadence"])
-        _el(rec, "PlayerRef", player_ref)
-        _el(rec, "BetsSettled", bets)
-        _el(rec, "StakeSum", f"{float(stake_sum):.2f}")
-        _el(rec, "WinningsSum", f"{float(winnings_sum):.2f}")
-        _el(rec, "GgrSum", f"{float(ggr_sum):.2f}")
-        receipt = _soap_submit(mkt, rid.lower(), rec)
-        _log_replace(cur, rid.lower(), f"{rid}|{start:%Y-%m-%d}|{account_id}", mkt, receipt)
-        print(f"[SUBMIT] {mkt}/{rid.lower()} {start:%Y-%m-%d} {account_id} -> {receipt}")
-        results.append((player_ref, receipt))
-    return results
+    rows = [{
+        "player_ref": _player_ref(mkt, account_id, national_id),
+        "opened_at": opened_at,
+        "bets_settled": bets,
+        "stake_sum": stake_sum,
+        "winnings_sum": winnings_sum,
+        "ggr_sum": ggr_sum,
+    } for (account_id, national_id, opened_at, bets, stake_sum, winnings_sum,
+           ggr_sum) in cur.fetchall()]
+    if not rows:
+        return 0, None
+    record_key = f"{rid}-{start:%Y-%m-%d}"
+    rec = {
+        "record_key": record_key,
+        "register_id": rid,
+        "cadence": register["cadence"],
+        "period_start": start,
+        "period_end": end,
+        "rows": rows,
+    }
+    receipt = _submit(mkt, rid.lower(), record_key, rec)
+    _log_replace(cur, rid.lower(), f"{rid}|{start:%Y-%m-%d}", mkt, receipt)
+    print(f"[SUBMIT] {mkt}/{rid.lower()} {start:%Y-%m-%d} "
+          f"({len(rows)} player(s) in one filing) -> {receipt}")
+    return len(rows), receipt
 
 
 def run_once(cur):
