@@ -37,6 +37,13 @@
 # from submission_ready_{mkt} carries the same fields the demo dicts do,
 # so these modules serialise either source unchanged.
 #
+# These hand-written modules are the REFERENCE implementation for four
+# markets, not the end state for seventeen: the target is one generic
+# engine driven by per-regulator mapping specs (variance as data, like
+# jurisdictions.js), validated against the vendored XSDs — see
+# docs/regulator/translation-architecture.md for that design and the
+# migration path from these modules to it.
+#
 # Formats are keyed (jurisdiction, record_type). Jurisdictions whose schemas
 # are sampled under docs/regulator/ get their stipulated format:
 #

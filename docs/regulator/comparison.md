@@ -150,3 +150,6 @@ Each model contains entities that simply do not exist elsewhere:
 7. **Network/shared-liquidity attribution is a recurring theme** (DK `TillIndh`/`Total`,
    ES `DesgloseOperador`/RUR, GR licensee vs network aggregates) and should be captured at
    source for poker and pool verticals.
+
+How this translation layer should be built — outside BigQuery, config-driven rather than
+hand-coded per market — is designed in [translation-architecture.md](translation-architecture.md).
