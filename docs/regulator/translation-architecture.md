@@ -238,6 +238,11 @@ credentials** — no per-market code on the happy path.
    per-module helpers) into the profile catalogue.
 3. Rewrite one market as a spec (NL first: smallest, most regular) and
    diff engine output against the golden files until byte-identical.
+   **Done** — `regulator_formats/engine.py` (the generic tree-walker) +
+   `regulator_formats/specs/nl_v1_11.py` (the spec, pure data) now serve
+   NL in the registry; `dataform-website/test_nl_spec.py` proves the pair
+   byte-identical to the retained hand-written oracle `nl.py` across all
+   four record types and their branches.
 4. Add the XSD validation gate to CI using the schemas in this folder.
 5. Convert ES/GR; decide DK case-by-case (spec vs template) given its
    quirks.

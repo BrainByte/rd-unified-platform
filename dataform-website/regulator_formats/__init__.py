@@ -37,12 +37,16 @@
 # from submission_ready_{mkt} carries the same fields the demo dicts do,
 # so these modules serialise either source unchanged.
 #
-# These hand-written modules are the REFERENCE implementation for four
-# markets, not the end state for seventeen: the target is one generic
-# engine driven by per-regulator mapping specs (variance as data, like
+# These hand-written modules are the REFERENCE implementation, not the
+# end state for seventeen markets: the target is one generic engine
+# driven by per-regulator mapping specs (variance as data, like
 # jurisdictions.js), validated against the vendored XSDs — see
 # docs/regulator/translation-architecture.md for that design and the
 # migration path from these modules to it.
+#
+# NL is the first market converted (migration step 3): it now serialises
+# through engine.py + specs/nl_v1_11.py, and test_nl_spec.py proves the
+# spec byte-identical to the retained hand-written oracle nl.py.
 #
 # Formats are keyed (jurisdiction, record_type). Jurisdictions whose schemas
 # are sampled under docs/regulator/ get their stipulated format:
@@ -63,7 +67,8 @@
 # cannot source — full KYC identity, IPs, device ids — are omitted or
 # defaulted, and each module says so where it does it.
 # ============================================================================
-from . import dk, es, generic, gr, nl
+from . import dk, engine, es, generic, gr, nl  # noqa: F401  (nl = test oracle)
+from .specs import nl_v1_11
 
 # (jurisdiction, record_type) -> formatter(canonical dict) -> xml.etree Element
 FORMATTERS = {
@@ -84,10 +89,12 @@ FORMATTERS = {
     ("GR", "players"):  gr.player,
     ("GR", "gaming"):   gr.gaming,
 
-    ("NL", "bets"):     nl.bet,
-    ("NL", "payments"): nl.payment,
-    ("NL", "players"):  nl.player,
-    ("NL", "gaming"):   nl.gaming,
+    # NL runs on the mapping-driven engine; nl.py remains as the byte-
+    # identity oracle exercised by test_nl_spec.py
+    ("NL", "bets"):     engine.bind(nl_v1_11.SPEC, "bets"),
+    ("NL", "payments"): engine.bind(nl_v1_11.SPEC, "payments"),
+    ("NL", "players"):  engine.bind(nl_v1_11.SPEC, "players"),
+    ("NL", "gaming"):   engine.bind(nl_v1_11.SPEC, "gaming"),
 }
 
 
