@@ -1,11 +1,11 @@
-# France (FR) new jurisdiction — implementation plan
+# France (FR) new jurisdiction — implementation
 
-*Step-by-step plan for [requirements.md](requirements.md), following
-[`how-to.md`](../../how-to.md) § 7. **Status: not yet implemented** —
-this document is written ahead as the work order; as each part lands it
-gains its `REQ: requirements/fr-new-jurisdiction` change-site comments
-and the trace table at the end moves from *planned* to *proven*. The
-regulator model is analysed in
+*Step-by-step record of how [requirements.md](requirements.md) was
+implemented, following [`how-to.md`](../../how-to.md) § 7. Written ahead
+as the work order and executed as planned — § "As implemented" records
+where reality amended the plan. Every change site carries a grep-able
+`REQ: requirements/fr-new-jurisdiction` comment. The regulator model is
+analysed in
 [`docs/regulator/fr/fr-data-model.md`](../../docs/regulator/fr/fr-data-model.md).*
 
 ## Part A — the pipeline (`dataform-example/`)
@@ -144,15 +144,57 @@ logging other FR rounds as suppressed — the same pattern as
 5. `reset_db.py` before the final commit (the committed DuckDB stays the
    pristine seed).
 
-## Planned requirement → artifact trace
+## As implemented — amendments to the plan
 
-| Requirement | Planned artifact | To be proven by |
+The plan executed as written; reality added five findings:
+
+1. **The XSD gate found real defects in the first pass** — exactly its
+   job: `Renc`/`Part` are the uppercase-only `canonique` type (fixed
+   with a `fr-canonique` sanitising codec), `TypeRes` has a 5-char
+   minimum (`RES1X2`), `Motif` is a closed enumeration (demo void
+   reasons degrade to `Autre`), and `OUVINFOPERSO` requires the full
+   identity block in sequence (mandatory fields now carry declared
+   `NonRenseigne`-style placeholders — the demo captures no identity at
+   registration). After fixes: **9/9 validated goldens** (`xmlschema`,
+   added to `requirements.txt`).
+2. **The regulator's own PO draft schema does not compile** —
+   `cercle.xsd` references an undeclared `poker` namespace prefix — so
+   the PO family is excluded from the validation gate with that
+   documented reason. A vendored-schema defect a validation gate exists
+   to surface.
+3. **The watermark WAITING_DATA trap was re-proven deliberately**: with
+   everything except the `cdc_source_watermarks` row, config validated
+   and assertions passed but the FR betting file and tax summary shipped
+   empty, with A10001 held `COMPLETENESS / WAITING_DATA` — the DE
+   onboarding's fail-closed behaviour, reproduced before adding the row.
+4. **Decisions the docs left open** (all commented in config):
+   `jackpotPolicy: "gross"` (validator-required, moot — OJACK is
+   blocked); `mandatoryRegister: "NATIONAL"` (the ANJ *fichier des
+   interdits de jeux*); `gamingTaxRate` kept a GGR-basis constant with
+   the stakes-basis pinning flagged; sport/game code labels illustrative.
+5. **Demo simplifications, declared in code**: balance triplets derive
+   from the current ledger balance (no as-of view); a re-reported void
+   deposits a second MISE alongside its ANNUL; golden-chip rounds move
+   the cash triplet by winnings only.
+
+Verification results: `npm run check` green — **135/135 unit tests, 72
+models, 114 rule assertions, 60 expectations, 17 negative tests**;
+emit-sql diff additive only (4 FR tables + 18 FR assertions, no other
+market's files changed). Demo suites: FR **12/12 goldens + 9/9 XSD**,
+NL 9/9 and ES 10/10 byte-identical (engine changes regression-free).
+Live: registered `amelie_fr`, deposited, one bet won (MISE+GAIN), one
+voided (MISE+ANNUL re-report), poker round (ACHAT), slots round
+suppressed as unlicensed; FR reconciliation residual 0.00, reported 5/5.
+
+## Requirement → artifact trace
+
+| Requirement | Implemented by | Proven by |
 |---|---|---|
-| REQ-FR-1 market as config | `jurisdictions.js` `FR` entry | validator + emit-sql additive diff |
-| REQ-FR-2 licensed verticals only | closed `sportCodes` / poker-only `gameCodes`, `block` policy | negative test: FR slots round blocked |
-| REQ-FR-3 tax model | effective-dated `taxRate`/`gamingTaxRate` schedules | tax-summary expectation |
-| REQ-FR-4 event-grained traces | `documents` lists in `specs/fr_v1.py` + multi-deposit `_submit` | live MISE+GAIN pair in `dataform-safe/FR/bets/` |
-| REQ-FR-5 format as mapping spec | `specs/fr_v1.py` + FR codecs | `test_fr_spec.py` goldens + XSD validation |
-| REQ-FR-6 balance triplets | ledger-derived canonical balance fields | golden files carry avant/mouvement/après |
-| REQ-FR-7 player protection | `playerProtection` config | existing breach detectors' FR coverage in expectations |
-| REQ-FR-8 demo end-to-end | five demo dict edits + FR SAFE folder | live e2e + FR reconciliation residual 0.00 |
+| REQ-FR-1 market as config | `jurisdictions.js` `FR` entry | validator clean; emit-sql diff additive only |
+| REQ-FR-2 licensed verticals only | closed `sportCodes` / poker-only `gameCodes`, `block` policy; `gaming_verticals` in the demo `MARKETS` | negative test `frUnlicensedGameTest` (FR-201 fires); live slots round suppressed, absent from SAFE and recon |
+| REQ-FR-3 tax model | effective-dated `taxRate` 0.549→0.593 (2025-07-01); recon `TAX_RATES` mirror | FR tax expectation (20 × 0.593 = 11.86 exact) |
+| REQ-FR-4 event-grained traces | `documents` lists in `specs/fr_v1.py`; multi-deposit `_submit` with suffixed keys; suffix-tolerant recon match | live MISE+GAIN pair and MISE+ANNUL pair in `dataform-safe/FR/bets/`; NL/ES suites prove single-document behaviour unchanged |
+| REQ-FR-5 format as mapping spec | `specs/fr_v1.py` + FR codecs (`digits12-yy`, `sha1-upper`, `fr-canonique`, `crc`) | `test_fr_spec.py`: 12/12 goldens, 9/9 XSD-valid (PO excluded, documented) |
+| REQ-FR-6 balance triplets | `_balances()` in `submission.py` from the wallet ledger | goldens and live traces carry consistent avant/mouvement/après |
+| REQ-FR-7 player protection | `playerProtection` config (NATIONAL register, verification-gated withdrawal) | existing breach-detector fan-out includes FR (assertion count +18) |
+| REQ-FR-8 demo end-to-end | demo dict edits (engine/submission/safe/recon) + FR SAFE folder | live e2e; FR reconciliation residual 0.00, reported 5/5 |

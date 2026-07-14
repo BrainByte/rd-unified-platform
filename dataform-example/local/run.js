@@ -342,6 +342,30 @@ function operatorJackpotBlockTest() {
   };
 }
 
+// FR unlicensed-casino negative test (REQ: requirements/fr-new-jurisdiction,
+// REQ-FR-2): online casino is NOT licensed in France — only poker maps in the
+// FR gaming nomenclature (block policy). Inject a real SLOTS activity id
+// (NE:R1 -> game G1 Starburst -> canonical SLOT) into a copy of the FR gaming
+// file; the no_unlicensed_games machinery must fire — the ES Punto y Banco
+// precedent inverted to a whole unlicensed vertical.
+function frUnlicensedGameTest() {
+  const fr = jurisdictions.FR;
+  const gOpts = { table: "gaming_submission_ready_fr_slots", keyColumn: "activity_id" };
+  const corruptCtx = { ref: (n) => n };
+  return {
+    setup: [
+      `CREATE OR REPLACE TABLE gaming_submission_ready_fr_slots AS
+         SELECT * FROM gaming_submission_ready_fr
+         UNION ALL
+         SELECT * REPLACE ('NE:R1' AS activity_id) FROM gaming_submission_ready_fr WHERE activity_id = 'P5'`,
+    ],
+    checks: [
+      { rule: "FR-201 (no_unlicensed_games) blocks a French slots round — no casino licence exists in France", expectViolations: 1,
+        sql: violationQuery(corruptCtx, fr, { id: "FR-201", type: "no_unlicensed_games" }, gOpts) },
+    ],
+  };
+}
+
 // Loss-limit negative test: a large operator-jackpot contribution (a gaming
 // wager on the phantom game) pushes A1001's net loss over their personal
 // daily LOSS limit — proving operator-jackpot contributions count toward
@@ -482,6 +506,8 @@ async function main() {
   const ppneg = playerProtectionNegativeTests();
   const eneg = extensionNegativeTests();
   const ojneg = operatorJackpotBlockTest();
+  // REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
+  const frneg = frUnlicensedGameTest();
   const llneg = lossLimitContributionTest();
   const woneg = walletOverspendTest();
   const fineg = faultIsolationNegativeTests();
@@ -494,7 +520,7 @@ async function main() {
     for (const s of seed) console.log("  " + s.split("\n")[0]);
     console.log(`\n-- ${plan.length} pipeline steps --`);
     for (const s of plan) console.log(`  [${s.kind}] ${s.name}`);
-    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
+    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + frneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
     console.log("\n✔ Plan built cleanly. Run without --dry-run to execute in DuckDB.");
     return;
   }
@@ -547,8 +573,8 @@ async function main() {
     }
   }
 
-  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
-  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
+  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...frneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
+  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...frneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
     const rows = await run(check.sql);
     if (rows.length === check.expectViolations) {
       console.log(`✔ negative test: ${check.rule} caught the corruption`);

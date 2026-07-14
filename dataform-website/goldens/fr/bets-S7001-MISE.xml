@@ -1,0 +1,33 @@
+<PASPMISE>
+  <IDOper>9001</IDOper>
+  <DateEvt>260713103000</DateEvt>
+  <IDEvt>708641137</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>S7001</Tech>
+  <PaSp>
+    <Combi>S</Combi>
+    <LigSp>
+      <Renc>ALPHA V BETA DEMO LEAGUE</Renc>
+      <Tech>F7001</Tech>
+      <Sport>FOOT</Sport>
+      <Evnt>F7001</Evnt>
+      <Genre>H</Genre>
+      <Date>260713103000</Date>
+      <Part>ALPHA</Part>
+      <Part>BETA</Part>
+      <PronoSp>
+        <TypeRes>RES1X2</TypeRes>
+        <Choix>HOME</Choix>
+      </PronoSp>
+      <Cote>2.50</Cote>
+    </LigSp>
+    <MiseBase>10.00</MiseBase>
+  </PaSp>
+  <SoldeAvantMise>100.00</SoldeAvantMise>
+  <Mise>10.00</Mise>
+  <SoldeApresMise>90.00</SoldeApresMise>
+</PASPMISE>

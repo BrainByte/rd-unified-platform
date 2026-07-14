@@ -173,7 +173,7 @@ Netherlands' mandatory CRUKS check and CDB control records).
 ### Market comparison matrix
 
 Every column below is a value in `jurisdictions.js`. The SQL that builds
-all seven regulator files, computes their taxes, and enforces their rules
+all eight regulator files, computes their taxes, and enforces their rules
 is **the same code** — this table is essentially the *entire* difference
 between the markets.
 

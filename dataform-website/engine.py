@@ -27,6 +27,7 @@ JURISDICTIONS = {
     "GR": {"name": "Greece",      "postcode_hint": "999 99 (e.g. 105 58)"},
     "NL": {"name": "Netherlands", "postcode_hint": "9999 LL (e.g. 1012 AB)"},
     "DE": {"name": "Germany",     "postcode_hint": "5 digits (e.g. 10115)"},  # REQ: de-regulator-addition
+    "FR": {"name": "France",      "postcode_hint": "5 digits (e.g. 75001)"},  # REQ: requirements/fr-new-jurisdiction
 }
 
 TERMS_VERSION = "1.0-demo"

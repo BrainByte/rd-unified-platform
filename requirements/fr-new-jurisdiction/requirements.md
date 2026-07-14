@@ -4,7 +4,7 @@
 |---|---|
 | Requirement id | **FR** (fr-new-jurisdiction) — individual items REQ-FR-1 … REQ-FR-8 |
 | Scope | The reporting pipeline (`dataform-example/`), the regulator format layer (`dataform-website/regulator_formats/`), and the demo stack (BetNova site, submission engine, SAFE, reconciliation) |
-| Status | **Proposed — not yet implemented.** These documents are the work order; [implementation.md](implementation.md) is the step-by-step plan and will gain the requirement → artifact trace as it lands |
+| Status | **Implemented** — see [implementation.md](implementation.md) § "As implemented" and the requirement → artifact → proven-by trace |
 | Companion docs | [overview.md](overview.md) (what & how) · [implementation.md](implementation.md) (the plan) · [docs/regulator/fr/fr-data-model.md](../../docs/regulator/fr/fr-data-model.md) (the analysed regulator model) |
 
 ## Background / regulatory context

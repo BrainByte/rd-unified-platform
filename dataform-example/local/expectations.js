@@ -7,13 +7,14 @@
 
 const expectations = [
   {
-    desc: "lifecycle: 19 slips with correct statuses (incl. DK/BG/GR/NL/DE, BG 2025 resubmission, ES second-day slip + 5 fault-isolation demo slips)",
+    // REQ: requirements/fr-new-jurisdiction — counts include the FR pair S15/S16
+    desc: "lifecycle: 21 slips with correct statuses (incl. DK/BG/GR/NL/DE/FR, BG 2025 resubmission, ES second-day slip + 5 fault-isolation demo slips)",
     sql: `SELECT slip_status, COUNT(*)::INT AS n FROM fct_bet_slip_lifecycle
           GROUP BY slip_status ORDER BY slip_status`,
     expect: [
       { slip_status: "OPEN", n: 1 },
-      { slip_status: "SETTLED", n: 16 }, // 9 + 5 fault-isolation demo + S13 (DE) + S14 (ES)
-      { slip_status: "VOIDED", n: 2 },
+      { slip_status: "SETTLED", n: 17 }, // 9 + 5 fault-isolation demo + S13 (DE) + S14 (ES) + S15 (FR)
+      { slip_status: "VOIDED", n: 3 },   // S2, S5 + S16 (FR)
     ],
   },
   {
@@ -266,6 +267,8 @@ const expectations = [
       { jurisdiction: "DK", direction: "DEPOSIT", total: 200 },   // funds A3001's wallet
       { jurisdiction: "ES", direction: "DEPOSIT", total: 640 },   // 90 + 550
       { jurisdiction: "ES", direction: "WITHDRAWAL", total: 20 },
+      // REQ: requirements/fr-new-jurisdiction — funds A10001's wallet
+      { jurisdiction: "FR", direction: "DEPOSIT", total: 500 },
       { jurisdiction: "GR", direction: "DEPOSIT", total: 1000 },  // funds A5001's wallet
       { jurisdiction: "MT", direction: "DEPOSIT", total: 350 },   // 200 + 50 + 5x20 demo fundings
       { jurisdiction: "MT", direction: "WITHDRAWAL", total: 150 },
@@ -495,6 +498,40 @@ const expectations = [
       { period: "MONTHLY", deflt: 1000 },
       { period: "WEEKLY", deflt: null },
     ],
+  },
+
+  // ---- FRANCE (ANJ) — the 8th market, REQ: requirements/fr-new-jurisdiction ----
+  {
+    desc: "FR file (REQ-FR-1): settled S15 AND voided S16 both present — voids are first-class ANNUL traces, carried with status, zero payout, clear account id, ANJ sport label",
+    sql: `SELECT slip_id, account_id, slip_status, sport_code,
+                 CAST(payout AS DOUBLE) AS payout
+          FROM submission_ready_fr ORDER BY slip_id`,
+    expect: [
+      { slip_id: "S15", account_id: "A10001", slip_status: "SETTLED", sport_code: "FOOTBALL", payout: 10 },
+      { slip_id: "S16", account_id: "A10001", slip_status: "VOIDED", sport_code: "FOOTBALL", payout: 0 },
+    ],
+  },
+  {
+    desc: "FR tax (REQ-FR-3): GGR 20 at the effective-dated 59.3% rate (from 1 Jul 2025) -> tax_due 11.86; the voided S16 stake never enters the base",
+    sql: `SELECT CAST(total_stake AS DOUBLE) AS s, CAST(total_payout AS DOUBLE) AS p,
+                 CAST(tax_due AS DOUBLE) AS t
+          FROM tax_summary_fr WHERE report_date = DATE '2026-07-08'`,
+    expect: [{ s: 30, p: 10, t: 11.86 }],
+  },
+  {
+    desc: "FR gaming file (REQ-FR-2): POKER ONLY — the sole vertical licensed under loi 2010-476 art. 14; no slots/roulette/blackjack row can exist for FR",
+    sql: `SELECT activity_id, game_code, vertical, CAST(gaming_ggr AS DOUBLE) AS ggr
+          FROM gaming_submission_ready_fr ORDER BY activity_id`,
+    expect: [
+      { activity_id: "P5", game_code: "PO-CG", vertical: "POKER_CASH", ggr: 0.5 },   // rake only
+      { activity_id: "P6", game_code: "PO-TR", vertical: "POKER_TOURNAMENT", ggr: 2 }, // entry fee only
+    ],
+  },
+  {
+    desc: "FR gaming tax: poker GGR (rake 0.5 + fee 2.0 = 2.5) at the illustrative 10% -> 0.25 (true levy is stakes-based — see jurisdictions.js note)",
+    sql: `SELECT CAST(total_ggr AS DOUBLE) AS g, CAST(gaming_tax_due AS DOUBLE) AS t
+          FROM gaming_tax_summary_fr WHERE report_date = DATE '2026-07-08'`,
+    expect: [{ g: 2.5, t: 0.25 }],
   },
 ];
 

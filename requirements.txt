@@ -5,3 +5,4 @@ flask>=3.1
 duckdb>=1.4
 pytz>=2024.1     # duckdb needs it to return TIMESTAMPTZ values to Python
 fpdf2>=2.7       # pure-python PDF generation (financial reconciliation reports)
+xmlschema>=4.0   # XSD validation gate for regulator mapping specs (test_fr_spec.py)

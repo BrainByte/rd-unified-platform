@@ -42,6 +42,9 @@ const accounts = [
   ["A8001", "MT", "801", "2005-03-15", "VERIFIED", "2026-06-15 09:00:00+00", "I", "2026-06-15 09:00:01+00"],
   // Germany (REQ: de-regulator-addition): the 7th market — added as config.
   ["A9001", "DE", "DE-PA-556677", "1994-08-25", "VERIFIED", "2026-05-20 09:00:00+00", "I", "2026-05-20 09:00:01+00"],
+  // France (REQ: requirements/fr-new-jurisdiction, REQ-FR-8): the 8th market.
+  // Clear national id — the sealed-vault regime reports identifiers in clear.
+  ["A10001", "FR", "FR-CNI-778899", "1987-06-14", "VERIFIED", "2026-06-10 09:00:00+00", "I", "2026-06-10 09:00:01+00"],
 ];
 
 // ---- FAULT ISOLATION seed (see includes/exceptions.js) ----
@@ -55,6 +58,9 @@ const accountAddresses = [
   ["A7003", "VLT 1117", "Valletta", "I", "2026-06-01 09:00:05+00"], // valid
   ["A7004", "SLM 2345", "Sliema",   "I", "2026-06-01 09:00:05+00"], // valid
   ["A7005", "MST 5678", "Mosta",    "I", "2026-06-01 09:00:05+00"], // valid format, region MST absent -> TRANSIENT
+  // France: valid 5-digit code postal (no region requirement).
+  // REQ: requirements/fr-new-jurisdiction (REQ-FR-1)
+  ["A10001", "75001", "Paris", "I", "2026-06-10 09:00:05+00"],
 ];
 
 // Postcode-prefix -> region reference. 'MST' (Mosta) is intentionally NOT yet
@@ -83,6 +89,11 @@ const sourceWatermarks = [
   // the fail-closed readiness gate — the DE player is held WAITING_DATA and
   // the DE file ships empty rather than incomplete. Proven during bring-up.
   ["bet_settlement", "DE", "2026-07-09 00:00:00+00"],
+  // FR (REQ: requirements/fr-new-jurisdiction, REQ-FR-8 / acceptance 5).
+  // The classic missing-watermark mistake was deliberately RE-PROVEN during
+  // the FR onboarding: without this row the pipeline compiled fine but held
+  // A10001 WAITING_DATA (period_not_complete) and shipped an empty FR file.
+  ["bet_settlement", "FR", "2026-07-09 00:00:00+00"],
 ];
 
 // Persisted retry state from prior runs (the pipeline's memory across runs).
@@ -173,6 +184,9 @@ const payments = [
   // DE: funds A9001's wallet — 300 sits comfortably under the LUGAS
   // cross-operator statutory 1000/month (monthly-only default).
   ["D16", "A9001", "DEPOSIT", 300.0, "CARD", "COMPLETED", "2026-07-08 08:30:00+00", "2026-07-08 08:30:05+00", "I", "2026-07-08 08:30:06+00"],
+  // FR: funds A10001's wallet before any stake (spend gate stays clean).
+  // REQ: requirements/fr-new-jurisdiction (REQ-FR-8)
+  ["D17", "A10001", "DEPOSIT", 500.0, "CARD", "COMPLETED", "2026-07-08 08:00:00+00", "2026-07-08 08:00:05+00", "I", "2026-07-08 08:00:06+00"],
 ];
 
 // Generic jurisdiction-attribute carrier (Option B). Market-specific data
@@ -232,6 +246,10 @@ const betSlips = [
   // ES second-day slip: proves the monthly RUT totalises across multiple
   // RUD days. REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-2/3)
   ["S14", "A2001", "F2", "sports", "I", "2026-07-08 22:30:00+00"],
+  // FR slips (REQ: requirements/fr-new-jurisdiction, REQ-FR-8): a settled
+  // bet AND a voided one — France reports voids (ANNUL traces).
+  ["S15", "A10001", "F1", "sports", "I", "2026-07-08 10:00:00+00"],
+  ["S16", "A10001", "F1", "sports", "I", "2026-07-08 11:00:00+00"],
 ];
 
 const betSlipEvents = [
@@ -297,6 +315,13 @@ const betSlipEvents = [
   // REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-1/2/3)
   ["S14", "PLACED",  "2026-07-08 22:30:00+00", 10.0, null, "I", "2026-07-08 22:30:01+00"],
   ["S14", "SETTLED", "2026-07-09 09:00:00+00", null, 0.0,  "I", "2026-07-09 09:00:01+00"],
+  // ---- FR (REQ: requirements/fr-new-jurisdiction, REQ-FR-3/8) ----
+  // S15 settled: GGR 20 -> effective-dated 59.3% (from 1 Jul 2025) tax 11.86
+  ["S15", "PLACED",  "2026-07-08 10:00:00+00", 30.0, null, "I", "2026-07-08 10:00:01+00"],
+  ["S15", "SETTLED", "2026-07-08 18:00:00+00", null, 10.0, "I", "2026-07-08 18:00:01+00"],
+  // S16 voided: reported with slip_status VOIDED and zero payout (ANNUL)
+  ["S16", "PLACED",  "2026-07-08 11:00:00+00", 15.0, null, "I", "2026-07-08 11:00:01+00"],
+  ["S16", "VOIDED",  "2026-07-08 12:30:00+00", null, null, "I", "2026-07-08 12:30:01+00"],
 ];
 
 // ---- GAMING domain seed ----
@@ -419,6 +444,10 @@ const pokerActivity = [
   ["P2", "A1001", "G7", "TOURNAMENT_ENTRY", 11.0, 40.0, 1.0, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
   ["P3", "A2001", "G6", "CASH_HAND", 20.0, 0.0, 1.0, "2026-07-08 11:30:00+00", "I", "2026-07-08 11:30:01+00"],
   ["P4", "A2002", "G7", "TOURNAMENT_ENTRY", 55.0, 0.0, 5.0, "2026-07-08 12:30:00+00", "I", "2026-07-08 12:30:01+00"],
+  // FR poker (REQ: requirements/fr-new-jurisdiction, REQ-FR-2): the only
+  // gaming vertical licensed in France — a cash hand and a tournament entry.
+  ["P5", "A10001", "G6", "CASH_HAND", 10.0, 18.0, 0.5, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
+  ["P6", "A10001", "G7", "TOURNAMENT_ENTRY", 20.0, 0.0, 2.0, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
 ];
 
 const jackpotPools = [

@@ -1,0 +1,18 @@
+<CPTEALIM>
+  <IDOper>9001</IDOper>
+  <DateEvt>260713103000</DateEvt>
+  <IDEvt>105907393</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <IDRef>P7001</IDRef>
+  <DateDemande>260713103000</DateDemande>
+  <DateEffective>260713103000</DateEffective>
+  <SoldeAvant>0.00</SoldeAvant>
+  <SoldeMouvement>100.00</SoldeMouvement>
+  <SoldeApres>100.00</SoldeApres>
+  <MoyenPaiement>CARD</MoyenPaiement>
+  <TypeMoyenPaiement>CarteBancaire</TypeMoyenPaiement>
+</CPTEALIM>

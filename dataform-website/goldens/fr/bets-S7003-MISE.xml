@@ -1,0 +1,33 @@
+<PASPMISE>
+  <IDOper>9001</IDOper>
+  <DateEvt>260713103000</DateEvt>
+  <IDEvt>495500315</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>S7003</Tech>
+  <PaSp>
+    <Combi>S</Combi>
+    <LigSp>
+      <Renc>EPSILON V ZETA LEAGUE</Renc>
+      <Tech>F7002</Tech>
+      <Sport>BASK</Sport>
+      <Evnt>F7002</Evnt>
+      <Genre>H</Genre>
+      <Date>260713103000</Date>
+      <Part>EPSILON</Part>
+      <Part>ZETA</Part>
+      <PronoSp>
+        <TypeRes>RES1X2</TypeRes>
+        <Choix>HOME</Choix>
+      </PronoSp>
+      <Cote>1.80</Cote>
+    </LigSp>
+    <MiseBase>4.00</MiseBase>
+  </PaSp>
+  <SoldeAvantMise>110.00</SoldeAvantMise>
+  <Mise>4.00</Mise>
+  <SoldeApresMise>106.00</SoldeApresMise>
+</PASPMISE>

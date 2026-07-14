@@ -556,6 +556,111 @@ const jurisdictions = {
       ],
     },
   },
+
+  // ==========================================================================
+  // FRANCE — Autorité Nationale des Jeux (ANJ), loi n° 2010-476 du 12 mai
+  // 2010 (ANJ replaced ARJEL in 2020, ordonnance 2019-1015). The EIGHTH
+  // market. Licensable online verticals: sports betting (PASP), horse-race
+  // betting (PAHI — a separate licence this operator does NOT hold, so no
+  // HORS mapping) and poker (PO); ONLINE CASINO IS NOT LICENSED in France —
+  // the whole casino vertical is blocked, the ES no_unlicensed_games
+  // precedent inverted. The reporting regime is an EVENT LOG: one XML trace
+  // per player action into a sealed local vault (coffre-fort) the regulator
+  // INSPECTS rather than receives — so voids (ANNUL) are first-class traces
+  // (includeVoided) and the player is identified by CLEAR operator account
+  // id inside the sealed vault (no pseudonymisation). Levy rates, sport
+  // labels and poker codes are ILLUSTRATIVE — pin to the loi 2010-476 levy
+  // articles and the ANJ authorised-competitions decisions before
+  // production. REQ: requirements/fr-new-jurisdiction (REQ-FR-1/2/3/7)
+  // ==========================================================================
+  FR: {
+    code: "FR",
+    dataset: "reporting_fr",
+    currency: "EUR",
+    rounding: 2,
+    timezone: "Europe/Paris",
+    addressValidation: { postcodePattern: "^[0-9]{5}$" }, // 5-digit code postal
+    submissionCadence: "daily",
+    includeVoided: true, // ANNUL traces are first-class events in the vault
+    taxModel: "ggr",
+    // Sports-betting levy on GGR (the produit brut des jeux): effective-dated
+    // like BG/NL — 54.9% to 30 Jun 2025, 59.3% from 1 Jul 2025 (LFSS 2025
+    // uplift). ILLUSTRATIVE — pin to the primary levy articles before use.
+    taxRate: [
+      { rate: 0.549, to: "2025-07-01" },
+      { rate: 0.593, from: "2025-07-01" },
+    ],
+    reportFields: [
+      "slip_id", "account_id", "slip_status",
+      "stake", "payout", "ggr",
+      "sport_code", "event_name",
+      "placed_at_local", "settled_at_local",
+    ],
+    // ANJ authorises competitions and bet types per sport — a CLOSED list
+    // with no OTHER bucket, so unmapped sports BLOCK the file. Horse racing
+    // is the separate PAHI licence (not held), hence no HORS entry.
+    nomenclature: {
+      sportCodes: { FOOT: "FOOTBALL", TENN: "TENNIS", BASK: "BASKETBALL" },
+      unmappedPolicy: "block",
+      defaultSportCode: null,
+      eventNameTemplate: "{home} - {away}",
+    },
+    rules: [
+      { id: "FR-101", type: "in_set", field: "slip_status", values: ["SETTLED", "VOIDED"],
+        description: "loi 2010-476: vault traces cover settled (GAIN) and voided (ANNUL) bets only — open bets have no terminal trace" },
+      { id: "FR-102", type: "zero_when", field: "payout", whenField: "slip_status", equals: "VOIDED",
+        description: "loi 2010-476: an ANNUL trace refunds the stake — a voided bet must report zero payout" },
+      { id: "FR-103", type: "no_unmapped_fixtures",
+        description: "loi 2010-476 art. 12: only ANJ-authorised competitions may be offered — an unmapped sport blocks the file" },
+      { id: "FR-104", type: "valid_sport_code",
+        description: "Sport code must be on the ANJ authorised-competitions list (closed, no OTHER bucket)" },
+      { id: "FR-105", type: "max_value", field: "stake", value: 50000,
+        description: "Stakes above EUR 50k indicate a data error; block the file" },
+    ],
+
+    // ---- GAMING domain: poker licensed, casino NOT (REQ-FR-2/3) ----
+    // loi 2010-476 art. 14 licenses online poker ("jeux de cercle") ONLY;
+    // slots/roulette/blackjack/baccarat and the operator jackpot have no
+    // French licence, so they are absent from the map and unmappedPolicy
+    // 'block' + no_unlicensed_games keeps them out of every FR file.
+    gamingNomenclature: {
+      gameCodes: { POKC: "PO-CG", POKT: "PO-TR" }, // cash game / tournoi
+      unmappedPolicy: "block",
+      defaultGameCode: null,
+    },
+    // NOTE: the true French poker levy is STAKES-based (a fraction of the
+    // mises/pot), not GGR-based — when the rate is pinned to the primary
+    // sources this should reuse the DE 'turnover' mechanics via a gaming
+    // taxModel arm rather than new machinery. GGR basis kept here with an
+    // illustrative rate until legal pinning.
+    gamingTaxRate: 0.1,
+    // No operator-jackpot licence in France (OJACK is unmapped and blocked),
+    // so the policy is moot — declared 'gross' (validator requires one).
+    jackpotPolicy: "gross",
+    gamingReportFields: [
+      "activity_id", "account_id", "game_code", "game_name", "vertical",
+      "stake", "payout", "rake_or_fee", "gaming_ggr", "occurred_at_local",
+    ],
+    gamingRules: [
+      { id: "FR-201", type: "no_unlicensed_games",
+        description: "loi 2010-476 art. 14: only poker (jeux de cercle) is licensed online — any casino activity in an FR file is an unlicensed offering" },
+      { id: "FR-202", type: "valid_game_code",
+        description: "Game code must be a held PO (poker) licence code" },
+    ],
+    // ---- PLAYER PROTECTION & PAYMENTS ----
+    playerProtection: {
+      // French law makes PLAYER-SET limits mandatory at registration (the
+      // CJ trace family records them via LIMITMISE) but sets no statutory
+      // default amount — so no statutory arm here.
+      defaultDepositLimits: null,
+      // National register of excluded players (fichier des interdits de
+      // jeux, held by the ANJ) — mandatory to honour, like ES's RGIAJ and
+      // NL's CRUKS.
+      selfExclusionSources: ["OPERATOR", "NATIONAL"],
+      mandatoryRegister: "NATIONAL", // interdits de jeux (ANJ national file)
+      withdrawalRequiresVerification: true,
+    },
+  },
 };
 
 module.exports = { jurisdictions, commonRules, commonGamingRules, commonPeriodicRules };

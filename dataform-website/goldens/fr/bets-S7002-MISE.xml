@@ -1,0 +1,33 @@
+<PASPMISE>
+  <IDOper>9001</IDOper>
+  <DateEvt>260713103000</DateEvt>
+  <IDEvt>330317236</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Tech>S7002</Tech>
+  <PaSp>
+    <Combi>S</Combi>
+    <LigSp>
+      <Renc>GAMMA V DELTA CUP</Renc>
+      <Tech>F7001</Tech>
+      <Sport>TENN</Sport>
+      <Evnt>F7001</Evnt>
+      <Genre>H</Genre>
+      <Date>260713103000</Date>
+      <Part>GAMMA</Part>
+      <Part>DELTA</Part>
+      <PronoSp>
+        <TypeRes>RES1X2</TypeRes>
+        <Choix>AWAY</Choix>
+      </PronoSp>
+      <Cote>3.00</Cote>
+    </LigSp>
+    <MiseBase>5.00</MiseBase>
+  </PaSp>
+  <SoldeAvantMise>115.00</SoldeAvantMise>
+  <Mise>5.00</Mise>
+  <SoldeApresMise>110.00</SoldeApresMise>
+</PASPMISE>

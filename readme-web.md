@@ -122,10 +122,10 @@ To wipe everything back to the seed state:
 
 **The regulator SAFE + submission engine** (runs automatically with the app):
 
-- `safe.py` — a single SOAP 1.1 web service impersonating all seven regulators'
+- `safe.py` — a single SOAP 1.1 web service impersonating all eight regulators'
   record stores (in real life one per regulator — Denmark's is literally
   called the SAFE). Endpoints: `POST /safe/<MKT>/<type>` for `<MKT>` in
-  MT/ES/DK/BG/GR/NL/DE and `<type>` in `bets` / `payments` / `players`, plus
+  MT/ES/DK/BG/GR/NL/DE/FR and `<type>` in `bets` / `payments` / `players`, plus
   `?wsdl` per endpoint and a browsable status page at
   **http://127.0.0.1:5002/**. Every accepted deposit is stored **as received,
   in the regulator's own format**, pretty-printed one XML file per deposit

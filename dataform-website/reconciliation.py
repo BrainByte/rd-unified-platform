@@ -26,6 +26,7 @@
 import argparse
 import calendar
 import os
+import re
 import sys
 from datetime import date, datetime, timedelta, timezone
 
@@ -50,6 +51,9 @@ TAX_RATES = {
     "GR": [{"rate": 0.35}],
     "NL": [{"rate": 0.342, "to": "2026-01-01"}, {"rate": 0.378, "from": "2026-01-01"}],
     "DE": [{"rate": 0.053}],   # RennwLottG: 5.3% — of STAKES (see TAX_BASIS)
+    # FR public levies on the produit brut des jeux; illustrative pending
+    # pinning to primary sources. REQ: requirements/fr-new-jurisdiction (REQ-FR-3)
+    "FR": [{"rate": 0.549, "to": "2025-07-01"}, {"rate": 0.593, "from": "2025-07-01"}],
 }
 
 # The tax BASE per market (REQ: de-regulator-addition): 'ggr' (default) or
@@ -65,6 +69,7 @@ BONUS_STAKE_POLICY = {
     "MT": "deduct", "ES": "gross", "DK": "deduct",
     "BG": "gross", "GR": "gross", "NL": "deduct",
     "DE": "gross",   # turnover regime: operator-funded stakes are taxed too
+    "FR": "deduct",  # REQ: requirements/fr-new-jurisdiction (REQ-FR-3)
 }
 
 
@@ -254,10 +259,16 @@ def reported_breaks(cur, mkt, start, end):
                   AND v.event_ts >= CAST(? AS TIMESTAMPTZ) AND v.event_ts < CAST(? AS TIMESTAMPTZ)""",
                 [mkt, start, end]).fetchall():
             expected.append(("bets", f"{slip_id}|VOIDED", slip_id))
-    for (round_id,) in cur.execute(f"""SELECT r.round_id FROM game_rounds r
+    # markets that license only some gaming verticals (FR: poker only)
+    # never report the others — mirror the submission engine's suppression.
+    # REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
+    verticals = MARKETS[mkt].get("gaming_verticals")
+    for (round_id, game) in cur.execute(f"""SELECT r.round_id, r.game FROM game_rounds r
             JOIN accounts a USING (account_id)
             WHERE a.jurisdiction=? AND r.round_ts >= CAST(? AS TIMESTAMPTZ)
               AND r.round_ts < CAST(? AS TIMESTAMPTZ)""", [mkt, start, end]).fetchall():
+        if verticals is not None and game not in verticals:
+            continue
         expected.append(("gaming", round_id, round_id))
     for (payment_id,) in cur.execute(f"""SELECT p.payment_id FROM payments p
             JOIN accounts a USING (account_id)
@@ -275,8 +286,12 @@ def reported_breaks(cur, mkt, start, end):
             continue
         receipt = row[0]
         folder = os.path.join(SAFE_ROOT, mkt, rtype)
+        # event-log regimes deposit several documents per record under
+        # suffixed keys (S1001-MISE, S1001-GAIN): any of them proves the
+        # record reached the SAFE. REQ: requirements/fr-new-jurisdiction (REQ-FR-4)
+        name_re = re.compile(rf"-{re.escape(rid)}(-[A-Z]+)?\.xml$")
         found = os.path.isdir(folder) and any(
-            f.endswith(f"-{rid}.xml") for f in os.listdir(folder))
+            name_re.search(f) for f in os.listdir(folder))
         if not found:
             breaks.append((rtype, rid, f"receipt {receipt} but XML missing from SAFE store"))
         else:

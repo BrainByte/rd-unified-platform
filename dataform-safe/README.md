@@ -3,7 +3,7 @@
 This folder is written by the demo SAFE web service
 (`dataform-website/safe.py`). In real regulation each authority runs its own
 record store (Denmark's Spillemyndigheden literally calls it the **SAFE**);
-for the demo one SOAP service impersonates all seven, with an endpoint per
+for the demo one SOAP service impersonates all eight, with an endpoint per
 jurisdiction per record type:
 
 ```
@@ -12,7 +12,7 @@ GET  http://127.0.0.1:5002/safe/<MKT>/<type>?wsdl  minimal WSDL
 GET  http://127.0.0.1:5002/                        status page
 ```
 
-`<MKT>` = MT · ES · DK · BG · GR · NL · DE — `<type>` = bets · payments ·
+`<MKT>` = MT · ES · DK · BG · GR · NL · DE · FR — `<type>` = bets · payments ·
 players · gaming · rud · rut (the DGOJ-style periodic registers — see
 `requirements/dgoj-periodic-reporting/`).
 

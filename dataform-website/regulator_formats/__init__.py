@@ -69,7 +69,7 @@
 # defaulted, and each module says so where it does it.
 # ============================================================================
 from . import dk, engine, es, generic, gr, nl  # noqa: F401  (es/nl = test oracles)
-from .specs import es_v3_3, nl_v1_11
+from .specs import es_v3_3, fr_v1, nl_v1_11
 
 # (jurisdiction, record_type) -> formatter(canonical dict) -> xml.etree Element
 FORMATTERS = {
@@ -98,6 +98,16 @@ FORMATTERS = {
     ("NL", "payments"): engine.bind(nl_v1_11.SPEC, "payments"),
     ("NL", "players"):  engine.bind(nl_v1_11.SPEC, "players"),
     ("NL", "gaming"):   engine.bind(nl_v1_11.SPEC, "gaming"),
+
+    # FR is spec-only (no hand-written module ever existed): the ANJ
+    # event-log traces, where one canonical record fans out to several
+    # documents (a settled bet = MISE + GAIN). Golden files in
+    # test_fr_spec.py are the oracle.
+    # REQ: requirements/fr-new-jurisdiction (REQ-FR-4/5)
+    ("FR", "bets"):     engine.bind(fr_v1.SPEC, "bets"),
+    ("FR", "payments"): engine.bind(fr_v1.SPEC, "payments"),
+    ("FR", "players"):  engine.bind(fr_v1.SPEC, "players"),
+    ("FR", "gaming"):   engine.bind(fr_v1.SPEC, "gaming"),
 }
 
 

@@ -1,0 +1,16 @@
+<POACHAT>
+  <IDOper>9001</IDOper>
+  <IDCoffre>1</IDCoffre>
+  <DateEvt>260713111500</DateEvt>
+  <IDEvt>1545813931</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDSession>0-sys</IDSession>
+  <Inscription>R7002</Inscription>
+  <Tech>R7002</Tech>
+  <Description>Mise POKER</Description>
+  <SoldeAvant>74.00</SoldeAvant>
+  <SoldeMouvement>3.00</SoldeMouvement>
+  <SoldeApres>71.00</SoldeApres>
+</POACHAT>

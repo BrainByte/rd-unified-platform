@@ -37,7 +37,10 @@ import regulator_formats
 SAFE_BASE = "http://127.0.0.1:5002/safe"
 POLL_SECONDS = 3
 
-# per-market reporting variance, as data (mirrors includes/jurisdictions.js)
+# per-market reporting variance, as data (mirrors includes/jurisdictions.js).
+# gaming_verticals: which casino/gaming verticals the market licenses —
+# None = all; FR licenses poker only, so its other rounds are suppressed.
+# REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
 MARKETS = {
     "MT": {"include_voided": True,  "hashed_ref": False},
     "DK": {"include_voided": True,  "hashed_ref": False},
@@ -46,6 +49,9 @@ MARKETS = {
     "GR": {"include_voided": False, "hashed_ref": True},
     "NL": {"include_voided": False, "hashed_ref": True},
     "DE": {"include_voided": False, "hashed_ref": True},  # LUGAS pseudonym; voids refunded, never taxed
+    # ANJ trace regime: voids are first-class ANNUL events; the sealed
+    # vault carries clear player ids. REQ: requirements/fr-new-jurisdiction (REQ-FR-1/2)
+    "FR": {"include_voided": True,  "hashed_ref": False, "gaming_verticals": {"POKER"}},
 }
 
 
@@ -85,9 +91,34 @@ def _soap_submit(mkt, rtype, record_key, payload_el):
 
 
 def _submit(mkt, rtype, record_key, rec):
-    """Translate one canonical record and deliver it."""
+    """Translate one canonical record and deliver it. Event-log regimes
+    (FR) translate one record into SEVERAL regulator documents — a settled
+    bet is a MISE trace plus a GAIN trace — each deposited under a
+    suffixed key with its own receipt; the joined receipts are logged
+    against the one canonical record.
+    REQ: requirements/fr-new-jurisdiction (REQ-FR-4)"""
     payload = regulator_formats.format_record(mkt, rtype, rec)
-    return _soap_submit(mkt, rtype, record_key, payload)
+    if not isinstance(payload, list):
+        return _soap_submit(mkt, rtype, record_key, payload)
+    receipts = [
+        _soap_submit(mkt, rtype,
+                     f"{record_key}-{suffix}" if suffix else record_key, doc)
+        for suffix, doc in payload]
+    return "+".join(receipts)
+
+
+def _balances(rec, current, stake, credit):
+    """FR traces state before/movement/after wallet balances around the
+    stake and the credit (winnings or refund). The demo derives them from
+    the CURRENT ledger balance (its ledger has no as-of view — declared
+    simplification): current = before - stake + credit.
+    REQ: requirements/fr-new-jurisdiction (REQ-FR-6)"""
+    before = float(current) + float(stake) - float(credit)
+    rec["balance_before_stake"] = before
+    rec["balance_after_stake"] = before - float(stake)
+    rec["balance_before_credit"] = before - float(stake)
+    rec["balance_after_credit"] = float(current)
+    return rec
 
 
 def _log(cur, rtype, key, mkt, receipt):
@@ -148,6 +179,8 @@ def submit_pending_bets(cur):
             "fixture_id": fixture_id,
             "sport": sport,
             "event": f"{home} v {away} ({comp})",
+            # FR bet traces list the participants individually
+            "participants": [{"name": home}, {"name": away}],
             "selection": selection,
             "odds": odds,
             "stake": stake,
@@ -159,6 +192,10 @@ def submit_pending_bets(cur):
             "placed_at": placed_at,
             "terminal_at": terminal_at,
         }
+        # balance triplets around stake and credit (winnings, or the
+        # refund when voided) for balance-bearing trace regimes (FR)
+        _balances(rec, db.balance(cur, account_id), stake,
+                  payout if status == "SETTLED" else stake)
         receipt = _submit(mkt, "bets", slip_id, rec)
         _log(cur, "bets", f"{slip_id}|{status}", mkt, receipt)
         print(f"[SUBMIT] {mkt}/bets {slip_id} ({status}) -> {receipt}")
@@ -194,10 +231,14 @@ def submit_pending_payments(cur):
             "amount": amount,
             "method": method,
             "completed_at": completed_ts,
-            # GR reports the balance after each wallet movement; the demo
-            # supplies the current balance (its ledger has no as-of view)
+            # GR reports the balance after each wallet movement; FR wants
+            # the before/after pair. The demo supplies the current balance
+            # (its ledger has no as-of view) as the post-event figure.
             "balance": db.balance(cur, account_id),
         }
+        rec["balance_before"] = (rec["balance"] - float(amount)
+                                 if direction == "DEPOSIT"
+                                 else rec["balance"] + float(amount))
         receipt = _submit(mkt, "payments", payment_id, rec)
         _log(cur, "payments", payment_id, mkt, receipt)
         print(f"[SUBMIT] {mkt}/payments {payment_id} ({direction}) -> {receipt}")
@@ -208,7 +249,7 @@ def submit_pending_payments(cur):
 # ---- record type: players (re-reported when KYC status changes) -------------
 PENDING_PLAYERS_SQL = """
 SELECT a.account_id, a.jurisdiction, a.national_id, a.kyc_status,
-       a.opened_at, a.date_of_birth
+       a.opened_at, a.date_of_birth, a.username
 FROM accounts a
 WHERE NOT a.is_admin
   AND NOT EXISTS (SELECT 1 FROM safe_submissions ss
@@ -222,7 +263,7 @@ def submit_pending_players(cur):
     cur.execute(PENDING_PLAYERS_SQL)
     n = 0
     for (account_id, mkt, national_id, kyc_status, opened_at,
-         date_of_birth) in cur.fetchall():
+         date_of_birth, username) in cur.fetchall():
         if mkt not in MARKETS:
             continue
         rec = {
@@ -231,8 +272,10 @@ def submit_pending_players(cur):
             "jurisdiction": mkt,
             "kyc_status": kyc_status,
             "opened_at": opened_at,
-            # the NL profile record wants DOB and end-of-day balance
+            # the NL profile record wants DOB and balance; FR's account-
+            # opening trace wants the login/pseudonym
             "date_of_birth": date_of_birth,
+            "username": username,
             "balance": db.balance(cur, account_id),
         }
         receipt = _submit(mkt, "players", account_id, rec)
@@ -263,7 +306,16 @@ def submit_pending_gaming(cur):
     n = 0
     for (round_id, mkt, account_id, national_id, game, stake, payout, funding,
          session_id, round_ts) in cur.fetchall():
-        if mkt not in MARKETS:
+        meta = MARKETS.get(mkt)
+        if meta is None:
+            continue
+        verticals = meta.get("gaming_verticals")
+        if verticals is not None and game not in verticals:
+            # this market does not license the vertical (FR: casino games
+            # are unlicensed, only poker reports); log it as suppressed so
+            # the round is never re-examined — the pipeline blocks it too.
+            # REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
+            _log(cur, "gaming", round_id, mkt, "SUPPRESSED-UNLICENSED")
             continue
         rec = {
             "record_key": round_id,
@@ -284,6 +336,10 @@ def submit_pending_gaming(cur):
             "session_id": session_id,
             "played_at": round_ts,
         }
+        # golden-chip rounds debit no cash (operator-funded stake), so the
+        # cash-wallet triplet moves only by the payout
+        _balances(rec, db.balance(cur, account_id),
+                  stake if funding == "CASH" else 0, payout)
         receipt = _submit(mkt, "gaming", round_id, rec)
         _log(cur, "gaming", round_id, mkt, receipt)
         print(f"[SUBMIT] {mkt}/gaming {round_id} ({game}) -> {receipt}")

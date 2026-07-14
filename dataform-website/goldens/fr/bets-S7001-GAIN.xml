@@ -1,0 +1,17 @@
+<PASPGAIN>
+  <IDOper>9001</IDOper>
+  <DateEvt>260713111500</DateEvt>
+  <IDEvt>2370501863</IDEvt>
+  <IDJoueur>W7001</IDJoueur>
+  <HashJoueur>115586C3089D274F3BE1B93E56712F3EBE4726DC</HashJoueur>
+  <IDSession>0-sys</IDSession>
+  <IPJoueur>0.0.0.0</IPJoueur>
+  <IDCoffre>1</IDCoffre>
+  <Supervision />
+  <Tech>S7001</Tech>
+  <DateMise>260713103000</DateMise>
+  <DateHeure>260713111500</DateHeure>
+  <SoldeAvantGain>90.00</SoldeAvantGain>
+  <Gain>25.00</Gain>
+  <SoldeApresGain>115.00</SoldeApresGain>
+</PASPGAIN>

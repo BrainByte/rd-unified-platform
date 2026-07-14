@@ -121,7 +121,7 @@ END
 ```
 
 Here there is **one** builder; the rate is **config** (and effective-dated), and
-**seven markets come from one loop**:
+**eight markets come from one loop**:
 
 ```js
 // includes/queries.js — ONE function, every market

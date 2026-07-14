@@ -233,7 +233,7 @@ the gate. One more convention: the demo database
   entirely FICTITIOUS single-user gaming site (Python 3.11 / Flask /
   persistent DuckDB committed to git) that plays the role of the
   operator OLTP so the architecture can be demonstrated end to end by
-  clicking, not slides. Register in any of the seven markets (T&Cs,
+  clicking, not slides. Register in any of the eight markets (T&Cs,
   national id, per-market postcode hints), limits, KYC, deposits/
   withdrawals, sports bets that settle ~40s after placement via LAZY
   settlement (WIN/LOSS/VOID with reasons), casino (slots/blackjack/
@@ -244,7 +244,7 @@ the gate. One more convention: the demo database
   same invariants the breach detectors prove after the fact.
 - Fictitious regulator SAFE + near-realtime submission engine
   (`dataform-website/safe.py` + `submission.py`, both started/stopped by
-  app.py as daemon threads): ONE SOAP 1.1 service impersonates all seven
+  app.py as daemon threads): ONE SOAP 1.1 service impersonates all eight
   regulators with an endpoint per jurisdiction PER RECORD TYPE
   (bets/payments/players), ?wsdl per endpoint, SOAP Faults on unknown
   jurisdiction/type, and a browsable status page (port 5002). The engine
@@ -350,6 +350,32 @@ the gate. One more convention: the demo database
   datasets incl. reporting_de. NOTE: Greece's regulator is referred to
   as HGC (Hellenic Gaming Commission) throughout — not EEEP.
 
+- FRANCE (FR / ANJ) — the EIGHTH market (branch fr-integration; REQ:
+  repo-root requirements/fr-new-jurisdiction, the first scenario written
+  as the work order BEFORE the work). The first EVENT-LOG jurisdiction:
+  ANJ trace regime (one French XML per player action into a sealed
+  coffre-fort; schemas + fr-data-model.md under docs/regulator/fr/).
+  Pipeline: one config object — daily, includeVoided true (ANNUL traces),
+  clear ids, closed sport list (block), poker-only gaming (casino
+  UNLICENSED — no_unlicensed_games FR-201 + negative test, the ES
+  precedent inverted), effective-dated GGR levy 54.9%→59.3% (2025-07-01,
+  illustrative), NATIONAL interdits-de-jeux register. Seed A10001 +
+  S15/S16 + P5/P6 + watermark (WAITING_DATA trap re-proven deliberately
+  first). 135 unit tests / 72 models / 114 assertions / 60 expectations /
+  17 negative tests; emit-sql additive only. Demo: FR traces produced by
+  the MAPPING ENGINE (regulator_formats/specs/fr_v1.py — no hand-written
+  module): one canonical record fans out to N documents (settled bet =
+  PASPMISE+PASPGAIN, void = +PASPANNUL re-report; suffixed deposit keys,
+  suffix-tolerant recon match), ledger-derived balance triplets, SHA-1
+  player hash, 12-digit yy-timestamps, canonique-sanitised names.
+  test_fr_spec.py: 12/12 goldens + 9/9 XSD-validated against the vendored
+  schemas via xmlschema (in requirements.txt) — the gate CAUGHT real
+  lexical constraints on first run, and exposed that the regulator's own
+  PO draft schema doesn't compile (cercle.xsd missing 'poker' ns prefix;
+  PO family excluded, documented). Live e2e verified: MISE+GAIN pair,
+  MISE+ANNUL void, POACHAT poker, slots SUPPRESSED-UNLICENSED, FR recon
+  residual 0.00 reported 5/5.
+
 **Open items (agreed direction, not yet built):**
 1. ~~Effective-dating on tax rates and regulator codes~~ DONE
    (includes/effective_dating.js): a taxRate/sportCode/gameCode can be a
@@ -386,7 +412,7 @@ the gate. One more convention: the demo database
    (register a runner), not on the config; re-add the file only once a
    runner exists. Until then, `npm run check` on desktop is the gate and
    MRs are merged manually.
-6. Scale from 6 example markets (MT, ES, DK, BG, GR, NL, DE) toward the real 17
+6. Scale from 8 example markets (MT, ES, DK, BG, GR, NL, DE, FR) toward the real 17
 
 (Former item #5 — verify `npm run local` end-to-end on desktop — is
 DONE as of 2026-07-11; see the OFFLINE TEST HARNESS entry above.)
