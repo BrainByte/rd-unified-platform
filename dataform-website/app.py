@@ -593,13 +593,21 @@ def admin():
     c.execute("""SELECT fixture_id, sport, home, away, settle_at FROM fixtures
                  WHERE status = 'OPEN' AND settle_at IS NOT NULL ORDER BY settle_at""")
     arming = c.fetchall()
-    # regulator SAFE feed: latest submissions + per-market/type counts
+    # regulator SAFE feed: latest submissions + per-market/type counts.
+    # Routing placeholders are NOT deliveries and would mislead (a market
+    # can show gaming "deliveries" with no gaming files): SUPPRESSED-*
+    # (voids/unlicensed verticals never sent) and VIA-SESSION (NL rounds
+    # aggregated inside per-game session records).
+    # REQ: requirements/session-tracking (REQ-ST-8)
     c.execute("""SELECT jurisdiction, record_type, COUNT(*) FROM safe_submissions
-                 WHERE receipt_id != 'SUPPRESSED-VOID'
+                 WHERE receipt_id NOT LIKE 'SUPPRESSED-%'
+                   AND receipt_id != 'VIA-SESSION'
                  GROUP BY 1, 2 ORDER BY 1, 2""")
     safe_counts = c.fetchall()
     c.execute("""SELECT record_type, record_key, jurisdiction, receipt_id, submitted_at
-                 FROM safe_submissions WHERE receipt_id != 'SUPPRESSED-VOID'
+                 FROM safe_submissions
+                 WHERE receipt_id NOT LIKE 'SUPPRESSED-%'
+                   AND receipt_id != 'VIA-SESSION'
                  ORDER BY submitted_at DESC LIMIT 12""")
     safe_recent = c.fetchall()
     return render_template("admin/dashboard.html", players=players, open_bets=open_bets,
