@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.5 Schema TRAN_"
+  (hourly player-account transactions / transações), for architectural
+  and demonstration purposes only. The official wire format is SRIJ's
+  "Modelo de Dados de Jogo Online". See pt-common.xsd header and
+  README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): TRAN_YYYYMMDDHH24_[GameVault code].xml
+  (reprocessed: ...rp.xml). One file per hour.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <xs:element name="codjogador" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador unico de jogador online na entidade
+    exploradora. NOT NULL" (Anexo 1, TRAN_ field comments, id_jogexpl).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="cod_conta" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo da conta de jogo do jogador na entidade
+    exploradora ou operador de jogo online. NOT NULL" (Anexo 1, TRAN_ field comments,
+    cod_cntjog).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="cod_optct">
+    <xs:annotation><xs:documentation>"Tipo de transacao financeira entre conta bancaria
+    do jog. e conta da ent. exploradora de jogo online. DEBITO ou CREDITO. NOT NULL"
+    (Anexo 1, TRAN_ field comments). NORMALISED: enumeration built from the gazette
+    field comment (the gazette XSD prints plain xs:string).</xs:documentation></xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="DEBITO"/>
+        <xs:enumeration value="CREDITO"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="timestp_op" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Timestamp de realizacao da operacao.
+    YYYYMMDDHH24MISS.FF TZH:TZM. NOT NULL" (Anexo 1, TRAN_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="saldo_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo inicial da conta do jogador ... antes da
+    operacao. NOT NULL" (Anexo 1, TRAN_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="saldo_mov" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo movimentado na conta do jogador ... durante
+    a operacao." (Anexo 1, TRAN_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="saldo_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo final da conta do jogador ... apos a
+    operacao. NOT NULL" (Anexo 1, TRAN_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="conta">
+    <xs:annotation><xs:documentation>One wallet transaction on the player account
+    (deposit/withdrawal debit or credit) with its before/movement/after balance triplet
+    (Anexo 1, V.5 Schema TRAN_; deposit/withdrawal logging obligations in secções
+    5.4.1 n.º 5 and 5.4.2 n.º 7). NORMALISED: gazette mixed="true" dropped.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="codjogador"/>
+        <xs:element ref="cod_conta"/>
+        <xs:element ref="cod_optct"/>
+        <xs:element ref="timestp_op"/>
+        <xs:element ref="saldo_ini"/>
+        <xs:element ref="saldo_mov"/>
+        <xs:element ref="saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="registos_conta">
+    <xs:annotation><xs:documentation>All account transactions of the reported hour
+    (Anexo 1, V.5 Schema TRAN_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="conta" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the hourly TRAN_ transactions file
+    (Anexo 1, V.5 Schema TRAN_): file envelope + registos_conta.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="registos_conta"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

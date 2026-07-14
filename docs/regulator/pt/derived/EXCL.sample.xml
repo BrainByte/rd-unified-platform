@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived EXCL.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.6 Schema EXCL_).
+     Would be named e.g. EXCL_20150405_1AA.xml. Data is fictitious; document
+     images abbreviated hex. -->
+<ficheiro>
+  <cod_entexpl>1</cod_entexpl>
+  <datahr>20150406003000</datahr>
+  <id_ficheiro>1</id_ficheiro>
+  <cod_cofre>1AA</cod_cofre>
+  <ListaPedidosExclusao>
+    <RegistoPedidoExclusao>
+      <IdTipoCid>1</IdTipoCid>
+      <IdCidadao>12345678</IdCidadao>
+      <Nome>Maria Exemplo</Nome>
+      <IdNacao>PT</IdNacao>
+      <SitProfissional>22</SitProfissional>
+      <Morada>Rua Exemplo 1, Lisboa</Morada>
+      <CodPostal>1000-001</CodPostal>
+      <Distrito>Lisboa</Distrito>
+      <Email>maria@example.com</Email>
+      <Duracao>6</Duracao>
+      <DataInicio>20150405120000</DataInicio>
+      <TipoDoc>C</TipoDoc>
+      <DocFrente>0A1B2C3D</DocFrente>
+      <DocVerso>4E5F6A7B</DocVerso>
+      <Motivo>Pedido do jogador</Motivo>
+    </RegistoPedidoExclusao>
+  </ListaPedidosExclusao>
+</ficheiro>

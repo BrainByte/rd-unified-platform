@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.6 Schema EXCL_"
+  (self-exclusion requests / autoexclusão), for architectural and
+  demonstration purposes only. The official wire format is SRIJ's
+  "Modelo de Dados de Jogo Online". See pt-common.xsd header and
+  README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): EXCL_YYYYMMDD_[GameVault code].xml
+  (reprocessed: ...rp.xml) - daily per the filename rule and storage
+  chapter, although the V.6 prose says "one file per hour" (an internal
+  inconsistency of the gazette text).
+  Deposited in the Safe subdirectory /u01/app/oracle/mftxfer/in/excl.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <xs:element name="IdTipoCid" type="xs:string">
+    <xs:annotation><xs:documentation>"ID do tipo de identificador de cidadao. 0 BI,
+    1 CARTAO CIDADAO, 2 PASSAPORTE, 3 NUMERO IDENTIFIC FISCAL, 4 OUTRO. NOT NULL"
+    (Anexo 1, EXCL_ field comments, id_tipocid). Kept xs:string as printed.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="IdCidadao" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de cidadao auto excluido. NOT NULL"
+    (Anexo 1, EXCL_ field comments). Corresponds to the NIF when IdTipoCid = 3
+    (gazette footnote).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Nome" type="xs:string">
+    <xs:annotation><xs:documentation>"Nome completo do cidadao auto excluido. NOT NULL"
+    (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="IdNacao" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo alpha-2 ISO3166 da nacionalidade do cidadao
+    auto excluido. NOT NULL" (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="SitProfissional" type="xs:byte">
+    <xs:annotation><xs:documentation>"Identificador de situacao profissional de cidadao
+    auto excluido. NOT NULL" (Anexo 1, EXCL_ field comments). Two-digit code list in
+    the gazette footnote: 11 conta própria, 22 conta de outrem, 33 profissional
+    liberal, 44 estudante, 55 reformado, 66 estagiário, 77 sem atividade, 88
+    desempregado, 99 outra. Type xs:byte as printed.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Morada" type="xs:string">
+    <xs:annotation><xs:documentation>"Morada de residencia do cidadao auto excluido.
+    NOT NULL" (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="CodPostal" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo postal da morada de residencia do cidadao
+    auto excluido. NOT NULL" (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Distrito" type="xs:string">
+    <xs:annotation><xs:documentation>"Nome do distrito de residencia do cidadao
+    autoexcluido." (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Email" type="xs:string">
+    <xs:annotation><xs:documentation>"Endereco electronico do cidadao auto excluido.
+    NOT NULL" (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Duracao" type="xs:byte">
+    <xs:annotation><xs:documentation>Duration of the self-exclusion in months (gazette
+    footnote: "The duration of self-exclusion in months. data_fim attribute calculated
+    using attributes data_ini and duracao"). Minimum three months per secção 5.3.2
+    n.º 6 / secção 1.5. Type xs:byte as printed.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="DataInicio" type="Datahora14">
+    <xs:annotation><xs:documentation>"Data de inicio do periodo de auto exclusao do jogo
+    online. YYYYMMDD HH24MISS. NOT NULL" (Anexo 1, EXCL_ field comments, data_ini).
+    NORMALISED: the gazette prints xs:int, which cannot hold the documented 14-digit
+    datetime.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="TipoDoc">
+    <xs:annotation><xs:documentation>"Tipo de documento enviado pelo cidadao auto
+    excluido. B Bilhete de Identidade, C Cartao Cidadao, P Passaporte. NOT NULL"
+    (Anexo 1, EXCL_ field comments, tipo_doc). NORMALISED: enumeration built from the
+    gazette field comment.</xs:documentation></xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="B"/>
+        <xs:enumeration value="C"/>
+        <xs:enumeration value="P"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="DocFrente" type="xs:string">
+    <xs:annotation><xs:documentation>"Imagem da frente de documento enviado por cidadao
+    auto excluido." (Anexo 1, EXCL_ field comments) — image binary as HEX codes per
+    the gazette footnote. Kept xs:string as printed.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="DocVerso" type="xs:string">
+    <xs:annotation><xs:documentation>"Imagem do verso de documento enviado por cidadao
+    auto excluido." (Anexo 1, EXCL_ field comments) — image binary as HEX codes.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="Motivo" type="xs:string">
+    <xs:annotation><xs:documentation>"Motivo de auto exclusao do jogo online. NOT NULL"
+    (Anexo 1, EXCL_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="RegistoPedidoExclusao">
+    <xs:annotation><xs:documentation>One self-exclusion request registered in the
+    operator's gaming technical system (Anexo 1, V.6 Schema EXCL_; obligations in
+    secções 2.2.3 and 5.3.2, notification to SRIJ within 24 hours).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="IdTipoCid"/>
+        <xs:element ref="IdCidadao"/>
+        <xs:element ref="Nome"/>
+        <xs:element ref="IdNacao"/>
+        <xs:element ref="SitProfissional"/>
+        <xs:element ref="Morada"/>
+        <xs:element ref="CodPostal"/>
+        <xs:element ref="Distrito"/>
+        <xs:element ref="Email"/>
+        <xs:element ref="Duracao"/>
+        <xs:element ref="DataInicio"/>
+        <xs:element ref="TipoDoc"/>
+        <xs:element ref="DocFrente"/>
+        <xs:element ref="DocVerso"/>
+        <xs:element ref="Motivo"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ListaPedidosExclusao">
+    <xs:annotation><xs:documentation>All self-exclusion requests of the reported period
+    (Anexo 1, V.6 Schema EXCL_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="RegistoPedidoExclusao" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the EXCL_ self-exclusion file (Anexo 1,
+    V.6 Schema EXCL_): file envelope + ListaPedidosExclusao.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="ListaPedidosExclusao"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

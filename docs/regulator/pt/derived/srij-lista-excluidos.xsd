@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "I. Serviço de
+  autoexclusão de jogadores" - the XSD imported by the ListaExcluidos
+  SOAP WebService WSDL (operator pulls SRIJ's national self-excluded
+  players list). For architectural and demonstration purposes only;
+  the official artefact is SRIJ's SRJJogoOnlineListaExcluidos.xsd.
+  NORMALISED vs. the gazette print: the gazette's Confirmado element
+  uses an xsd:list-based restriction carrying S/N enumerations (not
+  valid XSD 1.0); replaced with a plain S/N string enumeration. The
+  gazette's ListaCidadaoExcludo wraps a single CidadaoExcluido
+  (minOccurs=1, default maxOccurs); maxOccurs="unbounded" is used here
+  because the element represents a list - marked as an inference.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:srjlex="http://www.turismodeportugal.pt/SRJSchema/ListaExcluidos"
+            targetNamespace="http://www.turismodeportugal.pt/SRJSchema/ListaExcluidos"
+            elementFormDefault="qualified">
+
+  <xsd:element name="PedidoListaExcluidos" type="srjlex:PedidoListaExcluidosType">
+    <xsd:annotation><xsd:documentation>Request of the getlistaexcluidos operation
+    (Anexo 1, ListaExcluidos WSDL): the operator asks for the current self-excluded
+    list.</xsd:documentation></xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="RespostaListaExcluidos" type="srjlex:ListaCidadaoExcluidoType">
+    <xsd:annotation><xsd:documentation>Response of the getlistaexcluidos operation
+    (Anexo 1): success flag, list of excluded citizens, optional error message.</xsd:documentation></xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="ListaCidadaoExcluidoType">
+    <xsd:annotation><xsd:documentation>Self-excluded players list response (Anexo 1,
+    gazette XSD for the ListaExcluidos service).</xsd:documentation></xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="Sucesso" type="xsd:boolean"/>
+      <xsd:element name="ListaCidadaoExcludo" minOccurs="0">
+        <xsd:annotation><xsd:documentation>List wrapper; element name spelled
+        "ListaCidadaoExcludo" (sic) as printed in the gazette.</xsd:documentation></xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="CidadaoExcluido" type="srjlex:CidadaoExcluidoType"
+                         minOccurs="1" maxOccurs="unbounded"/>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="MensagemErro" minOccurs="0" maxOccurs="1" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="CidadaoExcluidoType">
+    <xsd:annotation><xsd:documentation>One self-excluded citizen on SRIJ's national list
+    (Anexo 1): identity document type/number, nationality, exclusion start/end dates,
+    confirmation flag. Self-exclusion semantics per secção 1.5 (minimum three months,
+    indefinite when no end date is set).</xsd:documentation></xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="IdTipoCid" type="srjlex:int1">
+        <xsd:annotation><xsd:documentation>Identity document type code (see EXCL_ code
+        list: 0 BI, 1 Cartão de Cidadão, 2 passport, 3 NIF, 4 other).</xsd:documentation></xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IdCidadao" type="srjlex:string20"/>
+      <xsd:element name="IdNacao" type="srjlex:string2"/>
+      <xsd:element name="DataInicio" type="xsd:date"/>
+      <xsd:element name="DataFim" type="xsd:date"/>
+      <xsd:element name="Confirmado" type="srjlex:SN">
+        <xsd:annotation><xsd:documentation>S/N confirmation flag. NORMALISED from the
+        gazette's malformed xsd:list restriction.</xsd:documentation></xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="PedidoListaExcluidosType">
+    <xsd:sequence>
+      <xsd:element name="CodEntidadeExploradora" type="srjlex:string3">
+        <xsd:annotation><xsd:documentation>3-character operator code (gazette simple
+        type string3).</xsd:documentation></xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="string20">
+    <xsd:restriction base="xsd:string"><xsd:maxLength value="20"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="string3">
+    <xsd:restriction base="xsd:string"><xsd:length value="3"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="string2">
+    <xsd:restriction base="xsd:string"><xsd:maxLength value="2"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="int1">
+    <xsd:restriction base="xsd:int"><xsd:totalDigits value="1"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SN">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="S"/>
+      <xsd:enumeration value="N"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.3 Schema SESS_"
+  (hourly player session log / sessões), for architectural and
+  demonstration purposes only. The official wire format is SRIJ's
+  "Modelo de Dados de Jogo Online". See pt-common.xsd header and
+  README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): SESS_YYYYMMDDHH24_[GameVault code].xml
+  (reprocessed: ...rp.xml). One file per hour.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <xs:element name="codjogador" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador unico de jogador online na entidade
+    exploradora. NOT NULL" (Anexo 1, SESS_ field comments, id_jogexpl).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="id_sessao" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de sessao de entrada no operador.
+    NOT NULL" (Anexo 1, SESS_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="timestp_acao" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Timestamp de registo de sessao de jogador online.
+    YYYYMMDDHH24MISS.FF TZH:TZM. NOT NULL" (Anexo 1, SESS_ field comments).
+    NORMALISED from gazette xs:string to the documented pattern.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="tipo_log">
+    <xs:annotation><xs:documentation>"Tipo de LOG de sessao. LOGIN ou LOGOUT. NOT NULL"
+    (Anexo 1, SESS_ field comments). NORMALISED: enumeration built from the gazette
+    field comment (the gazette XSD prints plain xs:string).</xs:documentation></xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="LOGIN"/>
+        <xs:enumeration value="LOGOUT"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="dispositivo">
+    <xs:annotation><xs:documentation>"Codigo de dispositivo de acesso. C computador,
+    A Movel app, B Movel browser, T TV." (Anexo 1, SESS_ field comments). NORMALISED:
+    enumeration built from the gazette field comment.</xs:documentation></xs:annotation>
+    <xs:simpleType>
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="C"/>
+        <xs:enumeration value="A"/>
+        <xs:enumeration value="B"/>
+        <xs:enumeration value="T"/>
+      </xs:restriction>
+    </xs:simpleType>
+  </xs:element>
+
+  <xs:element name="jogador">
+    <xs:annotation><xs:documentation>One session log entry (login or logout) produced in
+    the gaming technical system during a player session (Anexo 1, V.3 Schema SESS_;
+    session-recording obligation in secção 6.3.6). NORMALISED: gazette mixed="true"
+    dropped.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="codjogador"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="timestp_acao"/>
+        <xs:element ref="tipo_log"/>
+        <xs:element ref="dispositivo"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="registos_log">
+    <xs:annotation><xs:documentation>All session log entries of the reported hour
+    (Anexo 1, V.3 Schema SESS_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="jogador" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the hourly SESS_ session file (Anexo 1,
+    V.3 Schema SESS_): file envelope + registos_log.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="registos_log"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

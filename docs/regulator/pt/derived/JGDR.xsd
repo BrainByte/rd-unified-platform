@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.2 Schema JGDR_"
+  (hourly player registrations and updates / registos de jogadores),
+  for architectural and demonstration purposes only. The official wire
+  format is SRIJ's "Modelo de Dados de Jogo Online". See pt-common.xsd
+  header and README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): JGDR_YYYYMMDDHH24_[GameVault code].xml
+  (reprocessed: ...rp.xml). One file per hour.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <xs:element name="codjogador" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador unico de jogador online na entidade
+    exploradora. NOT NULL" (Anexo 1, JGDR_ field comments, id_jogexpl).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="conta_jog" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo de conta de jogador online. NOT NULL"
+    (Anexo 1, JGDR_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="tip_pag" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo de tipo de pagamento associado a conta de
+    jogador online. NOT NULL" (Anexo 1, JGDR_ field comments, tipo_pag). Code list not
+    published in the regulation.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="logon" type="xs:string">
+    <xs:annotation><xs:documentation>"Logon de entrada na entidade exploradora do jogo
+    online. NOT NULL" (Anexo 1, JGDR_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="id_cidadao" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de cidadao do jogador online.
+    NOT NULL" (Anexo 1, JGDR_ field comments) — identity document number.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="id_tipocid" type="xs:string">
+    <xs:annotation><xs:documentation>"ID do tipo de identificador de cidadao. 0 BI,
+    1 CARTAO CIDADAO, 2 PASSAPORTE, 3 NUMERO IDENTIFIC FISCAL, 4 OUTRO. NOT NULL"
+    (Anexo 1, JGDR_ field comments). Kept xs:string as printed in the gazette.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="timestp_reg" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Timestamp de registo de alteracoes de dados do
+    jogador online. YYYYMMDDHH24MISS.FF TZH:TZM. NOT NULL" (Anexo 1, JGDR_ field
+    comments). NORMALISED from gazette xs:string to the documented pattern.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="alias_jog" type="xs:string">
+    <xs:annotation><xs:documentation>"Alias do jogador online." (Anexo 1, JGDR_ field
+    comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="nome" type="xs:string">
+    <xs:annotation><xs:documentation>"Nome completo do jogador online. NOT NULL"
+    (Anexo 1, JGDR_ field comments; data item mandated by secção 5.2.1).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="data_nascimento" type="xs:string">
+    <xs:annotation><xs:documentation>"Data de nascimento do jogador online. NOT NULL"
+    (Anexo 1, JGDR_ field comments; secção 5.2.1). Date format not stated in the
+    regulation — kept xs:string as printed in the gazette.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="nif" type="xs:string">
+    <xs:annotation><xs:documentation>"Numero de identificacao fiscal do jogador online.
+    1 Cidadaos estrangeiros." (Anexo 1, JGDR_ field comments; secção 5.2.1).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="morada" type="xs:string">
+    <xs:annotation><xs:documentation>"Morada de residencia do jogador online NOT NULL."
+    (Anexo 1, JGDR_ field comments; secção 5.2.1).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="cod_postal" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo postal da morada de residencia do jogador
+    online. NOT NULL" (Anexo 1, JGDR_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="id_nacao" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo alpha-2 ISO3166 da nacionalidade do jogador
+    online. NOT NULL" (Anexo 1, JGDR_ field comments; secção 5.2.1).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="telefone" type="xs:string">
+    <xs:annotation><xs:documentation>"Contacto telefonico do jogador online. NOT NULL"
+    (Anexo 1, JGDR_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="email" type="xs:string">
+    <xs:annotation><xs:documentation>"Endereco electronico do jogador online. NOT NULL"
+    (Anexo 1, JGDR_ field comments; secção 5.2.1).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="resp_at" type="xs:string">
+    <xs:annotation><xs:documentation>"Resposta do servico da autoridade tributaria."
+    (Anexo 1, JGDR_ field comments) — tax-authority service response.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="id_resp_at" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de resposta do servico de registo na
+    autoridade tributaria." (Anexo 1, JGDR_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="jogador">
+    <xs:annotation><xs:documentation>One player registration or personal-data update
+    (Anexo 1, V.2 Schema JGDR_; registration data list in secção 5.2.1). NORMALISED:
+    the gazette prints mixed="true", dropped here.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="codjogador"/>
+        <xs:element ref="conta_jog"/>
+        <xs:element ref="tip_pag"/>
+        <xs:element ref="logon"/>
+        <xs:element ref="id_cidadao"/>
+        <xs:element ref="id_tipocid"/>
+        <xs:element ref="timestp_reg"/>
+        <xs:element ref="alias_jog"/>
+        <xs:element ref="nome"/>
+        <xs:element ref="data_nascimento"/>
+        <xs:element ref="nif"/>
+        <xs:element ref="morada"/>
+        <xs:element ref="cod_postal"/>
+        <xs:element ref="id_nacao"/>
+        <xs:element ref="telefone"/>
+        <xs:element ref="email"/>
+        <xs:element ref="resp_at"/>
+        <xs:element ref="id_resp_at"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="registos_jogador">
+    <xs:annotation><xs:documentation>All registrations/updates of the reported hour
+    (Anexo 1, V.2 Schema JGDR_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="jogador" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the hourly JGDR_ player-registration file
+    (Anexo 1, V.2 Schema JGDR_): file envelope + registos_jogador.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="registos_jogador"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

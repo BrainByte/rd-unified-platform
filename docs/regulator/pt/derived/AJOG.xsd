@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.4 Schema AJOG_"
+  (hourly gaming activity / atividade de jogo), for architectural and
+  demonstration purposes only. The official wire format is SRIJ's
+  "Modelo de Dados de Jogo Online". See pt-common.xsd header and
+  README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): AJOG_YYYYMMDDHH24_[GameVault code].xml
+  (reprocessed: ...rp.xml). One file per hour. Activity is organised in
+  six game categories (Anexo 1, V.4): sport (apostas desportivas),
+  hipica (apostas hípicas), poker, pbanca (Ponto e Banca / baccarat),
+  bjack (blackjack), fortazar (jogos de fortuna ou azar).
+  NORMALISED vs. the gazette print: gazette mixed="true" dropped;
+  duplicate global declarations of codjogador/logon declared once;
+  monetary elements typed xs:decimal (gazette: xs:string, comments say
+  "em euros"); timestamps pattern-typed per the documented masks;
+  S/N flags typed from the gazette field comments.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <!-- ===== player account wrapper fields (conta_jog) ===== -->
+  <xs:element name="codigo" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo da conta de jogo do jogador na entidade
+    exploradora ... NOT NULL" (Anexo 1, AJOG_ field comments, cod_cntjog).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="saldo_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo inicial, em euros, da conta de jogo online.
+    NOT NULL" (Anexo 1, AJOG_ field comments, sal_jog_ini).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="saldo_mov" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo movimentado, em euros, na conta de jogo
+    online." (Anexo 1, AJOG_ field comments, sal_jog_mov).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="saldo_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo actual, em euros, da conta de jogo online."
+    (Anexo 1, AJOG_ field comments, sal_jog_final).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="bonus_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus inicial, em euros, na conta de jogo online.
+    NOT NULL" (Anexo 1, AJOG_ field comments, bon_jog_ini).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="bonus_mov" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus movimentado, em euros, na conta de jogo
+    online." (Anexo 1, AJOG_ field comments, bon_jog_mov).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="bonus_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus actual, em euros, na conta de jogador
+    online." (Anexo 1, AJOG_ field comments, bon_jog_final).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="pinscr_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor inicial de premio de inscricao em torneio de
+    poker, em euros." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="pinscr_mov" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor movimentado de premio de inscricao em torneio
+    de poker, em euros." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="pinscr_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor final de premio de inscricao em torneio de
+    poker, em euros." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== common bet/game-slip fields ===== -->
+  <xs:element name="cod_ficha" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo externo de ficha de jogo, aposta online.
+    NOT NULL" (Anexo 1, AJOG_ field comments, cod_fichjog) — game-slip code.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cod_aptr_jog" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo de aposta para utilizacao da entidade
+    exploradora ou operador de jogo online. NOT NULL" (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ap_cruz" type="SN">
+    <xs:annotation><xs:documentation>"Identifica se a ficha de jogador de refere a um
+    jogo ou aposta cruzada. NOT NULL" (Anexo 1, AJOG_ field comments) — cross
+    (shared-liquidity) bet flag. S/N typing INFERRED by analogy with the other
+    "Identifica se" flags.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="timestp_ini" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Ficha de jogo. Inicio da aposta, jogo online.
+    YYYYMMDDHH24MISS.FF TZH:TZM. NOT NULL" (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="timestp_fim" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Ficha de jogo. Fim da aposta, jogo online.
+    YYYYMMDDHH24MISS.FF TZH:TZM." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="dathr_ini_evento" type="Datahora14">
+    <xs:annotation><xs:documentation>"Datahora de inicio do evento. YYYYMMDDHH24MISS."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="dathr_fim_evento" type="Datahora14">
+    <xs:annotation><xs:documentation>"Datahora de fim do evento. YYYYMMDDHH24MISS."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cod_fichajog" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo externo de ficha de jogador atribuido pela
+    entidade exploradora de jogo online. NOT NULL" (Anexo 1, AJOG_ field comments,
+    cod_fjoga) — per-game-event player code (Anexo 1, "Conceitos da estrutura").</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="id_sessao" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de sessao de entrada no operador."
+    (Anexo 1, AJOG_ field comments) — links to SESS_.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ip_jogador" type="xs:string">
+    <xs:annotation><xs:documentation>"IP da maquina do jogador online." (Anexo 1, AJOG_
+    field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ip_regiao" type="xs:string">
+    <xs:annotation><xs:documentation>"Regiao do IP da maquina do jogador online."
+    (Anexo 1, AJOG_ field comments, regiao_ip). Value list not published in the
+    regulation.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cod_opejog" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo externo de operacao de jogo, aposta online.
+    NOT NULL" (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="timestp" type="TimestampFFTZ">
+    <xs:annotation><xs:documentation>"Timestamp da operacao de jogo, aposta online.
+    YYYYMMDDHH24MISS.FF TZH:TZM. NOT NULL" (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="descr_ap" type="xs:string">
+    <xs:annotation><xs:documentation>"Descritivo da aposta. NOT NULL" (Anexo 1, AJOG_
+    field comments) — bet description.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="resultado" type="xs:string">
+    <xs:annotation><xs:documentation>Result code; the code list varies by category
+    (Anexo 1, AJOG_ field comments): generic "0 Perdeu 1 Ganhou 3 Empate"; poker adds
+    "2 All In"; Ponto e Banca uses "4 Ponto 3 Empate 5 Banca"; free-form for
+    sports/horse bets. Kept xs:string because no single enumeration applies.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== per-operation balance triplets (all "em euros") ===== -->
+  <xs:element name="a_saldo_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo, em euros, antes do inicio da aposta."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_valor" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor da aposta, em euros." (Anexo 1, AJOG_ field
+    comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_saldo_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Saldo, em euros, depois do fecho de aposta."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_bonus_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus do jogador online, em euros, antes do inicio
+    da aposta." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_bonus" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus da aposta, em euros." (Anexo 1, AJOG_ field
+    comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_bonus_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Bonus do jogador online, em euros, depois do fecho
+    de aposta." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_comissao" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Comissao de aposta da entidade exploradora ou
+    operador jogo online." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="g_saldo_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor do saldo, em euros, antes do ganho de
+    aposta." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="g_ganho" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor ganho, em euros, com a aposta." (Anexo 1,
+    AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="g_saldo_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor do saldo, em euros, apos ganho de aposta."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="r_saldo_ini" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor do saldo, em euros, antes do reembolso de
+    aposta." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="r_valor" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor do reembolso, em euros." (Anexo 1, AJOG_
+    field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="r_saldo_fim" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Valor do saldo, em euros, depois do reembolso de
+    aposta." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== sports / horse-racing specifics ===== -->
+  <xs:element name="combinado" type="SN">
+    <xs:annotation><xs:documentation>"Identifica se a aposta e combinada ou nao. Mais do
+    que um evento. S sim, N nao. NOT NULL" (Anexo 1, AJOG_ field comments, combi).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="multipla" type="SN">
+    <xs:annotation><xs:documentation>"Identifica se a aposta e multipla ou nao. Mais do
+    que um resultado. S sim, N nao. NOT NULL" (Anexo 1, AJOG_ field comments, multi).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cota_ap" type="xs:decimal">
+    <xs:annotation><xs:documentation>"Cota total da aposta desportiva. NOT NULL"
+    (Anexo 1, AJOG_ field comments, cota) — total odds. xs:decimal INFERRED
+    (gazette: xs:string).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cota" type="xs:decimal">
+    <xs:annotation><xs:documentation>"Cota da aposta hipica. NOT NULL" (Anexo 1, AJOG_
+    field comments) — horse-race odds. xs:decimal INFERRED (gazette: xs:string).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="mutua" type="SN">
+    <xs:annotation><xs:documentation>"Identifica se a aposta e mutua ou nao. S sim,
+    N nao. NOT NULL" (Anexo 1, AJOG_ field comments) — pari-mutuel flag.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== poker / table-game specifics ===== -->
+  <xs:element name="id_inscricao" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador da inscricao do jogador. NOT NULL"
+    (Anexo 1, AJOG_ field comments) — registration/buy-in id.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="id_partida" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de partida de jogo. NOT NULL"
+    (Anexo 1, AJOG_ field comments) — game/hand id.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="descr" type="xs:string">
+    <xs:annotation><xs:documentation>"Descritivo do torneio, partida. NOT NULL"
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="torneio" type="SN">
+    <xs:annotation><xs:documentation>"Identifica se a operacao se enquadra num torneio ou
+    nao. S sim, N nao. NOT NULL" (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="id_mesa" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador da mesa de jogo. NOT NULL" (Anexo 1,
+    AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="njog_min" type="xs:string">
+    <xs:annotation><xs:documentation>"Numero minimo de jogadores." (Anexo 1, AJOG_ field
+    comments). Kept xs:string as printed in the gazette.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="njog_max" type="xs:string">
+    <xs:annotation><xs:documentation>"Numero maximo de jogadores." (Anexo 1, AJOG_ field
+    comments). Kept xs:string as printed in the gazette.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="comp_oper" type="xs:string">
+    <xs:annotation><xs:documentation>"Comparticipacao da entidade exploradora de jogo
+    online na partida, jogo de poker." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="buyin" type="xs:string">
+    <xs:annotation><xs:documentation>"Buy in" (Anexo 1, AJOG_ field comments). Format
+    not stated; kept xs:string as printed in the gazette.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="buyin_pool" type="xs:string">
+    <xs:annotation><xs:documentation>"Buy in pool." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_lim_min" type="xs:string">
+    <xs:annotation><xs:documentation>"Limite minimo de aposta do jogador online."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_lim_max" type="xs:string">
+    <xs:annotation><xs:documentation>"Limite maximo de aposta do jogador online."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="nr_creditos" type="xs:string">
+    <xs:annotation><xs:documentation>"Numero de fichas de jogo." (Anexo 1, AJOG_ field
+    comments) — number of chips.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="marca_jog" type="SN">
+    <xs:annotation><xs:documentation>"Jogador online que tem a mao ou botao. S tem ou
+    botao, N nao tem o botao" (Anexo 1, AJOG_ field comments) — dealer button flag.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cartas_m" type="xs:string">
+    <xs:annotation><xs:documentation>"Lista de cartas existentes na mesa, separadas por
+    hifen." (Anexo 1, AJOG_ field comments) — community/table cards. Card encoding not
+    published in the regulation.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cartas_j" type="xs:string">
+    <xs:annotation><xs:documentation>"Lista de cartas do jogador online, separadas por
+    hifen." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="posicao_mesa" type="xs:string">
+    <xs:annotation><xs:documentation>"Lugar do jogador na mesa de jogo." (Anexo 1, AJOG_
+    field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== Ponto e Banca (baccarat) specifics ===== -->
+  <xs:element name="cartas_p" type="xs:string">
+    <xs:annotation><xs:documentation>"Lista de cartas existentes no ponto, separadas por
+    hifen." (Anexo 1, AJOG_ field comments) — player (ponto) hand.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="cartas_b" type="xs:string">
+    <xs:annotation><xs:documentation>"Lista de cartas existentes na banca, separadas por
+    hifen." (Anexo 1, AJOG_ field comments) — bank hand.</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="a_local" type="xs:string">
+    <xs:annotation><xs:documentation>"Local de aposta. 4 Ponto 3 Empate 5 Banca"
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="diferencial" type="xs:string">
+    <xs:annotation><xs:documentation>"Diferencial aplicado pela mesa de jogo. Apenas
+    Ponto e Banca Macau." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="pontuacao_p" type="xs:string">
+    <xs:annotation><xs:documentation>"Pontuacao ponto." (Anexo 1, AJOG_ field comments,
+    pont_ponto).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="pontuacao_b" type="xs:string">
+    <xs:annotation><xs:documentation>"Pontuacao banca." (Anexo 1, AJOG_ field comments,
+    pont_banca).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== jogos de fortuna ou azar specifics ===== -->
+  <xs:element name="ro_result_nr" type="xs:string">
+    <xs:annotation><xs:documentation>"Resultado da aposta roleta numero." (Anexo 1,
+    AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="ro_result_cor" type="xs:string">
+    <xs:annotation><xs:documentation>"Resultado roleta cor. V vermelho, P preto."
+    (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="sm_result" type="xs:string">
+    <xs:annotation><xs:documentation>"Resultado da aposta slot machine." (Anexo 1, AJOG_
+    field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="bin_cartao" type="xs:string">
+    <xs:annotation><xs:documentation>"Lista de numeros do cartao de jogador de bingo
+    separados por hifen." (Anexo 1, AJOG_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:element name="bin_result" type="xs:string">
+    <xs:annotation><xs:documentation>"Resultado da aposta bingo." (Anexo 1, AJOG_ field
+    comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <!-- ===== six game-category records (Anexo 1, V.4 Schema AJOG_) ===== -->
+
+  <xs:element name="sport">
+    <xs:annotation><xs:documentation>Sports bet (apostas desportivas) record; element
+    order as printed in the gazette (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="descr_ap"/>
+        <xs:element ref="combinado"/>
+        <xs:element ref="multipla"/>
+        <xs:element ref="cota_ap"/>
+        <xs:element ref="resultado"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="hipica">
+    <xs:annotation><xs:documentation>Horse-race bet (apostas hípicas) record with odds
+    (cota) and pari-mutuel flag (mutua) (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="descr_ap"/>
+        <xs:element ref="cota"/>
+        <xs:element ref="mutua"/>
+        <xs:element ref="resultado"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="poker">
+    <xs:annotation><xs:documentation>Poker record: tournament/table context, buy-ins,
+    blinds/button, cards and per-operation balance triplets incl. poker tournament
+    prize (pinscr_*) (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="id_inscricao"/>
+        <xs:element ref="id_partida"/>
+        <xs:element ref="descr"/>
+        <xs:element ref="torneio"/>
+        <xs:element ref="id_mesa"/>
+        <xs:element ref="njog_min"/>
+        <xs:element ref="njog_max"/>
+        <xs:element ref="comp_oper"/>
+        <xs:element ref="buyin"/>
+        <xs:element ref="buyin_pool"/>
+        <xs:element ref="a_lim_min"/>
+        <xs:element ref="a_lim_max"/>
+        <xs:element ref="nr_creditos"/>
+        <xs:element ref="marca_jog"/>
+        <xs:element ref="cartas_m"/>
+        <xs:element ref="cartas_j"/>
+        <xs:element ref="posicao_mesa"/>
+        <xs:element ref="resultado"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+        <xs:element ref="pinscr_ini"/>
+        <xs:element ref="pinscr_mov"/>
+        <xs:element ref="pinscr_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="pbanca">
+    <xs:annotation><xs:documentation>Ponto e Banca (baccarat) record: ponto/banca cards
+    and scores, bet location, Macau differential (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="id_inscricao"/>
+        <xs:element ref="id_partida"/>
+        <xs:element ref="descr"/>
+        <xs:element ref="id_mesa"/>
+        <xs:element ref="njog_max"/>
+        <xs:element ref="cartas_p"/>
+        <xs:element ref="cartas_b"/>
+        <xs:element ref="a_local"/>
+        <xs:element ref="diferencial"/>
+        <xs:element ref="pontuacao_p"/>
+        <xs:element ref="pontuacao_b"/>
+        <xs:element ref="resultado"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="bjack">
+    <xs:annotation><xs:documentation>Blackjack record: table/player cards and position
+    (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="id_inscricao"/>
+        <xs:element ref="id_partida"/>
+        <xs:element ref="descr"/>
+        <xs:element ref="id_mesa"/>
+        <xs:element ref="njog_max"/>
+        <xs:element ref="cartas_m"/>
+        <xs:element ref="cartas_j"/>
+        <xs:element ref="posicao_mesa"/>
+        <xs:element ref="resultado"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="fortazar">
+    <xs:annotation><xs:documentation>Games of chance (jogos de fortuna ou azar) record:
+    roulette number/colour, slot result, bingo card and result (Anexo 1, V.4 Schema
+    AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_ficha"/>
+        <xs:element ref="cod_aptr_jog"/>
+        <xs:element ref="ap_cruz"/>
+        <xs:element ref="timestp_ini"/>
+        <xs:element ref="timestp_fim"/>
+        <xs:element ref="dathr_ini_evento"/>
+        <xs:element ref="dathr_fim_evento"/>
+        <xs:element ref="cod_fichajog"/>
+        <xs:element ref="id_sessao"/>
+        <xs:element ref="ip_jogador"/>
+        <xs:element ref="ip_regiao"/>
+        <xs:element ref="cod_opejog"/>
+        <xs:element ref="timestp"/>
+        <xs:element ref="descr_ap"/>
+        <xs:element ref="ro_result_nr"/>
+        <xs:element ref="ro_result_cor"/>
+        <xs:element ref="sm_result"/>
+        <xs:element ref="bin_cartao"/>
+        <xs:element ref="bin_result"/>
+        <xs:element ref="a_saldo_ini"/>
+        <xs:element ref="a_valor"/>
+        <xs:element ref="a_saldo_fim"/>
+        <xs:element ref="a_bonus_ini"/>
+        <xs:element ref="a_bonus"/>
+        <xs:element ref="a_bonus_fim"/>
+        <xs:element ref="a_comissao"/>
+        <xs:element ref="g_saldo_ini"/>
+        <xs:element ref="g_ganho"/>
+        <xs:element ref="g_saldo_fim"/>
+        <xs:element ref="r_saldo_ini"/>
+        <xs:element ref="r_valor"/>
+        <xs:element ref="r_saldo_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- ===== player wrapper ===== -->
+
+  <xs:element name="codjogador" type="xs:string">
+    <xs:annotation><xs:documentation>"Identificador de jogador online na entidade
+    exploradora. NOT NULL" (Anexo 1, AJOG_ field comments, id_jogexpl). NORMALISED:
+    the gazette prints this global element declaration twice; declared once here.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="logon" type="xs:string">
+    <xs:annotation><xs:documentation>Player logon at the operator (Anexo 1, V.4 Schema
+    AJOG_; comment as in JGDR_). NORMALISED: gazette duplicate declaration removed.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="conta_jog">
+    <xs:annotation><xs:documentation>Player gaming-account snapshot: cash, bonus and
+    poker-prize balance triplets (initial/movement/final, all in euros) (Anexo 1,
+    V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="codigo"/>
+        <xs:element ref="saldo_ini"/>
+        <xs:element ref="saldo_mov"/>
+        <xs:element ref="saldo_fim"/>
+        <xs:element ref="bonus_ini"/>
+        <xs:element ref="bonus_mov"/>
+        <xs:element ref="bonus_fim"/>
+        <xs:element ref="pinscr_ini"/>
+        <xs:element ref="pinscr_mov"/>
+        <xs:element ref="pinscr_fim"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="apostas">
+    <xs:annotation><xs:documentation>The player's bets/games in the reported hour,
+    grouped by the six categories (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="sport" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="hipica" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="poker" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="pbanca" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="bjack" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element ref="fortazar" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="jogador">
+    <xs:annotation><xs:documentation>Per-player gaming-activity block (Anexo 1, V.4
+    Schema AJOG_). NORMALISED: gazette mixed="true" dropped.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="codjogador"/>
+        <xs:element ref="logon"/>
+        <xs:element ref="conta_jog"/>
+        <xs:element ref="apostas"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="registos_jogo">
+    <xs:annotation><xs:documentation>All players' gaming activity of the reported hour
+    (Anexo 1, V.4 Schema AJOG_).</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="jogador" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the hourly AJOG_ gaming-activity file
+    (Anexo 1, V.4 Schema AJOG_): file envelope + registos_jogo.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="registos_jogo"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

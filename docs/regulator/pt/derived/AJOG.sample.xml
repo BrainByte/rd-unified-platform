@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived AJOG.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.4 Schema AJOG_).
+     Would be named e.g. AJOG_2015040221_2AA.xml. Data is fictitious. One sports
+     bet is shown; the other five categories (hipica, poker, pbanca, bjack,
+     fortazar) follow the same wrapper. -->
+<ficheiro>
+  <cod_entexpl>2</cod_entexpl>
+  <datahr>20150402220000</datahr>
+  <id_ficheiro>22</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_jogo>
+    <jogador>
+      <codjogador>J000123</codjogador>
+      <logon>maria.exemplo</logon>
+      <conta_jog>
+        <codigo>C000123</codigo>
+        <saldo_ini>100.00</saldo_ini>
+        <saldo_mov>-10.00</saldo_mov>
+        <saldo_fim>90.00</saldo_fim>
+        <bonus_ini>5.00</bonus_ini>
+        <bonus_mov>0.00</bonus_mov>
+        <bonus_fim>5.00</bonus_fim>
+        <pinscr_ini>0.00</pinscr_ini>
+        <pinscr_mov>0.00</pinscr_mov>
+        <pinscr_fim>0.00</pinscr_fim>
+      </conta_jog>
+      <apostas>
+        <sport>
+          <cod_ficha>F0001</cod_ficha>
+          <cod_aptr_jog>AP0001</cod_aptr_jog>
+          <ap_cruz>N</ap_cruz>
+          <timestp_ini>20150402211530.00 +01:00</timestp_ini>
+          <timestp_fim>20150402211530.00 +01:00</timestp_fim>
+          <dathr_ini_evento>20150402210000</dathr_ini_evento>
+          <dathr_fim_evento>20150402225000</dathr_fim_evento>
+          <cod_fichajog>FJ0001</cod_fichajog>
+          <id_sessao>S20150402-0001</id_sessao>
+          <ip_jogador>203.0.113.10</ip_jogador>
+          <ip_regiao>PT</ip_regiao>
+          <cod_opejog>OP0001</cod_opejog>
+          <timestp>20150402211530.00 +01:00</timestp>
+          <descr_ap>Futebol - Resultado final</descr_ap>
+          <combinado>N</combinado>
+          <multipla>N</multipla>
+          <cota_ap>2.50</cota_ap>
+          <resultado>1</resultado>
+          <a_saldo_ini>100.00</a_saldo_ini>
+          <a_valor>10.00</a_valor>
+          <a_saldo_fim>90.00</a_saldo_fim>
+          <a_bonus_ini>5.00</a_bonus_ini>
+          <a_bonus>0.00</a_bonus>
+          <a_bonus_fim>5.00</a_bonus_fim>
+          <g_saldo_ini>90.00</g_saldo_ini>
+          <a_comissao>0.00</a_comissao>
+          <g_ganho>25.00</g_ganho>
+          <g_saldo_fim>115.00</g_saldo_fim>
+          <r_saldo_ini>115.00</r_saldo_ini>
+          <r_valor>0.00</r_valor>
+          <r_saldo_fim>115.00</r_saldo_fim>
+        </sport>
+      </apostas>
+    </jogador>
+  </registos_jogo>
+</ficheiro>

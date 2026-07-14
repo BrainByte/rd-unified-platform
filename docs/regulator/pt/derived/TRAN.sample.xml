@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived TRAN.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.5 Schema TRAN_).
+     Would be named e.g. TRAN_2015040214_2AA.xml. Data is fictitious. -->
+<ficheiro>
+  <cod_entexpl>2</cod_entexpl>
+  <datahr>20150402150000</datahr>
+  <id_ficheiro>14</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_conta>
+    <conta>
+      <codjogador>J000123</codjogador>
+      <cod_conta>C000123</cod_conta>
+      <cod_optct>CREDITO</cod_optct>
+      <timestp_op>20150402141205.30 +01:00</timestp_op>
+      <saldo_ini>50.00</saldo_ini>
+      <saldo_mov>50.00</saldo_mov>
+      <saldo_fim>100.00</saldo_fim>
+    </conta>
+  </registos_conta>
+</ficheiro>

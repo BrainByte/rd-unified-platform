@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived SESS.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.3 Schema SESS_).
+     Would be named e.g. SESS_2015040221_2AA.xml. Data is fictitious. -->
+<ficheiro>
+  <cod_entexpl>2</cod_entexpl>
+  <datahr>20150402220000</datahr>
+  <id_ficheiro>22</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_log>
+    <jogador>
+      <codjogador>J000123</codjogador>
+      <id_sessao>S20150402-0001</id_sessao>
+      <timestp_acao>20150402211004.05 +01:00</timestp_acao>
+      <tipo_log>LOGIN</tipo_log>
+      <dispositivo>C</dispositivo>
+    </jogador>
+    <jogador>
+      <codjogador>J000123</codjogador>
+      <id_sessao>S20150402-0001</id_sessao>
+      <timestp_acao>20150402215530.10 +01:00</timestp_acao>
+      <tipo_log>LOGOUT</tipo_log>
+      <dispositivo>C</dispositivo>
+    </jogador>
+  </registos_log>
+</ficheiro>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived JGDR.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.2 Schema JGDR_).
+     Would be named e.g. JGDR_2015040221_2AA.xml. Data is fictitious. -->
+<ficheiro>
+  <cod_entexpl>2</cod_entexpl>
+  <datahr>20150402220000</datahr>
+  <id_ficheiro>22</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_jogador>
+    <jogador>
+      <codjogador>J000123</codjogador>
+      <conta_jog>C000123</conta_jog>
+      <tip_pag>01</tip_pag>
+      <logon>maria.exemplo</logon>
+      <id_cidadao>12345678</id_cidadao>
+      <id_tipocid>1</id_tipocid>
+      <timestp_reg>20150402213512.00 +01:00</timestp_reg>
+      <alias_jog>mexemplo</alias_jog>
+      <nome>Maria Exemplo</nome>
+      <data_nascimento>1985-06-15</data_nascimento>
+      <nif>123456789</nif>
+      <morada>Rua Exemplo 1, Lisboa</morada>
+      <cod_postal>1000-001</cod_postal>
+      <id_nacao>PT</id_nacao>
+      <telefone>+351210000000</telefone>
+      <email>maria@example.com</email>
+      <resp_at>OK</resp_at>
+      <id_resp_at>AT0001</id_resp_at>
+    </jogador>
+  </registos_jogador>
+</ficheiro>

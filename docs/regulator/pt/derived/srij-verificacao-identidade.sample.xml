@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative response of the
+     PedidoVerificacaoIdentidadeTP service per the derived
+     srij-verificacao-identidade.xsd (Regulamento n.º 903-B/2015, Anexo 1).
+     Data is fictitious. -->
+<RespostaVerificacaoTP xmlns="http://www.turismodeportugal.pt/SRJSchema/VerificacaoIdentidade">
+  <Sucesso>true</Sucesso>
+  <NomeValido>S</NomeValido>
+  <NifValido>S</NifValido>
+  <DataNascimentoValida>S</DataNascimentoValida>
+  <Falecido>N</Falecido>
+</RespostaVerificacaoTP>

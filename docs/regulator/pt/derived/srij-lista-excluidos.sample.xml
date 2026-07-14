@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative response of the
+     ListaExcluidos service per the derived srij-lista-excluidos.xsd (Regulamento
+     n.º 903-B/2015, Anexo 1). Data is fictitious. -->
+<RespostaListaExcluidos xmlns="http://www.turismodeportugal.pt/SRJSchema/ListaExcluidos">
+  <Sucesso>true</Sucesso>
+  <ListaCidadaoExcludo>
+    <CidadaoExcluido>
+      <IdTipoCid>1</IdTipoCid>
+      <IdCidadao>12345678</IdCidadao>
+      <IdNacao>PT</IdNacao>
+      <DataInicio>2015-04-05</DataInicio>
+      <DataFim>2015-10-05</DataFim>
+      <Confirmado>S</Confirmado>
+    </CidadaoExcluido>
+  </ListaCidadaoExcludo>
+</RespostaListaExcluidos>

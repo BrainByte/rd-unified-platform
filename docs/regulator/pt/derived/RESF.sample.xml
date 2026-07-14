@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative instance for the
+     derived RESF.xsd (Regulamento n.º 903-B/2015, Anexo 1, V.1 Schema RESF_).
+     Would be named e.g. RESF_20150402_2AA.xml. See README.md in this folder. -->
+<ficheiro>
+  <cod_entexpl>2</cod_entexpl>
+  <datahr>20150403003000</datahr>
+  <id_ficheiro>1</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <resumo_activ>
+    <data_fin>20150402</data_fin>
+    <tipo_jogo>
+      <descricao>Apostas desportivas a cota</descricao>
+      <licenca_exp>001</licenca_exp>
+      <liq_int>
+        <tipo_liq>0</tipo_liq>
+        <total_comissoes>0.00</total_comissoes>
+        <total_ganhos>8250.50</total_ganhos>
+        <total_apostas>10500.00</total_apostas>
+        <total_reembolsos>120.00</total_reembolsos>
+      </liq_int>
+    </tipo_jogo>
+  </resumo_activ>
+</ficheiro>

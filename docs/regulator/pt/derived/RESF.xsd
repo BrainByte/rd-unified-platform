@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "V.1 Schema RESF_"
+  (daily financial summary / resumo financeiro), for architectural and
+  demonstration purposes only. The official wire format is SRIJ's
+  "Modelo de Dados de Jogo Online". See pt-common.xsd header and
+  README.md in this folder for the full disclaimer.
+  Filename rule (Anexo 1): RESF_YYYYMMDD_[GameVault code].xml
+  (reprocessed: ...rp.xml). One file per day.
+-->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           attributeFormDefault="unqualified" elementFormDefault="qualified">
+
+  <xs:include schemaLocation="pt-common.xsd"/>
+
+  <xs:element name="descricao" type="xs:string">
+    <xs:annotation><xs:documentation>"Descricao do tipo de jogo, aposta online. NOT NULL"
+    (Anexo 1, RESF_ field comments, tipo_jogo).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="licenca_exp" type="xs:string">
+    <xs:annotation><xs:documentation>"Codigo da licenca de jogo online. NOT NULL"
+    (Anexo 1, RESF_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="tipo_liq" type="xs:int">
+    <xs:annotation><xs:documentation>"Tipo de liquidez. Internacional Sim 1, Nao 0."
+    (Anexo 1, RESF_ field comments) — international shared-liquidity flag.</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="total_reembolsos" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Total de reembolsos gerado ... no periodo reportado,
+    em euros." (Anexo 1, RESF_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="total_comissoes" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Total de comissoes gerado ... no periodo reportado,
+    em euros." (Anexo 1, RESF_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="total_ganhos" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Total de ganhos gerado ... no periodo reportado,
+    em euros." (Anexo 1, RESF_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="total_apostas" type="MontanteEUR">
+    <xs:annotation><xs:documentation>"Total de apostas gerado ... no periodo reportado,
+    em euros. NOT NULL" (Anexo 1, RESF_ field comments).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="data_fin" type="xs:int">
+    <xs:annotation><xs:documentation>"Data de resumo de actividade financeira. NOT NULL"
+    (Anexo 1, RESF_ field comments). Type xs:int as printed in the gazette; INFERRED
+    convention YYYYMMDD (fits the gazette type).</xs:documentation></xs:annotation>
+  </xs:element>
+
+  <xs:element name="tipo_jogo">
+    <xs:annotation><xs:documentation>Per-game-type financial block (Anexo 1, V.1 Schema
+    RESF_): description, licence and liquidity-scoped totals. NORMALISED: the gazette
+    prints mixed="true", dropped here.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="descricao"/>
+        <xs:element ref="licenca_exp"/>
+        <xs:element name="liq_int">
+          <xs:annotation><xs:documentation>Liquidity-scoped totals (Anexo 1, V.1 Schema
+          RESF_): tipo_liq plus the day's total stakes, winnings, commissions and
+          refunds. Optionality of the totals as printed in the gazette XSD.</xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element ref="tipo_liq"/>
+              <xs:element ref="total_comissoes" minOccurs="0"/>
+              <xs:element ref="total_ganhos" minOccurs="0"/>
+              <xs:element ref="total_apostas"/>
+              <xs:element ref="total_reembolsos" minOccurs="0"/>
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="resumo_activ">
+    <xs:annotation><xs:documentation>Daily activity summary: the summary date plus one
+    tipo_jogo block per game type operated (Anexo 1, V.1 Schema RESF_). The gazette
+    text requires the totals to reconcile with the per-record categories.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="data_fin"/>
+        <xs:element ref="tipo_jogo" minOccurs="0" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:element name="ficheiro">
+    <xs:annotation><xs:documentation>Root of the daily RESF_ financial-summary file
+    (Anexo 1, V.1 Schema RESF_): file envelope + resumo_activ.</xs:documentation></xs:annotation>
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element ref="cod_entexpl"/>
+        <xs:element ref="datahr"/>
+        <xs:element ref="id_ficheiro"/>
+        <xs:element ref="cod_cofre"/>
+        <xs:element ref="resumo_activ"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

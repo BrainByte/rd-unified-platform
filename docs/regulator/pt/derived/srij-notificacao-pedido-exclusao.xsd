@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  DERIVED SCHEMA - NOT AN OFFICIAL SRIJ ARTEFACT.
+  Derived from Regulamento n.º 903-B/2015, Anexo 1, "I. Serviço de
+  autoexclusão de jogadores", point 3 - the NotificacaoPedidoExclusao
+  service by which SRIJ pushes, in real time, changes of state of
+  self-excluded players on its national list to every operator's
+  gaming technical system. For architectural and demonstration
+  purposes only; the official artefact is SRIJ's technical spec.
+  NORMALISED: the gazette's Confirmado element uses an xsd:list-based
+  restriction carrying S/N enumerations (not valid XSD 1.0); replaced
+  with a plain S/N string enumeration.
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+            xmlns:srjnpe="http://www.turismodeportugal.pt/SRJSchema/NotificacaoPedidoExclusao"
+            targetNamespace="http://www.turismodeportugal.pt/SRJSchema/NotificacaoPedidoExclusao"
+            elementFormDefault="qualified">
+
+  <xsd:element name="NotificacaoPedidoExclusao" type="srjnpe:NotificacaoPedidoExclusaoType">
+    <xsd:annotation><xsd:documentation>Push notification from SRIJ: a change to a
+    self-excluded citizen's state on the national list (Anexo 1). Operators must react
+    and re-download the current list (secções 2.2.3 and 3.2).</xsd:documentation></xsd:annotation>
+  </xsd:element>
+
+  <xsd:element name="RespostaNotificacaoPedidoExclusao" type="srjnpe:RespostaNotificacaoPedidoExclusaoType">
+    <xsd:annotation><xsd:documentation>Operator acknowledgement of the notification
+    (Anexo 1).</xsd:documentation></xsd:annotation>
+  </xsd:element>
+
+  <xsd:complexType name="NotificacaoPedidoExclusaoType">
+    <xsd:sequence>
+      <xsd:element name="IdCidadao" type="srjnpe:string20">
+        <xsd:annotation><xsd:documentation>Identity document number of the citizen.</xsd:documentation></xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IdTipoCid" type="srjnpe:int1">
+        <xsd:annotation><xsd:documentation>Identity document type code (see EXCL_ code
+        list: 0 BI, 1 Cartão de Cidadão, 2 passport, 3 NIF, 4 other).</xsd:documentation></xsd:annotation>
+      </xsd:element>
+      <xsd:element name="IdNacao" type="srjnpe:string2"/>
+      <xsd:element name="DataInicio" type="xsd:date"/>
+      <xsd:element name="DataFim" type="xsd:date"/>
+      <xsd:element name="Confirmado" type="srjnpe:SN">
+        <xsd:annotation><xsd:documentation>S/N confirmation flag. NORMALISED from the
+        gazette's malformed xsd:list restriction.</xsd:documentation></xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:complexType name="RespostaNotificacaoPedidoExclusaoType">
+    <xsd:sequence>
+      <xsd:element name="Sucesso" type="xsd:boolean"/>
+      <xsd:element name="MensagemErro" type="xsd:string"/>
+    </xsd:sequence>
+  </xsd:complexType>
+
+  <xsd:simpleType name="string20">
+    <xsd:restriction base="xsd:string"><xsd:maxLength value="20"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="string2">
+    <xsd:restriction base="xsd:string"><xsd:maxLength value="2"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="int1">
+    <xsd:restriction base="xsd:int"><xsd:totalDigits value="1"/></xsd:restriction>
+  </xsd:simpleType>
+
+  <xsd:simpleType name="SN">
+    <xsd:restriction base="xsd:string">
+      <xsd:enumeration value="S"/>
+      <xsd:enumeration value="N"/>
+    </xsd:restriction>
+  </xsd:simpleType>
+
+</xsd:schema>

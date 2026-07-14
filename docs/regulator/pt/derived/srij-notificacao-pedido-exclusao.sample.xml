@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- DERIVED SAMPLE - NOT AN OFFICIAL SRIJ ARTEFACT. Illustrative push notification
+     per the derived srij-notificacao-pedido-exclusao.xsd (Regulamento
+     n.º 903-B/2015, Anexo 1). Data is fictitious. -->
+<NotificacaoPedidoExclusao xmlns="http://www.turismodeportugal.pt/SRJSchema/NotificacaoPedidoExclusao">
+  <IdCidadao>12345678</IdCidadao>
+  <IdTipoCid>1</IdTipoCid>
+  <IdNacao>PT</IdNacao>
+  <DataInicio>2015-04-05</DataInicio>
+  <DataFim>2015-10-05</DataFim>
+  <Confirmado>S</Confirmado>
+</NotificacaoPedidoExclusao>
