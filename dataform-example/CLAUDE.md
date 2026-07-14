@@ -401,6 +401,35 @@ the gate. One more convention: the demo database
   reported (full portfolio licensed — contrast FR), PT recon residual
   0.00 reported 6/6.
 
+- SESSION TRACKING (branch session-management; REQ: repo-root
+  requirements/session-tracking, work-order-first). Sessions promoted
+  from demo plumbing to a REPORTED entity: platform sessions
+  (login -> LOGOUT | INACTIVITY timeout, timeout as config) stored via
+  cdc/stg_gaming_sessions + fct_platform_sessions; per-game sessions
+  DERIVED (fct_game_session_activity materialises the pre-aggregation
+  set with a session x game key; fct_game_sessions groups by the derived
+  key ALONE so the single-game invariant ST-204 genuinely bites —
+  negative-tested by mis-stamping an OJ1 contribution). The
+  operator-jackpot SHADOW SESSION emerges from that GROUP BY with zero
+  OJACK-specific SQL — resolving the collision with regimes that forbid
+  two games per session (NL CDB WOK_Game_Session has a single Game_ID;
+  the Dutch KSB GAT tax report imposes the same basis — layout to pin).
+  sessionReporting config: NL per_game, PT platform; rule types
+  activity_within_session / single_open_session / end_reason_in_set /
+  single_game_session; provider sessionRef in providers.js; session_id
+  widened into shared feeds (universal datum, date_of_birth precedent);
+  NO sessions watermark (gaming-domain precedent, documented gap).
+  145 unit tests / 82 models / 139 assertions / 72 expectations / 21
+  negative tests; Dataform compile 277 actions. Demo: sessions record
+  type in engine+SAFE; NL gaming REGRAINED to true per-game session
+  records (rounds VIA-SESSION, same deterministic Transaction_IDs;
+  recon expects sessions instead of rounds); PT SESS_ LOGIN/LOGOUT
+  files; stale sessions closed INACTIVITY by the engine (data-driven).
+  Proven: NL session goldens validate against the vendored KSA XSD
+  (incl. the shadow session), PT against the gazette schema; live e2e
+  one opted-in login -> GS-x-SLOTS + GS-x-operator-jackpots files, PT
+  SESS_ pair, 2h-stale session auto-closed and filed, NL+PT recon 0.00.
+
 **Open items (agreed direction, not yet built):**
 1. ~~Effective-dating on tax rates and regulator codes~~ DONE
    (includes/effective_dating.js): a taxRate/sportCode/gameCode can be a

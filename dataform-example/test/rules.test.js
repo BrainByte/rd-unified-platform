@@ -66,3 +66,55 @@ test("rules: marketRules prepends common rules to market rules", () => {
   const j = validMarket({ rules: [{ id: "M1", type: "non_negative", field: "stake" }] });
   assert.deepEqual(marketRules(j, common).map((r) => r.id), ["C1", "M1"]);
 });
+
+// ---- SESSION rule types (REQ: requirements/session-tracking, REQ-ST-5) ----
+
+function sessionMarket(granularity = "per_game") {
+  return validMarket({
+    code: "NL",
+    sessionReporting: {
+      granularity, timeoutMinutes: 30,
+      endReasons: ["LOGOUT", "INACTIVITY"], reportEmptySessions: false, rules: [],
+    },
+  });
+}
+
+test("rules: activity_within_session flags plays outside the platform session window, scoped to the market's players", () => {
+  const sql = squash(violationQuery(fakeCtx, sessionMarket(), { id: "ST-201", type: "activity_within_session" }));
+  assert.match(sql, /JOIN `core\.fct_platform_sessions` s ON g\.session_id = s\.session_id/);
+  assert.match(sql, /g\.occurred_at < s\.started_at/);
+  assert.match(sql, /s\.ended_at IS NOT NULL AND g\.occurred_at > s\.ended_at/);
+  assert.match(sql, /a\.jurisdiction = 'NL'/);
+});
+
+test("rules: single_open_session flags an account with more than one open platform session", () => {
+  const sql = squash(violationQuery(fakeCtx, sessionMarket(), { id: "ST-202", type: "single_open_session" }));
+  assert.match(sql, /s\.ended_at IS NULL/);
+  assert.match(sql, /GROUP BY s\.account_id HAVING COUNT\(\*\) > 1/);
+});
+
+test("rules: end_reason_in_set takes its vocabulary from sessionReporting config, not the rule", () => {
+  const sql = squash(violationQuery(fakeCtx, sessionMarket(), { id: "ST-203", type: "end_reason_in_set" },
+    { table: "submission_sessions_nl", keyColumn: "session_id" }));
+  assert.match(sql, /end_reason IS NULL OR end_reason NOT IN \('LOGOUT', 'INACTIVITY'\)/);
+  assert.match(sql, /FROM `core\.submission_sessions_nl`/);
+});
+
+test("rules: end_reason_in_set validation requires a non-empty configured vocabulary", () => {
+  const bare = sessionMarket();
+  bare.sessionReporting.endReasons = [];
+  const errors = RULE_TYPES.end_reason_in_set.validate({ id: "ST-203" }, bare);
+  assert.ok(errors.some((e) => e.includes("endReasons")));
+});
+
+test("rules: single_game_session (THE invariant) groups the pre-aggregation set by game-session key and counts distinct games", () => {
+  const sql = squash(violationQuery(fakeCtx, sessionMarket(), { id: "ST-204", type: "single_game_session" }));
+  assert.match(sql, /FROM `core\.fct_game_session_activity` ga/);
+  assert.match(sql, /GROUP BY ga\.game_session_id HAVING COUNT\(DISTINCT ga\.game_id\) > 1/);
+});
+
+test("rules: single_game_session only validates on per_game markets — a platform-granularity market never derives game sessions", () => {
+  const errors = RULE_TYPES.single_game_session.validate({ id: "ST-204" }, sessionMarket("platform"));
+  assert.ok(errors.some((e) => e.includes("per_game")));
+  assert.deepEqual(RULE_TYPES.single_game_session.validate({ id: "ST-204" }, sessionMarket()), []);
+});

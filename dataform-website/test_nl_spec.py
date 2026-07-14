@@ -8,8 +8,16 @@
 # void-suppressed bets). The clock is frozen on both sides so
 # Extraction_Date/Modified compare equal.
 #
-#   python test_nl_spec.py        (exit 0 = identical, 1 = divergence)
+# Phase 2 proves the SESSIONS record type — true per-game session grain,
+# added by requirements/session-tracking with no oracle module — against
+# golden files AND the vendored KSA schema
+# (docs/regulator/nl/wok_game_session_v1.11.xsd): a casino game session
+# and the operator-jackpot SHADOW session, each with a single Game_ID.
+#
+#   python test_nl_spec.py            (exit 0 = identical, 1 = divergence)
+#   python test_nl_spec.py --regen    rewrite the session goldens
 # ============================================================================
+import os
 import sys
 import xml.etree.ElementTree as ET
 from datetime import date, datetime, timezone
@@ -17,6 +25,10 @@ from types import SimpleNamespace
 
 from regulator_formats import engine, nl
 from regulator_formats.specs import nl_v1_11
+
+GOLDEN_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "goldens", "nl")
+SESSION_XSD = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                           "docs", "regulator", "nl", "wok_game_session_v1.11.xsd")
 
 FROZEN = datetime(2026, 7, 13, 12, 0, 0, tzinfo=timezone.utc)
 nl.datetime = SimpleNamespace(now=lambda tz=None: FROZEN)   # freeze the oracle
@@ -68,24 +80,93 @@ CASES = [
 ]
 
 
-def main():
+# Phase 2 — the sessions record type (REQ: requirements/session-tracking):
+# a derived casino game session and the operator-jackpot shadow session
+# from the SAME platform session GS9001, each single-game.
+P = "a" * 64
+SESSION_CASES = [
+    ("GS9001-SLOTS", {
+        "record_key": "GS9001-SLOTS", "session_id": "GS9001", "game": "SLOTS",
+        "player_ref": P,
+        "first_played_at": datetime(2026, 7, 13, 10, 35, 0, tzinfo=timezone.utc),
+        "last_played_at": datetime(2026, 7, 13, 10, 50, 0, tzinfo=timezone.utc),
+        "rounds": [{"round_id": "R9101", "player_ref": P},
+                   {"round_id": "R9102", "player_ref": P}],
+        "rounds_won": 1}),
+    ("GS9001-operator-jackpots", {   # the shadow session: contributions only
+        "record_key": "GS9001-operator-jackpots", "session_id": "GS9001",
+        "game": "operator-jackpots", "player_ref": P,
+        "first_played_at": datetime(2026, 7, 13, 10, 35, 0, tzinfo=timezone.utc),
+        "last_played_at": datetime(2026, 7, 13, 10, 50, 0, tzinfo=timezone.utc),
+        "rounds": [{"round_id": "R9103", "player_ref": P},
+                   {"round_id": "R9104", "player_ref": P}],
+        "rounds_won": 0}),
+]
+
+
+def _render(root):
+    ET.indent(root)
+    return ET.tostring(root, encoding="unicode") + "\n"
+
+
+def session_goldens(regen=False):
     failures = 0
-    for record_type, oracle, rec in CASES:
-        expected = ET.tostring(oracle(rec), encoding="unicode")
-        actual = ET.tostring(
-            engine.serialise(nl_v1_11.SPEC, record_type, rec, now=FROZEN),
-            encoding="unicode")
-        if expected == actual:
-            print(f"  ok  {record_type:<9} {rec['record_key']}")
+    for label, rec in SESSION_CASES:
+        root = engine.serialise(nl_v1_11.SPEC, "sessions", rec, now=FROZEN)
+        path = os.path.join(GOLDEN_DIR, f"sessions-{label}.xml")
+        actual = _render(root)
+        if regen:
+            os.makedirs(GOLDEN_DIR, exist_ok=True)
+            with open(path, "w", encoding="utf-8") as fh:
+                fh.write(actual)
+            print(f"  wrote  sessions-{label}.xml")
+            continue
+        with open(path, encoding="utf-8") as fh:
+            expected = fh.read()
+        if actual == expected:
+            print(f"  ok  sessions  {label}")
         else:
             failures += 1
-            print(f"FAIL  {record_type:<9} {rec['record_key']}")
-            print(f"  oracle: {expected}")
-            print(f"  engine: {actual}")
-    print(f"\n{len(CASES) - failures}/{len(CASES)} byte-identical"
-          + ("" if not failures else f" — {failures} DIVERGENT"))
+            print(f"FAIL  sessions {label}\n  golden: {expected}\n  actual: {actual}")
+    if regen:
+        return 0
+    try:
+        import xmlschema
+        schema = xmlschema.XMLSchema(SESSION_XSD)
+        bad = 0
+        for label, _ in SESSION_CASES:
+            errors = list(schema.iter_errors(os.path.join(GOLDEN_DIR, f"sessions-{label}.xml")))
+            if errors:
+                bad += 1
+                print(f"XSD FAIL  sessions-{label}: {errors[0].reason}")
+        print(f"{len(SESSION_CASES) - bad}/{len(SESSION_CASES)} session goldens valid "
+              f"against the vendored KSA wok_game_session schema")
+        failures += bad
+    except ImportError:
+        print("XSD gate SKIPPED: xmlschema not installed")
+    return failures
+
+
+def main(regen=False):
+    failures = 0
+    if not regen:
+        for record_type, oracle, rec in CASES:
+            expected = ET.tostring(oracle(rec), encoding="unicode")
+            actual = ET.tostring(
+                engine.serialise(nl_v1_11.SPEC, record_type, rec, now=FROZEN),
+                encoding="unicode")
+            if expected == actual:
+                print(f"  ok  {record_type:<9} {rec['record_key']}")
+            else:
+                failures += 1
+                print(f"FAIL  {record_type:<9} {rec['record_key']}")
+                print(f"  oracle: {expected}")
+                print(f"  engine: {actual}")
+        print(f"\n{len(CASES) - failures}/{len(CASES)} byte-identical"
+              + ("" if not failures else f" — {failures} DIVERGENT"))
+    failures += session_goldens(regen)
     return 1 if failures else 0
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(main(regen="--regen" in sys.argv))

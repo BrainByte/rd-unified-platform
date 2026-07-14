@@ -1,0 +1,24 @@
+<Root>
+  <WOK_Game_Session_v1.11>
+    <Record_ID>328ec092-7ca8-59a3-a62d-c6cafdd758d7</Record_ID>
+    <Extraction_Date>2026-07-13T12:00:00Z</Extraction_Date>
+    <Operator_ID>BETNOVA</Operator_ID>
+    <Data_Safe_ID>CDB-BETNOVA-1</Data_Safe_ID>
+    <Game_ID>a8595001-ae88-5421-837e-78501521ae11</Game_ID>
+    <Game_Session_ID>328ec092-7ca8-59a3-a62d-c6cafdd758d7</Game_Session_ID>
+    <Game_Session_Start_Datetime>2026-07-13T10:35:00Z</Game_Session_Start_Datetime>
+    <Game_Session_End_Datetime>2026-07-13T10:50:00Z</Game_Session_End_Datetime>
+    <Game_Session_Rounds>2</Game_Session_Rounds>
+    <Game_Session_Rounds_Won>1</Game_Session_Rounds_Won>
+    <Game_Transactions>
+      <Game_Transaction>
+        <Transaction_ID>d0a1e4a9-0225-50c0-b06b-ce4d915f3e7c</Transaction_ID>
+        <Player_Profile_ID>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</Player_Profile_ID>
+      </Game_Transaction>
+      <Game_Transaction>
+        <Transaction_ID>da21ab5d-a27a-5f61-a54e-dc45ea24a64e</Transaction_ID>
+        <Player_Profile_ID>aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</Player_Profile_ID>
+      </Game_Transaction>
+    </Game_Transactions>
+  </WOK_Game_Session_v1.11>
+</Root>

@@ -88,6 +88,55 @@ test("validate: taxModel accepts ggr/turnover and rejects anything else", () => 
   assert.ok(errors.some((e) => e.includes("taxModel must be 'ggr' or 'turnover'")));
 });
 
+// REQ: requirements/session-tracking (REQ-ST-2) — session reporting is
+// config; a malformed block must fail validation before compiling anything.
+function sessionMarket(sr = {}) {
+  return validMarket({
+    sessionReporting: {
+      granularity: "platform", timeoutMinutes: 30,
+      endReasons: ["LOGOUT", "INACTIVITY"], reportEmptySessions: false,
+      rules: [], ...sr,
+    },
+  });
+}
+
+test("validate: a well-formed sessionReporting block passes (both granularities)", () => {
+  assert.deepEqual(validateMarket(sessionMarket(), []), []);
+  assert.deepEqual(validateMarket(sessionMarket({ granularity: "per_game" }), []), []);
+});
+
+test("validate: sessionReporting rejects unknown granularity, non-positive timeout and empty end-reason vocabulary", () => {
+  const errors = [
+    ...validateMarket(sessionMarket({ granularity: "per_round" }), []),
+    ...validateMarket(sessionMarket({ timeoutMinutes: 0 }), []),
+    ...validateMarket(sessionMarket({ endReasons: [] }), []),
+  ];
+  assert.ok(errors.some((e) => e.includes("granularity must be 'platform' or 'per_game'")));
+  assert.ok(errors.some((e) => e.includes("timeoutMinutes must be a positive number")));
+  assert.ok(errors.some((e) => e.includes("endReasons must be a non-empty array")));
+});
+
+test("validate: session column rule referencing a column absent from that granularity's file is caught", () => {
+  // 'rounds' exists only at per_game grain — a platform market can't rule on it
+  const errors = validateMarket(sessionMarket({
+    rules: [{ id: "SX-1", type: "non_negative", field: "rounds", description: "d" }],
+  }), []);
+  assert.ok(errors.some((e) => e.includes("SX-1") && e.includes("'rounds'") && e.includes("session file")));
+  // ...but a per_game market can
+  const ok = validateMarket(sessionMarket({
+    granularity: "per_game",
+    rules: [{ id: "SX-1", type: "non_negative", field: "rounds", description: "d" }],
+  }), []);
+  assert.deepEqual(ok, []);
+});
+
+test("validate: the single-game invariant is rejected on a platform-granularity market", () => {
+  const errors = validateMarket(sessionMarket({
+    rules: [{ id: "ST-204", type: "single_game_session", description: "d" }],
+  }), []);
+  assert.ok(errors.some((e) => e.includes("ST-204") && e.includes("per_game")));
+});
+
 test("validate: defaultDepositLimits allows per-period nulls (DE: monthly-only LUGAS 1000)", () => {
   const ok = validateMarket(validMarket({
     playerProtection: { defaultDepositLimits: { daily: null, weekly: null, monthly: 1000 },

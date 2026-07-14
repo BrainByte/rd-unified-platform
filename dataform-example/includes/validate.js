@@ -4,7 +4,7 @@
 // errors; empty list = config is deployable.
 // ============================================================================
 
-const { knownFields, knownGamingFields, knownPeriodicFields } = require("./fields");
+const { knownFields, knownGamingFields, knownPeriodicFields, knownSessionFields } = require("./fields");
 const { knownExtensions } = require("./extensions");
 const { RULE_TYPES, marketRules, marketGamingRules } = require("./rules");
 const { canonicalSports, canonicalGameTypes } = require("./nomenclature/canonical");
@@ -197,6 +197,45 @@ function validateMarket(j, commonRules, commonGamingRules = []) {
       const monthly = j.periodicReports.find((r) => r.cadence === "monthly");
       if (daily && monthly && daily.playerField !== monthly.playerField) {
         errors.push(where(`daily register '${daily.id}' and monthly register '${monthly.id}' must share playerField for the completeness check`));
+      }
+    }
+  }
+
+  // ---- session reporting checks ----
+  // REQ: requirements/session-tracking (REQ-ST-2) — session reporting is
+  // config; a bad block must fail validation, never compile wrong SQL.
+  if (j.sessionReporting !== undefined) {
+    const sr = j.sessionReporting;
+    if (!["platform", "per_game"].includes(sr.granularity)) {
+      errors.push(where(`sessionReporting.granularity must be 'platform' or 'per_game', got '${sr.granularity}'`));
+    }
+    if (typeof sr.timeoutMinutes !== "number" || sr.timeoutMinutes <= 0) {
+      errors.push(where(`sessionReporting.timeoutMinutes must be a positive number`));
+    }
+    if (!Array.isArray(sr.endReasons) || sr.endReasons.length === 0) {
+      errors.push(where(`sessionReporting.endReasons must be a non-empty array`));
+    }
+    if (typeof sr.reportEmptySessions !== "boolean") {
+      errors.push(where(`sessionReporting.reportEmptySessions must be boolean`));
+    }
+    // session rules: same integrity checks, against the SESSION file's
+    // columns for this market's granularity.
+    const sessionColumns = ["jurisdiction", "report_date", ...knownSessionFields(sr.granularity)];
+    const srSeen = new Set();
+    for (const rule of sr.rules || []) {
+      if (!rule.id) { errors.push(where(`session rule without an id: ${JSON.stringify(rule)}`)); continue; }
+      if (srSeen.has(rule.id)) errors.push(where(`duplicate session rule id '${rule.id}'`));
+      srSeen.add(rule.id);
+      if (!rule.description) errors.push(where(`session rule ${rule.id} has no description (audit trail requires one)`));
+      const type = RULE_TYPES[rule.type];
+      if (!type) { errors.push(where(`session rule ${rule.id} has unknown type '${rule.type}'`)); continue; }
+      errors.push(...type.validate(rule, j).map(where));
+      if (COLUMN_RULE_TYPES.includes(rule.type)) {
+        for (const col of [rule.field, rule.whenField].filter(Boolean)) {
+          if (!sessionColumns.includes(col)) {
+            errors.push(where(`session rule ${rule.id} references '${col}' which is not in the ${j.code} session file`));
+          }
+        }
       }
     }
   }

@@ -59,6 +59,18 @@ MARKETS = {
            "gaming_verticals": {"SLOTS", "BLACKJACK", "POKER"}},
 }
 
+# Session reporting variance, as data (mirrors sessionReporting in the
+# pipeline's jurisdictions.js). granularity: "platform" reports the login
+# itself (PT SESS_); "per_game" reports DERIVED per-game sessions — no
+# session may span two games (the NL CDB / KSB GAT invariant), so an
+# opted-in player's jackpot contributions form their own SHADOW session.
+# gaming_via_sessions: rounds are not deposited individually — they reach
+# the regulator aggregated inside their game session records.
+# REQ: requirements/session-tracking (REQ-ST-2/4/6)
+MARKETS["NL"]["sessions"] = {"granularity": "per_game", "timeout_minutes": 30,
+                             "gaming_via_sessions": True}
+MARKETS["PT"]["sessions"] = {"granularity": "platform", "timeout_minutes": 30}
+
 
 def _player_ref(mkt, account_id, national_id):
     if MARKETS[mkt]["hashed_ref"]:
@@ -325,6 +337,13 @@ def submit_pending_gaming(cur):
             # REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
             _log(cur, "gaming", round_id, mkt, "SUPPRESSED-UNLICENSED")
             continue
+        if meta.get("sessions", {}).get("gaming_via_sessions"):
+            # this market reports rounds AGGREGATED inside per-game session
+            # records (NL: WOK_Game_Session), not individually; log so the
+            # round is never re-examined — the session submitter owns it.
+            # REQ: requirements/session-tracking (REQ-ST-6)
+            _log(cur, "gaming", round_id, mkt, "VIA-SESSION")
+            continue
         rec = {
             "record_key": round_id,
             "round_id": round_id,
@@ -353,6 +372,111 @@ def submit_pending_gaming(cur):
         _log(cur, "gaming", round_id, mkt, receipt)
         print(f"[SUBMIT] {mkt}/gaming {round_id} ({game}) -> {receipt}")
         n += 1
+    return n
+
+
+# ---- record type: sessions (platform logins / derived per-game sessions) ---
+# Sessions exist login -> logout, or are DISCONNECTED by the market's
+# inactivity timeout (closed here, data-driven). Granularity is market
+# config: "platform" reports the login itself; "per_game" derives one
+# session per (platform session x game) from the stamped rounds — the
+# operator-jackpot SHADOW session emerges from that same GROUP BY because
+# its contributions are rounds of their own game. No session ever spans
+# two games. REQ: requirements/session-tracking (REQ-ST-1/3/4/6)
+PLATFORM_SESSIONS_SQL = """
+SELECT s.session_id, a.account_id, a.national_id, s.started_at,
+       s.ended_at, s.end_reason
+FROM gaming_sessions s JOIN accounts a USING (account_id)
+WHERE a.jurisdiction = ? AND s.ended_at IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM safe_submissions ss
+                  WHERE ss.record_type = 'sessions'
+                    AND ss.record_key = s.session_id)
+ORDER BY s.ended_at
+"""
+
+GAME_SESSIONS_SQL = """
+SELECT s.session_id, a.account_id, a.national_id, r.game,
+       MIN(r.round_ts) AS first_played_at, MAX(r.round_ts) AS last_played_at,
+       COUNT(*) AS rounds,
+       SUM(CASE WHEN r.payout > 0 THEN 1 ELSE 0 END) AS rounds_won,
+       LIST(r.round_id ORDER BY r.round_ts) AS round_ids
+FROM gaming_sessions s
+JOIN accounts a USING (account_id)
+JOIN game_rounds r ON r.session_id = s.session_id
+WHERE a.jurisdiction = ? AND s.ended_at IS NOT NULL
+  AND NOT EXISTS (SELECT 1 FROM safe_submissions ss
+                  WHERE ss.record_type = 'sessions'
+                    AND ss.record_key = s.session_id || '-' || r.game)
+GROUP BY 1, 2, 3, 4
+ORDER BY 1, 4
+"""
+
+
+def submit_pending_sessions(cur):
+    """Close stale open sessions per the market's inactivity timeout (the
+    'disconnected by timeout' end), then submit ended sessions at the
+    market's configured granularity."""
+    n = 0
+    for mkt, meta in MARKETS.items():
+        smeta = meta.get("sessions")
+        if not smeta:
+            continue
+        cur.execute("""
+            UPDATE gaming_sessions
+            SET ended_at = last_activity_ts + ? * INTERVAL 1 MINUTE,
+                end_reason = 'INACTIVITY'
+            WHERE ended_at IS NULL
+              AND last_activity_ts < ? - ? * INTERVAL 1 MINUTE
+              AND account_id IN (SELECT account_id FROM accounts
+                                 WHERE jurisdiction = ?)""",
+            [smeta["timeout_minutes"], db.now(), smeta["timeout_minutes"], mkt])
+        if smeta["granularity"] == "platform":
+            cur.execute(PLATFORM_SESSIONS_SQL, [mkt])
+            for (session_id, account_id, national_id, started_at, ended_at,
+                 end_reason) in cur.fetchall():
+                pref = _player_ref(mkt, account_id, national_id)
+                rec = {
+                    "record_key": session_id,
+                    "session_id": session_id,
+                    "player_ref": pref,
+                    "started_at": started_at,
+                    "ended_at": ended_at,
+                    "end_reason": end_reason,
+                    # the wire rows (PT SESS_: one LOGIN + one LOGOUT entry;
+                    # a timeout disconnect is a LOGOUT on the wire, the
+                    # reason stays in the pipeline tables)
+                    "events": [
+                        {"player_ref": pref, "session_id": session_id,
+                         "at": started_at, "tipo": "LOGIN"},
+                        {"player_ref": pref, "session_id": session_id,
+                         "at": ended_at, "tipo": "LOGOUT"},
+                    ],
+                }
+                receipt = _submit(mkt, "sessions", session_id, rec)
+                _log(cur, "sessions", session_id, mkt, receipt)
+                print(f"[SUBMIT] {mkt}/sessions {session_id} ({end_reason}) -> {receipt}")
+                n += 1
+        else:   # per_game: derived sessions, incl. the OJ shadow session
+            cur.execute(GAME_SESSIONS_SQL, [mkt])
+            for (session_id, account_id, national_id, game, first_at, last_at,
+                 rounds, rounds_won, round_ids) in cur.fetchall():
+                pref = _player_ref(mkt, account_id, national_id)
+                key = f"{session_id}-{game}"
+                rec = {
+                    "record_key": key,
+                    "session_id": session_id,
+                    "game": game,
+                    "player_ref": pref,
+                    "first_played_at": first_at,
+                    "last_played_at": last_at,
+                    "rounds": [{"round_id": rid, "player_ref": pref}
+                               for rid in round_ids],
+                    "rounds_won": int(rounds_won),
+                }
+                receipt = _submit(mkt, "sessions", key, rec)
+                _log(cur, "sessions", key, mkt, receipt)
+                print(f"[SUBMIT] {mkt}/sessions {key} ({rounds} round(s)) -> {receipt}")
+                n += 1
     return n
 
 
@@ -442,11 +566,12 @@ def submit_periodic(cur, mkt, register, period_start):
 
 
 def run_once(cur):
-    """One polling pass over all four record types. Returns records sent."""
+    """One polling pass over all five record types. Returns records sent."""
     return (submit_pending_players(cur)
             + submit_pending_payments(cur)
             + submit_pending_bets(cur)
-            + submit_pending_gaming(cur))
+            + submit_pending_gaming(cur)
+            + submit_pending_sessions(cur))
 
 
 def run_loop(interval=POLL_SECONDS):

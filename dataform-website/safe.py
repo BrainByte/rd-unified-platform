@@ -40,7 +40,9 @@ JURISDICTIONS = ["MT", "ES", "DK", "BG", "GR", "NL", "DE", "FR", "PT"]  # REQ: r
 # 'rud'/'rut' are the DGOJ-style periodic registers (daily detailed /
 # monthly totalized); only markets configured for them submit any.
 # REQ: requirements/dgoj-periodic-reporting (REQ-DGOJ-5)
-RECORD_TYPES = ["bets", "payments", "players", "gaming", "rud", "rut"]
+# 'sessions': platform logins (PT SESS_) or derived per-game sessions
+# (NL WOK_Game_Session). REQ: requirements/session-tracking (REQ-ST-6)
+RECORD_TYPES = ["bets", "payments", "players", "gaming", "sessions", "rud", "rut"]
 SAFE_ROOT = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                          "dataform-safe")
 SOAP_ENV = "http://schemas.xmlsoap.org/soap/envelope/"

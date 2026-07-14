@@ -103,6 +103,32 @@ SPEC = {
             },
         },
 
+        # true per-game sessions: one record per DERIVED (platform session
+        # x game) — single Game_ID each, the CDB's structural invariant.
+        # The gaming stream below remains for markets consuming rounds;
+        # for NL the submission engine routes rounds VIA these sessions.
+        # REQ: requirements/session-tracking (REQ-ST-4/6)
+        "sessions": {
+            "element": "WOK_Game_Session_v1.11",
+            "key": ["nl-gsession", "$session_id", "$game"],
+            "fields": {
+                "Game_ID":         {"uid": ["nl-game", "$game"]},
+                "Game_Session_ID": {"uid": ["nl-gsession", "$session_id", "$game"]},
+                "Game_Session_Start_Datetime": {"from": "first_played_at", "as": "datetime"},
+                "Game_Session_End_Datetime":   {"from": "last_played_at", "as": "datetime"},
+                "Game_Session_Rounds":     {"count": "rounds"},
+                "Game_Session_Rounds_Won": {"from": "rounds_won"},
+                "Game_Transactions": {"children": {
+                    "Game_Transaction": {"each": "rounds", "children": {
+                        # same Transaction_ID derivation as the per-round
+                        # stream, so identifiers stay consistent across grains
+                        "Transaction_ID":    {"uid": ["nl-txn", "$round_id", "STAKE"]},
+                        "Player_Profile_ID": {"from": "player_ref"},
+                    }},
+                }},
+            },
+        },
+
         "gaming": {
             "element": "WOK_Game_Session_v1.11",
             "key": ["nl-gaming", "$round_id"],

@@ -31,7 +31,8 @@ GOLDEN_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "goldens",
 XSD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
                        "docs", "regulator", "pt", "derived")
 XSD_FAMILY = {"bets": "AJOG.xsd", "gaming": "AJOG.xsd",
-              "payments": "TRAN.xsd", "players": "JGDR.xsd"}
+              "payments": "TRAN.xsd", "players": "JGDR.xsd",
+              "sessions": "SESS.xsd"}
 
 FROZEN = datetime(2026, 7, 14, 12, 0, 0, tzinfo=timezone.utc)
 T1 = datetime(2026, 7, 14, 10, 30, 0, tzinfo=timezone.utc)
@@ -105,6 +106,13 @@ CASES = [
         "balance_before_stake": 74.0, "balance_after_stake": 69.0,
         "balance_before_credit": 69.0, "balance_after_credit": 69.0,
         "balance_net": -5.0}),
+    ("sessions", "GS6001", {   # platform session -> SESS_ LOGIN+LOGOUT rows
+        "record_key": "GS6001", "session_id": "GS6001", "player_ref": "W6001",
+        "started_at": T1, "ended_at": T2, "end_reason": "INACTIVITY",
+        "events": [
+            {"player_ref": "W6001", "session_id": "GS6001", "at": T1, "tipo": "LOGIN"},
+            {"player_ref": "W6001", "session_id": "GS6001", "at": T2, "tipo": "LOGOUT"},
+        ]}),
     ("gaming", "R6003", {   # poker win -> poker (with pinscr_* zeros)
         "record_key": "R6003", "round_id": "R6003", "player_ref": "W6001",
         "username": "joana_pt", "game": "POKER", "game_type_code": 3,

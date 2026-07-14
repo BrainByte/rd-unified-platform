@@ -36,6 +36,11 @@ const providers = {
       payout: "win_amount",
       contribution: "jp_contribution", // jackpot contribution embedded
       jackpotRef: "jp_id",
+      // REQ: requirements/session-tracking (REQ-ST-1): NetEnt's operator
+      // integration echoes the platform-session stamp back on each round.
+      // Optional per provider — feeds without it yield NULL session_id
+      // (unstamped plays never enter the session derivation).
+      sessionRef: "session_ref",
       ts: "round_ts",
     },
   },
@@ -145,6 +150,7 @@ function roundGrainSql(ctx, key, p) {
       ${amt(`f.${m.payout}`, p)} AS payout,
       ${m.contribution ? amt(`COALESCE(f.${m.contribution}, 0)`, p) : "0"} AS jackpot_contribution,
       ${m.jackpotRef ? `f.${m.jackpotRef}` : "CAST(NULL AS STRING)"} AS jackpot_id,
+      ${m.sessionRef ? `f.${m.sessionRef}` : "CAST(NULL AS STRING)"} AS session_id,
       f.${m.ts} AS round_ts
     FROM (
       SELECT * FROM ${ctx.ref(p.feed)}
@@ -168,6 +174,8 @@ function transactionGrainSql(ctx, key, p) {
       ${amt("t.win_minor", p)} AS payout,
       0 AS jackpot_contribution,
       CAST(NULL AS STRING) AS jackpot_id,
+      -- REQ: requirements/session-tracking — no session echo on this feed yet
+      CAST(NULL AS STRING) AS session_id,
       t.round_ts
     FROM (
       SELECT

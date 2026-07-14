@@ -1,10 +1,10 @@
-# Session tracking — implementation plan
+# Session tracking — implementation
 
-*Step-by-step plan for [requirements.md](requirements.md).
-**Status: not yet implemented** — written ahead as the work order; as
-each part lands it gains its `REQ: requirements/session-tracking`
-change-site comments and the trace table moves from *planned* to
-*proven*. Precedents: [operator-jackpots](../operator-jackpots/implementation.md)
+*Step-by-step record of how [requirements.md](requirements.md) was
+implemented. Written ahead as the work order and executed as planned —
+§ "As implemented" records where reality amended the plan. Every change
+site carries a grep-able `REQ: requirements/session-tracking` comment.
+Precedents followed: [operator-jackpots](../operator-jackpots/implementation.md)
 (sessions minted, plays stamped), [dgoj-periodic-reporting](../dgoj-periodic-reporting/implementation.md)
 (a new report *kind* as config + one builder + one wiring file), and the
 FR/PT onboardings (mapping-spec + golden/XSD discipline).*
@@ -139,15 +139,67 @@ the architecture.
    produces the `SESS_` pair.
 4. `reset_db.py` before the final commit.
 
-## Planned requirement → artifact trace
+## As implemented — amendments to the plan
 
-| Requirement | Planned artifact | To be proven by |
+The plan executed as written; reality added these findings:
+
+1. **ST-204 was made enforceable, not tautological.** A naive
+   GROUP BY (session, game) can never violate the single-game invariant.
+   The pipeline materialises the pre-aggregation set
+   (`fct_game_session_activity`, activity + a derived
+   `game_session_id` = session×game key) and `fct_game_sessions` groups
+   by the **derived key alone** — so a mis-stamp genuinely collides two
+   games into one session, and the negative test proves ST-204 catches
+   exactly that.
+2. **No sessions watermark row** (plan A2 left this open): the readiness
+   gate consumes watermarks only for the betting settlement source; the
+   gaming domain — the direct precedent — has no watermark, and sessions
+   follow it. Extending readiness gating to non-betting domains is a
+   pre-existing gap shared with gaming, documented in the wiring
+   comments rather than half-built here.
+3. **Session stamping is a universal datum**, widening the shared feeds
+   (the `date_of_birth` precedent) rather than riding the extension
+   carrier; provider session echo is provider variance as config
+   (`sessionRef` in `providers.js`), with NULL = unstamped legacy rows
+   that never enter the derivation.
+4. **The timeout close is data-driven in the demo engine**: the
+   submission pass first ends stale open sessions at
+   `last_activity + timeoutMinutes` as `INACTIVITY` (per-market config),
+   proven by inserting a 2-hour-stale session and watching it close and
+   file.
+5. **INACTIVITY on the wire**: PT's `tipo_log` knows only LOGIN/LOGOUT,
+   and the NL Game_Session record has no end-reason field — the reason
+   is reported distinctly wherever a schema carries it and always in the
+   pipeline tables/submission log (acceptance 5 as amended, honestly).
+6. **NL regrain landed as designed**: per-round NL gaming deposits
+   stopped (rounds logged `VIA-SESSION`), `WOK_Game_Session` records now
+   carry real round counts and `Game_Transactions` lists with the same
+   deterministic `Transaction_ID`s as the old per-round stream, and the
+   reconciliation completeness expects sessions instead of rounds for
+   `gaming_via_sessions` markets.
+
+Verification results — pipeline (`npm run check` green): **145/145 unit
+tests, 82 models, 139 rule assertions, 72 expectations, 21 negative
+tests** (before: 135/76/132/66/19); genuine Dataform compile **277
+actions / 82 datasets**; session tables exist only for NL and PT (pinned
+by expectation). Demo suites: NL 9/9 byte-identical **+ 2/2 session
+goldens valid against the vendored KSA schema** (the shadow session
+validates); PT 11/11 goldens + 11/11 gazette-valid (incl. `SESS_`);
+ES 10/10 and FR 12/12 + 9/9 untouched. Live: one opted-in NL login
+produced `GS…-SLOTS` **and** `GS…-operator-jackpots` session files (no
+per-round NL gaming files); PT produced its `SESS_` LOGIN/LOGOUT file;
+a 2-hour-stale session closed as `INACTIVITY` and filed; NL and PT
+reconciliations both residual 0.00 with the session-aware completeness.
+
+## Requirement → artifact trace
+
+| Requirement | Implemented by | Proven by |
 |---|---|---|
-| REQ-ST-1 platform sessions as source | `cdc_gaming_sessions` + `fct_platform_sessions` | expectations; watermark coverage |
-| REQ-ST-2 reporting as config | `sessionReporting` blocks + validator | emit-sql: session tables only for configured markets |
-| REQ-ST-3 derived per-game sessions | `fct_game_sessions` | expectation: union of game sessions = platform activity |
-| REQ-ST-4 shadow session | no special-case code — the derivation | expectation: opted-in login yields slots + OJACK sessions |
-| REQ-ST-5 integrity rules | ST-201..204 assertions | two negative tests (ST-204 mis-stamped contribution; ST-201 out-of-window play) |
-| REQ-ST-6 sessions on the wire | NL Game_Session regrain + PT `SESS_` + demo `sessions` record type | goldens incl. NL vs KSA XSD, PT vs gazette XSD; live SAFE files |
-| REQ-ST-7 retrofit path | config-only enablement, two granularities live | adding a third market in review = one config block |
-| REQ-ST-8 demo end-to-end | session pages + live drive | timeout vs logout visible; shadow session in the SAFE |
+| REQ-ST-1 platform sessions as source | `cdc_gaming_sessions` + `stg_` + `fct_platform_sessions`; demo timeout close in `submit_pending_sessions` | expectations; live INACTIVITY close + filing |
+| REQ-ST-2 reporting as config | `sessionReporting` blocks (NL per_game, PT platform) + validator + `sessionSubmissionQuery` | emit-sql/expectation: session tables only for NL+PT; 10 new unit tests |
+| REQ-ST-3 derived per-game sessions | `fct_game_session_activity` + `fct_game_sessions` | expectation: union of game sessions = platform activity |
+| REQ-ST-4 shadow session | no special-case code — the derivation | expectation + live: opted-in login yields slots + OJACK sessions, single-game each |
+| REQ-ST-5 integrity rules | RULE_TYPES `activity_within_session`, `single_open_session`, `end_reason_in_set`, `single_game_session`; ST-201..204 | two negative tests (mis-stamped OJ contribution fires ST-204; out-of-window play fires ST-201) |
+| REQ-ST-6 sessions on the wire | NL `sessions` spec record (Game_Session regrain, rounds VIA-SESSION) + PT `SESS_` + demo `sessions` record type + recon regrain | NL session goldens vs KSA XSD; PT golden vs gazette XSD; live SAFE files; NL/PT recon 3/3 |
+| REQ-ST-7 retrofit path | config-only enablement, two granularities live from day one | a third market = one `sessionReporting` block (+ spec record if it has a wire format) |
+| REQ-ST-8 demo end-to-end | sessions in the polling loop + SAFE `sessions` type | live drive: logout and timeout sessions filed; shadow session in the SAFE |

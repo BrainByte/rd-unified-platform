@@ -25,13 +25,13 @@ const m = require("../includes/models");
 const pp = require("../includes/player_protection");
 const ex = require("../includes/exceptions");
 const { submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery,
-        periodicReportQuery, periodicCompletenessQuery } = require("../includes/queries");
+        periodicReportQuery, periodicCompletenessQuery, sessionSubmissionQuery } = require("../includes/queries");
 
 // Fixed "now" for the offline run so the retry state machine is deterministic
 // (Dataform would pass CURRENT_TIMESTAMP()). See includes/exceptions.js.
 const RUN_TS = "TIMESTAMPTZ '2026-07-08 12:00:00+00'";
 const { jurisdictions, commonRules, commonGamingRules, commonPeriodicRules } = require("../includes/jurisdictions");
-const { marketRules, marketGamingRules, periodicRules, violationQuery } = require("../includes/rules");
+const { marketRules, marketGamingRules, periodicRules, marketSessionRules, violationQuery } = require("../includes/rules");
 const { validateAll } = require("../includes/validate");
 const { canonicalSports } = require("../includes/nomenclature/canonical");
 const { sportAliases, participantAliases, gameTypeAliases } = require("../includes/nomenclature/aliases");
@@ -106,6 +106,13 @@ function buildPlan() {
   table("unmapped_game_types", m.unmappedGameTypes(ctx));
   table("recon_provider_ggr", m.reconProviderGgr(ctx));
 
+  // session tracking (REQ: requirements/session-tracking, REQ-ST-1/3/4):
+  // stored platform sessions -> pre-aggregation set -> derived game sessions.
+  table("stg_gaming_sessions", m.stgGamingSessions(ctx));
+  table("fct_platform_sessions", m.fctPlatformSessions(ctx));
+  table("fct_game_session_activity", m.fctGameSessionActivity(ctx));
+  table("fct_game_sessions", m.fctGameSessions(ctx));
+
   // player protection & payments
   table("stg_player_limits", pp.stgPlayerLimits(ctx));
   table("stg_self_exclusions", pp.stgSelfExclusions(ctx));
@@ -149,6 +156,11 @@ function buildPlan() {
     for (const r of j.periodicReports || []) {
       table(`submission_${r.id.toLowerCase()}_${mkt}`, periodicReportQuery(ctx, j, r));
     }
+    // session reporting is opt-in per market at its configured granularity
+    // REQ: requirements/session-tracking (REQ-ST-2, REQ-ST-7)
+    if (j.sessionReporting) {
+      table(`submission_sessions_${mkt}`, sessionSubmissionQuery(ctx, j));
+    }
   }
 
   // rule assertions: any returned row is a violation
@@ -157,6 +169,20 @@ function buildPlan() {
       steps.push({
         name: `rule ${j.code}/${rule.id}`,
         sql: violationQuery(ctx, j, rule),
+        kind: "assertion",
+        rule,
+      });
+    }
+    // session rules: opt-in via sessionReporting, mirrored from
+    // definitions/90_assertions/session_assertions.js.
+    // REQ: requirements/session-tracking (REQ-ST-5)
+    for (const rule of marketSessionRules(j)) {
+      steps.push({
+        name: `session rule ${j.code}/${rule.id}`,
+        sql: violationQuery(ctx, j, rule, {
+          table: `submission_sessions_${j.code.toLowerCase()}`,
+          keyColumn: "session_id",
+        }),
         kind: "assertion",
         rule,
       });
@@ -393,6 +419,57 @@ function ptUnlicensedGameTest() {
   };
 }
 
+// Session single-game negative test (REQ: requirements/session-tracking,
+// REQ-ST-4/5, acceptance 1): corrupt a copy of the PRE-AGGREGATION set so an
+// OJ1 contribution (OJC5, the shadow session's activity) is mis-stamped into
+// the SLOTS game session key 'GS-NL1:G1' — a slots round and a jackpot
+// contribution now collide into ONE derived game session, two distinct games
+// under one key. The ST-204 single-game invariant must fire: this is the
+// invariant that makes NL's one-Game_ID CDB record (and the KSB GAT basis)
+// expressible at all.
+function sessionSingleGameTest() {
+  const nl = jurisdictions.NL;
+  const corruptCtx = { ref: (n) => (n === "fct_game_session_activity" ? "fct_game_session_activity_corrupt" : n) };
+  return {
+    setup: [
+      `CREATE OR REPLACE TABLE fct_game_session_activity_corrupt AS
+         SELECT * FROM fct_game_session_activity WHERE activity_id != 'OJC5'
+         UNION ALL
+         SELECT * REPLACE ('GS-NL1:G1' AS game_session_id)
+           FROM fct_game_session_activity WHERE activity_id = 'OJC5'`,
+    ],
+    checks: [
+      { rule: "ST-204 (single_game_session): an OJ1 contribution mis-stamped into the NL slots game session is caught — no game session may span two games", expectViolations: 1,
+        sql: violationQuery(corruptCtx, nl, { id: "ST-204", type: "single_game_session" },
+          { table: "submission_sessions_nl", keyColumn: "session_id" }) },
+    ],
+  };
+}
+
+// Session activity-window negative test (REQ: requirements/session-tracking,
+// REQ-ST-5, acceptance 1): corrupt a copy of the gaming activity so NL round
+// NE:R13 is timestamped 15:00 — AFTER its session GS-NL2 ended (LOGOUT at
+// 14:30). ST-201 must fire: no play may be stamped outside its platform
+// session's [start, end] window.
+function sessionActivityWindowTest() {
+  const nl = jurisdictions.NL;
+  const corruptCtx = { ref: (n) => (n === "fct_gaming_activity" ? "fct_gaming_activity_late_play" : n) };
+  return {
+    setup: [
+      `CREATE OR REPLACE TABLE fct_gaming_activity_late_play AS
+         SELECT * FROM fct_gaming_activity WHERE activity_id != 'NE:R13'
+         UNION ALL
+         SELECT * REPLACE (TIMESTAMPTZ '2026-07-08 15:00:00+00' AS occurred_at)
+           FROM fct_gaming_activity WHERE activity_id = 'NE:R13'`,
+    ],
+    checks: [
+      { rule: "ST-201 (activity_within_session): a play timestamped after its session's end is caught", expectViolations: 1,
+        sql: violationQuery(corruptCtx, nl, { id: "ST-201", type: "activity_within_session" },
+          { table: "submission_sessions_nl", keyColumn: "session_id" }) },
+    ],
+  };
+}
+
 // Loss-limit negative test: a large operator-jackpot contribution (a gaming
 // wager on the phantom game) pushes A1001's net loss over their personal
 // daily LOSS limit — proving operator-jackpot contributions count toward
@@ -451,6 +528,7 @@ function stakeLimitNegativeTests() {
     `SELECT '${id}' AS activity_id, '${acct}' AS account_id, '${game}' AS game_id,
             '${vertical}' AS vertical, ${stake} AS stake, 0 AS payout, 0 AS rake_or_fee,
             0 AS jackpot_contribution, CAST(NULL AS VARCHAR) AS jackpot_id,
+            CAST(NULL AS VARCHAR) AS session_id,  -- REQ: requirements/session-tracking
             TIMESTAMPTZ '${ts}' AS occurred_at`;
   const detector = (id) =>
     `SELECT * FROM (${pp.rgBreachStakeLimits(corruptCtx)}) WHERE activity_id = '${id}'`;
@@ -542,6 +620,9 @@ async function main() {
   const fineg = faultIsolationNegativeTests();
   const slneg = stakeLimitNegativeTests();
   const pneg = periodicNegativeTests();
+  // REQ: requirements/session-tracking (REQ-ST-4/5)
+  const sgneg = sessionSingleGameTest();
+  const swneg = sessionActivityWindowTest();
 
   if (process.argv.includes("--dry-run")) {
     console.log(`DRY RUN (dialect: duckdb)\n`);
@@ -549,7 +630,7 @@ async function main() {
     for (const s of seed) console.log("  " + s.split("\n")[0]);
     console.log(`\n-- ${plan.length} pipeline steps --`);
     for (const s of plan) console.log(`  [${s.kind}] ${s.name}`);
-    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + frneg.checks.length + ptneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
+    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + frneg.checks.length + ptneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length + sgneg.checks.length + swneg.checks.length} negative tests --`);
     console.log("\n✔ Plan built cleanly. Run without --dry-run to execute in DuckDB.");
     return;
   }
@@ -602,8 +683,8 @@ async function main() {
     }
   }
 
-  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...frneg.setup, ...ptneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
-  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...frneg.checks, ...ptneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
+  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...frneg.setup, ...ptneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup, ...sgneg.setup, ...swneg.setup]) await run(s);
+  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...frneg.checks, ...ptneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks, ...sgneg.checks, ...swneg.checks]) {
     const rows = await run(check.sql);
     if (rows.length === check.expectViolations) {
       console.log(`✔ negative test: ${check.rule} caught the corruption`);

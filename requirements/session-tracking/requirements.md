@@ -4,7 +4,7 @@
 |---|---|
 | Requirement id | **ST** (session-tracking) — individual items REQ-ST-1 … REQ-ST-8 |
 | Scope | The reporting pipeline (`dataform-example/`), the regulator format layer (`dataform-website/regulator_formats/`), and the demo stack (BetNova site, submission engine, SAFE) |
-| Status | **Proposed — not yet implemented.** These documents are the work order; [implementation.md](implementation.md) is the step-by-step plan and gains the requirement → artifact trace as it lands |
+| Status | **Implemented** — see [implementation.md](implementation.md) § "As implemented" and the requirement → artifact → proven-by trace |
 | Companion docs | [overview.md](overview.md) (what & how) · [implementation.md](implementation.md) (the plan) · precedent: [operator-jackpots](../operator-jackpots/requirements.md) (which minted the demo's gaming sessions) |
 
 ## Background / regulatory context

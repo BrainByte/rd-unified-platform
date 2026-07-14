@@ -84,6 +84,57 @@ const periodicRegistry = {
   ggr_sum:      (j) => `ROUND(SUM(b.stake - b.payout), ${j.rounding})`,
 };
 
+// ---------------------------------------------------------------------------
+// SESSION registries (REQ: requirements/session-tracking, REQ-ST-2/3/4).
+// One SQL definition per measure per granularity — the only place a session
+// submission column's SQL is defined. Aliases:
+//   p  = fct_platform_sessions (the stored login lifecycle, source of truth)
+//   gs = fct_game_sessions     (the per-game derivation, per_game grain only)
+//   gm = dim_game
+// The per_game file's end_reason comes from the PARENT platform session —
+// how the login closed is a platform fact; the game session's own start/end
+// are that game's first and last play (REQ-ST-3).
+const sessionRegistries = {
+  platform: {
+    session_id:       () => "p.session_id",
+    account_id:       () => "p.account_id",
+    started_at_local: (j) => dialect.localDatetime("p.started_at", j.timezone),
+    ended_at_local:   (j) => dialect.localDatetime("p.ended_at", j.timezone),
+    end_reason:       () => "p.end_reason",
+    plays:            () => "p.plays",
+    staked:           (j) => `ROUND(p.staked, ${j.rounding})`,
+    won:              (j) => `ROUND(p.won, ${j.rounding})`,
+  },
+  per_game: {
+    game_session_id:  () => "gs.game_session_id",
+    session_id:       () => "gs.session_id",
+    account_id:       () => "gs.account_id",
+    game_id:          () => "gs.game_id",
+    game_name:        () => "gm.game_name",
+    started_at_local: (j) => dialect.localDatetime("gs.started_at", j.timezone),
+    ended_at_local:   (j) => dialect.localDatetime("gs.ended_at", j.timezone),
+    end_reason:       () => "p.end_reason",
+    rounds:           () => "gs.rounds",
+    rounds_won:       () => "gs.rounds_won",
+    staked:           (j) => `ROUND(gs.staked, ${j.rounding})`,
+    won:              (j) => `ROUND(gs.won, ${j.rounding})`,
+  },
+};
+
+function selectSessionFields(j) {
+  const reg = sessionRegistries[j.sessionReporting.granularity];
+  if (!reg) {
+    throw new Error(`Unknown session granularity '${j.sessionReporting.granularity}' (market ${j.code}).`);
+  }
+  return Object.entries(reg)
+    .map(([name, fn]) => `${fn(j)} AS ${name}`)
+    .join(",\n      ");
+}
+
+function knownSessionFields(granularity) {
+  return Object.keys(sessionRegistries[granularity] || {});
+}
+
 function periodicFieldSql(name, j) {
   const fn = periodicRegistry[name];
   if (!fn) {
@@ -144,4 +195,5 @@ module.exports = {
   fieldSql, selectFields, knownFields,
   gamingFieldSql, selectGamingFields, knownGamingFields,
   periodicFieldSql, selectPeriodicFields, knownPeriodicFields,
+  selectSessionFields, knownSessionFields,
 };

@@ -168,8 +168,10 @@ function reconProviderGgr(ctx) {
 }
 
 function stgPokerActivity(ctx) {
+  // session_id: REQ requirements/session-tracking (REQ-ST-1) — every play is
+  // stamped with its platform session (NULL = unstamped legacy/foreign feed).
   return `
-    SELECT activity_id, account_id, game_id, kind, amount_in, amount_out, rake_or_fee, activity_ts
+    SELECT activity_id, account_id, game_id, kind, amount_in, amount_out, rake_or_fee, session_id, activity_ts
     FROM ${ctx.ref("cdc_poker_activity")}
     WHERE kind IN ('CASH_HAND', 'TOURNAMENT_ENTRY')
     QUALIFY ROW_NUMBER() OVER (PARTITION BY activity_id ORDER BY _commit_ts DESC) = 1
@@ -180,8 +182,11 @@ function stgPokerActivity(ctx) {
 // Operator-run opt-in jackpot: contributions (wagers on the phantom game)
 // and wins (payouts), deduped from CDC like every other feed.
 function stgOperatorJackpotContributions(ctx) {
+  // session_id: REQ requirements/session-tracking (REQ-ST-1/4) — a
+  // contribution is a play on the phantom game, stamped with the platform
+  // session of the trigger, so the OJACK shadow session can be DERIVED.
   return `
-    SELECT contribution_id, account_id, jackpot_id, game_id, trigger_type, trigger_ref, amount, contributed_at
+    SELECT contribution_id, account_id, jackpot_id, game_id, trigger_type, trigger_ref, amount, session_id, contributed_at
     FROM ${ctx.ref("cdc_operator_jackpot_contributions")}
     QUALIFY ROW_NUMBER() OVER (PARTITION BY contribution_id ORDER BY _commit_ts DESC) = 1
       AND _op != 'D'
@@ -189,8 +194,9 @@ function stgOperatorJackpotContributions(ctx) {
 }
 
 function stgOperatorJackpotWins(ctx) {
+  // session_id: REQ requirements/session-tracking (REQ-ST-1)
   return `
-    SELECT win_id, jackpot_id, account_id, game_id, amount, win_ts
+    SELECT win_id, jackpot_id, account_id, game_id, amount, session_id, win_ts
     FROM ${ctx.ref("cdc_operator_jackpot_wins")}
     QUALIFY ROW_NUMBER() OVER (PARTITION BY win_id ORDER BY _commit_ts DESC) = 1
       AND _op != 'D'
@@ -207,7 +213,7 @@ function fctOperatorJackpotContributions(ctx) {
   return `
     SELECT
       c.contribution_id, c.account_id, c.jackpot_id, c.game_id,
-      c.trigger_type, c.trigger_ref, c.amount, c.contributed_at,
+      c.trigger_type, c.trigger_ref, c.amount, c.session_id, c.contributed_at,
       CASE
         WHEN c.trigger_type = 'SPORTS_BET'   AND vb.slip_id  IS NOT NULL THEN 'REFUNDED'
         WHEN c.trigger_type = 'GAMING_ROUND' AND vr.round_id IS NOT NULL THEN 'REFUNDED'
@@ -243,6 +249,11 @@ function dimGame(ctx) {
 //   CASINO_ROUND: stake=wager, payout=win, rake_or_fee=0, contribution kept
 //   POKER_CASH: stake=pot contribution, payout=pot won, rake carried
 //   POKER_TOURNAMENT: stake=buy-in incl. fee, payout=winnings, fee carried
+// session_id on every arm: REQ requirements/session-tracking (REQ-ST-1) —
+// gaming activity carries its platform-session stamp (NULL = unstamped);
+// the per-game session derivation (fct_game_session_activity /
+// fct_game_sessions) reads it. Jurisdiction-agnostic: the column is
+// carried, never branched on.
 function fctGamingActivity(ctx) {
   return `
     SELECT
@@ -255,6 +266,7 @@ function fctGamingActivity(ctx) {
       0 AS rake_or_fee,
       jackpot_contribution,
       jackpot_id,
+      session_id,
       round_ts AS occurred_at
     FROM ${ctx.ref("stg_game_rounds")}
     UNION ALL
@@ -268,6 +280,7 @@ function fctGamingActivity(ctx) {
       rake_or_fee,
       0 AS jackpot_contribution,
       CAST(NULL AS STRING) AS jackpot_id,
+      session_id,
       activity_ts AS occurred_at
     FROM ${ctx.ref("stg_poker_activity")}
     UNION ALL
@@ -285,6 +298,7 @@ function fctGamingActivity(ctx) {
       0 AS rake_or_fee,
       0 AS jackpot_contribution,
       CAST(NULL AS STRING) AS jackpot_id,
+      session_id,
       contributed_at AS occurred_at
     FROM ${ctx.ref("fct_operator_jackpot_contributions")}
     WHERE status = 'ACTIVE'   -- refunded contributions (voided triggers) reversed out
@@ -300,6 +314,7 @@ function fctGamingActivity(ctx) {
       0 AS rake_or_fee,
       0 AS jackpot_contribution,
       CAST(NULL AS STRING) AS jackpot_id,
+      session_id,
       win_ts AS occurred_at
     FROM ${ctx.ref("stg_operator_jackpot_wins")}
   `;
@@ -364,6 +379,97 @@ function fctOperatorJackpotLiability(ctx) {
   `;
 }
 
+// ---- SESSION TRACKING (REQ: requirements/session-tracking) ----
+
+// REQ-ST-1: the platform-session lifecycle (login -> logout/timeout) lands
+// as a CDC source like any other event stream; staging dedupes to the
+// latest image per session. Timeout enforcement happens in the OLTP (the
+// demo's engine) — the pipeline receives the resulting lifecycle.
+function stgGamingSessions(ctx) {
+  return `
+    SELECT session_id, account_id, started_at, last_activity_ts, ended_at, end_reason
+    FROM ${ctx.ref("cdc_gaming_sessions")}
+    QUALIFY ROW_NUMBER() OVER (PARTITION BY session_id ORDER BY _commit_ts DESC) = 1
+      AND _op != 'D'
+  `;
+}
+
+// REQ-ST-1/3: the stored platform session (source of truth) joined to the
+// aggregate of the gaming activity stamped with it — plays, staked, won,
+// first/last play. Jurisdiction-agnostic; 'platform'-granularity markets
+// report these rows directly, per-game markets derive from the same facts.
+function fctPlatformSessions(ctx) {
+  return `
+    SELECT
+      s.session_id,
+      s.account_id,
+      s.started_at,
+      s.last_activity_ts,
+      s.ended_at,
+      s.end_reason,
+      COALESCE(a.plays, 0) AS plays,
+      COALESCE(a.staked, 0) AS staked,
+      COALESCE(a.won, 0) AS won,
+      a.first_play_ts,
+      a.last_play_ts
+    FROM ${ctx.ref("stg_gaming_sessions")} s
+    LEFT JOIN (
+      SELECT session_id, COUNT(*) AS plays, SUM(stake) AS staked, SUM(payout) AS won,
+             MIN(occurred_at) AS first_play_ts, MAX(occurred_at) AS last_play_ts
+      FROM ${ctx.ref("fct_gaming_activity")}
+      WHERE session_id IS NOT NULL
+      GROUP BY session_id
+    ) a ON a.session_id = s.session_id
+  `;
+}
+
+// REQ-ST-3/4: the PRE-AGGREGATION set for the per-game derivation — every
+// session-stamped play with its derived game-session key (platform session
+// x game). Materialised separately (a) so fct_game_sessions is a pure
+// GROUP BY over it and (b) as the target of the ST-204 single-game
+// invariant: per game_session_id, COUNT(DISTINCT game) must be 1. The
+// operator-jackpot SHADOW SESSION emerges here with no special-case SQL:
+// OJ1 contributions are already stamped gaming activity of their own game.
+function fctGameSessionActivity(ctx) {
+  return `
+    SELECT
+      g.activity_id,
+      g.account_id,
+      g.session_id,
+      CONCAT(g.session_id, ':', g.game_id) AS game_session_id,
+      g.game_id,
+      g.stake,
+      g.payout,
+      g.occurred_at
+    FROM ${ctx.ref("fct_gaming_activity")} g
+    WHERE g.session_id IS NOT NULL
+  `;
+}
+
+// REQ-ST-3/4: derived per-game sessions — one row per (platform session x
+// game): start = first play of that game, end = last, with round counts and
+// money totals. DERIVED, never stored (a granularity change is a config
+// edit, not a migration). Grouping is by the derived key ALONE so that a
+// mis-stamped play genuinely collides into the wrong game session — which
+// is exactly what the ST-204 invariant over the pre-aggregation set catches.
+function fctGameSessions(ctx) {
+  return `
+    SELECT
+      game_session_id,
+      MIN(session_id) AS session_id,
+      MIN(account_id) AS account_id,
+      MIN(game_id) AS game_id,
+      MIN(occurred_at) AS started_at,
+      MAX(occurred_at) AS ended_at,
+      COUNT(*) AS rounds,
+      SUM(CASE WHEN payout > 0 THEN 1 ELSE 0 END) AS rounds_won,
+      SUM(stake) AS staked,
+      SUM(payout) AS won
+    FROM ${ctx.ref("fct_game_session_activity")}
+    GROUP BY game_session_id
+  `;
+}
+
 // Gaming maintenance queue: provider game-type labels with no alias.
 function unmappedGameTypes(ctx) {
   return `
@@ -390,4 +496,6 @@ module.exports = {
   fctOperatorJackpotContributions,
   dimGame, fctGamingActivity, fctJackpotLiability, fctOperatorJackpotLiability,
   unmappedGameTypes, reconProviderGgr,
+  // REQ: requirements/session-tracking
+  stgGamingSessions, fctPlatformSessions, fctGameSessionActivity, fctGameSessions,
 };

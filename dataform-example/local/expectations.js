@@ -127,11 +127,12 @@ const expectations = [
   },
   {
     // REQ: requirements/pt-new-jurisdiction — NetEnt gains the PT slots round R10
-    desc: "provider spread: rounds normalised from NetEnt(6), Evolution(2), Playtech(1), Spribe-via-aggregator(1)",
+    // REQ: requirements/session-tracking — and the NL session-stamped R11-R13
+    desc: "provider spread: rounds normalised from NetEnt(9), Evolution(2), Playtech(1), Spribe-via-aggregator(1)",
     sql: `SELECT provider, COUNT(*)::INT AS rounds FROM stg_game_rounds GROUP BY provider ORDER BY provider`,
     expect: [
       { provider: "Evolution", rounds: 2 },
-      { provider: "NetEnt", rounds: 6 },
+      { provider: "NetEnt", rounds: 9 },
       { provider: "Playtech", rounds: 1 },
       { provider: "Spribe", rounds: 1 },
     ],
@@ -204,28 +205,30 @@ const expectations = [
     ],
   },
   {
-    desc: "operator jackpot: ACTIVE contribution triggers span BOTH a provider game round AND a sports bet (one unified balance)",
+    // REQ: requirements/session-tracking — A6001's session-stamped OJC5-7
+    // add three more GAMING_ROUND triggers
+    desc: "operator jackpot: ACTIVE contribution triggers span BOTH provider game rounds AND a sports bet (one unified balance)",
     sql: `SELECT trigger_type, COUNT(*)::INT AS n FROM fct_operator_jackpot_contributions
           WHERE status = 'ACTIVE' GROUP BY trigger_type ORDER BY trigger_type`,
     expect: [
-      { trigger_type: "GAMING_ROUND", n: 1 },
+      { trigger_type: "GAMING_ROUND", n: 4 },
       { trigger_type: "SPORTS_BET", n: 1 },
     ],
   },
   {
-    desc: "void/refund cascade: contributions on voided triggers (bet S2, rolled-back round NE:R99) are REFUNDED; 2 ACTIVE remain",
+    desc: "void/refund cascade: contributions on voided triggers (bet S2, rolled-back round NE:R99) are REFUNDED; 5 ACTIVE remain (incl. the NL session-stamped OJC5-7)",
     sql: `SELECT status, COUNT(*)::INT AS n FROM fct_operator_jackpot_contributions
           GROUP BY status ORDER BY status`,
     expect: [
-      { status: "ACTIVE", n: 2 },
+      { status: "ACTIVE", n: 5 },
       { status: "REFUNDED", n: 2 },
     ],
   },
   {
-    desc: "void/refund cascade: refunded contributions (6+7=13) reversed out — pool counts only the 9 active, balance 506",
+    desc: "void/refund cascade: refunded contributions (6+7=13) reversed out — pool counts only the active 9.10 (MT 9 + NL 0.10), balance 506.10",
     sql: `SELECT CAST(total_contributions AS DOUBLE) AS contribs, CAST(pool_balance AS DOUBLE) AS balance
           FROM fct_operator_jackpot_liability WHERE jackpot_id = 'OJP1'`,
-    expect: [{ contribs: 9, balance: 506 }],
+    expect: [{ contribs: 9.1, balance: 506.1 }],
   },
   {
     desc: "void/refund cascade: refunded contributions never reach the gaming file (GGR/tax/loss unaffected)",
@@ -244,11 +247,11 @@ const expectations = [
     ],
   },
   {
-    desc: "wallet ↔ pool reconciliation: opt-in jackpot wallet debits (9) match the pool's active contributions (9)",
+    desc: "wallet ↔ pool reconciliation: opt-in jackpot wallet debits (9.10) match the pool's active contributions (9.10)",
     sql: `SELECT
             CAST((SELECT -SUM(signed_amount) FROM fct_wallet_ledger WHERE entry_type = 'JACKPOT_CONTRIBUTION') AS DOUBLE) AS wallet_debits,
             CAST((SELECT total_contributions FROM fct_operator_jackpot_liability WHERE jackpot_id = 'OJP1') AS DOUBLE) AS pool_contributions`,
-    expect: [{ wallet_debits: 9, pool_contributions: 9 }],
+    expect: [{ wallet_debits: 9.1, pool_contributions: 9.1 }],
   },
   {
     desc: "unified balance: A1001's wallet across deposits, settled bets and all gaming (incl. active jackpot) = 67.50",
@@ -569,6 +572,60 @@ const expectations = [
     sql: `SELECT CAST(total_ggr AS DOUBLE) AS g, CAST(gaming_tax_due AS DOUBLE) AS t
           FROM gaming_tax_summary_pt WHERE report_date = DATE '2026-07-08'`,
     expect: [{ g: 6.4, t: 1.6 }],
+  },
+
+  // ---- SESSION TRACKING (REQ: requirements/session-tracking) ----
+  {
+    desc: "sessions CDC dedupe (REQ-ST-1): replayed GS-NL1 terminal image collapsed to one staged row; 3 platform sessions total",
+    sql: `SELECT
+            (SELECT COUNT(*) FROM stg_gaming_sessions WHERE session_id = 'GS-NL1')::INT AS gs_nl1_rows,
+            (SELECT COUNT(*) FROM fct_platform_sessions)::INT AS platform_sessions`,
+    expect: [{ gs_nl1_rows: 1, platform_sessions: 3 }],
+  },
+  {
+    desc: "sessions SHADOW SESSION (REQ-ST-3/4, acceptance 3): the opted-in NL login GS-NL1 derives BOTH a slots game session AND the OPERATOR-JACKPOT shadow session — each exactly one game, from one GROUP BY, no OJACK-specific SQL",
+    sql: `SELECT game_session_id, game_id, rounds::INT AS rounds, rounds_won::INT AS rounds_won,
+                 CAST(staked AS DOUBLE) AS staked, CAST(won AS DOUBLE) AS won
+          FROM fct_game_sessions WHERE session_id = 'GS-NL1' ORDER BY game_id`,
+    expect: [
+      { game_session_id: "GS-NL1:G1", game_id: "G1", rounds: 2, rounds_won: 1, staked: 8, won: 2 },     // slots: R11+R12
+      { game_session_id: "GS-NL1:OJ1", game_id: "OJ1", rounds: 2, rounds_won: 0, staked: 0.08, won: 0 }, // shadow: OJC5+OJC6
+    ],
+  },
+  {
+    desc: "sessions UNION = PLATFORM (REQ-ST-3, acceptance 3): GS-NL1's game sessions reconcile exactly to the platform session's stamped activity (4 plays, 8.08 staked, 2.00 won)",
+    sql: `SELECT p.plays::INT AS plays, CAST(p.staked AS DOUBLE) AS staked, CAST(p.won AS DOUBLE) AS won,
+                 g.rounds::INT AS game_rounds, CAST(g.staked AS DOUBLE) AS game_staked, CAST(g.won AS DOUBLE) AS game_won
+          FROM fct_platform_sessions p
+          JOIN (SELECT session_id, SUM(rounds) AS rounds, SUM(staked) AS staked, SUM(won) AS won
+                FROM fct_game_sessions GROUP BY session_id) g USING (session_id)
+          WHERE p.session_id = 'GS-NL1'`,
+    expect: [{ plays: 4, staked: 8.08, won: 2, game_rounds: 4, game_staked: 8.08, game_won: 2 }],
+  },
+  {
+    desc: "sessions END REASONS (acceptance 5): the NL per-game file reports the INACTIVITY-ended login distinctly from the LOGOUT-ended one — each with its slots + shadow pair",
+    sql: `SELECT session_id, end_reason, COUNT(*)::INT AS game_sessions
+          FROM submission_sessions_nl GROUP BY session_id, end_reason ORDER BY session_id`,
+    expect: [
+      { session_id: "GS-NL1", end_reason: "INACTIVITY", game_sessions: 2 },
+      { session_id: "GS-NL2", end_reason: "LOGOUT", game_sessions: 2 },
+    ],
+  },
+  {
+    desc: "sessions PT PLATFORM grain (REQ-ST-2/7): PT reports the login itself — one row for GS-PT1 covering the existing seeded play (slots R10 + poker P7), with its end reason",
+    sql: `SELECT session_id, account_id, end_reason, plays::INT AS plays,
+                 CAST(staked AS DOUBLE) AS staked, CAST(won AS DOUBLE) AS won
+          FROM submission_sessions_pt`,
+    expect: [{ session_id: "GS-PT1", account_id: "A11001", end_reason: "LOGOUT", plays: 2, staked: 13, won: 2 }],
+  },
+  {
+    desc: "sessions CONFIG-ONLY fan-out (REQ-ST-2, acceptance 2): session submission tables exist ONLY for the markets with a sessionReporting block (NL, PT) — mirrored 1:1 by the emit-sql output",
+    sql: `SELECT table_name FROM information_schema.tables
+          WHERE table_name LIKE 'submission_sessions_%' ORDER BY table_name`,
+    expect: [
+      { table_name: "submission_sessions_nl" },
+      { table_name: "submission_sessions_pt" },
+    ],
   },
 ];
 

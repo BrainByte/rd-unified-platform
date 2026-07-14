@@ -4,7 +4,7 @@
 // No business decisions live here; those are in config, fields, filters.
 // ============================================================================
 
-const { selectFields, selectGamingFields, fieldSql, selectPeriodicFields } = require("./fields");
+const { selectFields, selectGamingFields, fieldSql, selectPeriodicFields, selectSessionFields } = require("./fields");
 const { selectExtensionFields, extensionJoins } = require("./extensions");
 const { rateSql, temporalPredicate } = require("./effective_dating");
 const { statusFilter, jurisdictionFilter, reportDateExpr } = require("./filters");
@@ -186,7 +186,45 @@ function gamingTaxSummaryQuery(ctx, j) {
   `;
 }
 
+// ---- SESSION reporting (REQ: requirements/session-tracking, REQ-ST-2/3/4) ----
+// One builder for both granularities — which one a market gets is CONFIG
+// (sessionReporting.granularity). Only ENDED platform sessions are
+// reportable (a session never re-opens, so ended = terminal state); the
+// report date is the local date the platform session closed. Zero-activity
+// logins are reported only where the market opts in (reportEmptySessions) —
+// at per_game grain empty sessions have no derived rows by construction.
+function sessionSubmissionQuery(ctx, j) {
+  const dialect = require("./dialect");
+  const sr = j.sessionReporting;
+  const reportDate = dialect.localDate("p.ended_at", j.timezone);
+  const emptyFilter = sr.reportEmptySessions ? "" : `\n      AND p.plays > 0`;
+  if (sr.granularity === "per_game") {
+    return `
+    SELECT
+      '${j.code}' AS jurisdiction,
+      ${reportDate} AS report_date,
+      ${selectSessionFields(j)}
+    FROM ${ctx.ref("fct_game_sessions")} gs
+    JOIN ${ctx.ref("fct_platform_sessions")} p ON gs.session_id = p.session_id
+    JOIN ${ctx.ref("dim_customer_account")} a ON gs.account_id = a.account_id
+    LEFT JOIN ${ctx.ref("dim_game")} gm ON gs.game_id = gm.game_id
+    WHERE ${jurisdictionFilter(j)}
+      AND p.ended_at IS NOT NULL${emptyFilter}
+  `;
+  }
+  return `
+    SELECT
+      '${j.code}' AS jurisdiction,
+      ${reportDate} AS report_date,
+      ${selectSessionFields(j)}
+    FROM ${ctx.ref("fct_platform_sessions")} p
+    JOIN ${ctx.ref("dim_customer_account")} a ON p.account_id = a.account_id
+    WHERE ${jurisdictionFilter(j)}
+      AND p.ended_at IS NOT NULL${emptyFilter}
+  `;
+}
+
 module.exports = {
   submissionQuery, taxSummaryQuery, gamingSubmissionQuery, gamingTaxSummaryQuery,
-  periodicReportQuery, periodicCompletenessQuery,
+  periodicReportQuery, periodicCompletenessQuery, sessionSubmissionQuery,
 };

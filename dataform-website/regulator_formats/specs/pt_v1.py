@@ -217,6 +217,23 @@ SPEC = {
             }}, "JGDR"),
         },
 
+        # a platform session as a SESS_ file: LOGIN and LOGOUT log rows
+        # (an INACTIVITY disconnect is a LOGOUT on the wire — the schema's
+        # tipo_log knows only LOGIN/LOGOUT; the end reason stays in the
+        # pipeline tables). REQ: requirements/session-tracking (REQ-ST-6)
+        "sessions": {
+            "element": "ficheiro",
+            "fields": _ENVELOPE("registos_log", {"children": {
+                "jogador": {"each": "events", "children": {
+                    "codjogador": {"from": "player_ref"},
+                    "id_sessao": {"from": "session_id"},
+                    "timestp_acao": {"from": "at", "as": "digits14-fftz"},
+                    "tipo_log": {"from": "tipo"},
+                    "dispositivo": {"const": "C"},   # demo captures no device
+                }},
+            }}, "SESS"),
+        },
+
         # a casino round as the homologated AJOG_ sub-record family for its
         # vertical; only licensed verticals reach PT (suppression upstream)
         "gaming": _AJOG_FICHEIRO({

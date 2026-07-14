@@ -269,14 +269,39 @@ def reported_breaks(cur, mkt, start, end):
     # markets that license only some gaming verticals (FR: poker only)
     # never report the others — mirror the submission engine's suppression.
     # REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
+    # Markets reporting rounds VIA per-game sessions (NL) expect the
+    # session records instead of individual rounds.
+    # REQ: requirements/session-tracking (REQ-ST-6)
     verticals = MARKETS[mkt].get("gaming_verticals")
-    for (round_id, game) in cur.execute(f"""SELECT r.round_id, r.game FROM game_rounds r
-            JOIN accounts a USING (account_id)
-            WHERE a.jurisdiction=? AND r.round_ts >= CAST(? AS TIMESTAMPTZ)
-              AND r.round_ts < CAST(? AS TIMESTAMPTZ)""", [mkt, start, end]).fetchall():
-        if verticals is not None and game not in verticals:
-            continue
-        expected.append(("gaming", round_id, round_id))
+    smeta = MARKETS[mkt].get("sessions") or {}
+    if not smeta.get("gaming_via_sessions"):
+        for (round_id, game) in cur.execute(f"""SELECT r.round_id, r.game FROM game_rounds r
+                JOIN accounts a USING (account_id)
+                WHERE a.jurisdiction=? AND r.round_ts >= CAST(? AS TIMESTAMPTZ)
+                  AND r.round_ts < CAST(? AS TIMESTAMPTZ)""", [mkt, start, end]).fetchall():
+            if verticals is not None and game not in verticals:
+                continue
+            expected.append(("gaming", round_id, round_id))
+    if smeta:
+        if smeta["granularity"] == "platform":
+            for (session_id,) in cur.execute(f"""SELECT s.session_id
+                    FROM gaming_sessions s JOIN accounts a USING (account_id)
+                    WHERE a.jurisdiction=? AND s.ended_at IS NOT NULL
+                      AND s.ended_at >= CAST(? AS TIMESTAMPTZ)
+                      AND s.ended_at < CAST(? AS TIMESTAMPTZ)""",
+                    [mkt, start, end]).fetchall():
+                expected.append(("sessions", session_id, session_id))
+        else:   # per_game: one expected record per (session x game) played
+            for (session_id, game) in cur.execute(f"""SELECT DISTINCT s.session_id, r.game
+                    FROM gaming_sessions s
+                    JOIN accounts a USING (account_id)
+                    JOIN game_rounds r ON r.session_id = s.session_id
+                    WHERE a.jurisdiction=? AND s.ended_at IS NOT NULL
+                      AND s.ended_at >= CAST(? AS TIMESTAMPTZ)
+                      AND s.ended_at < CAST(? AS TIMESTAMPTZ)""",
+                    [mkt, start, end]).fetchall():
+                key = f"{session_id}-{game}"
+                expected.append(("sessions", key, key))
     for (payment_id,) in cur.execute(f"""SELECT p.payment_id FROM payments p
             JOIN accounts a USING (account_id)
             WHERE a.jurisdiction=? AND p.status='COMPLETED'

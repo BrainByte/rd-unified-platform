@@ -389,19 +389,33 @@ const operatorJackpotPools = [
 const jackpotOptins = [
   // optin_id, account_id, jackpot_id, opted_in_at, opted_out_at, _op, _commit_ts
   ["OPT1", "A1001", "OJP1", "2026-07-01 00:00:00+00", null, "I", "2026-07-01 00:00:01+00"],
+  // A6001 (NL) opts in so their casino play triggers OJ1 contributions —
+  // the raw material for the OPERATOR-JACKPOT SHADOW SESSION the per-game
+  // derivation must discover. REQ: requirements/session-tracking (REQ-ST-4)
+  ["OPT2", "A6001", "OJP1", "2026-07-05 00:00:00+00", null, "I", "2026-07-05 00:00:01+00"],
 ];
 
+// session_id column: REQ requirements/session-tracking (REQ-ST-1/4) — a
+// contribution is stamped with the platform session of its trigger. Legacy
+// MT rows predate stamping (NULL): unstamped plays never derive sessions,
+// and MT reports none.
 const operatorJackpotContributions = [
-  // contribution_id, account_id, jackpot_id, game_id, trigger_type, trigger_ref, amount, contributed_at, _op, _commit_ts
+  // contribution_id, account_id, jackpot_id, game_id, trigger_type, trigger_ref, amount, session_id, contributed_at, _op, _commit_ts
   // CROSS-DOMAIN: one contribution triggered by a provider game round...
-  ["OJC1", "A1001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R1", 5.0, "2026-07-08 09:00:05+00", "I", "2026-07-08 09:00:06+00"],
+  ["OJC1", "A1001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R1", 5.0, null, "2026-07-08 09:00:05+00", "I", "2026-07-08 09:00:06+00"],
   // ...and one triggered by a SPORTS bet, debited from the same unified balance.
-  ["OJC2", "A1001", "OJP1", "OJ1", "SPORTS_BET", "S1", 4.0, "2026-07-08 10:00:05+00", "I", "2026-07-08 10:00:06+00"],
+  ["OJC2", "A1001", "OJP1", "OJ1", "SPORTS_BET", "S1", 4.0, null, "2026-07-08 10:00:05+00", "I", "2026-07-08 10:00:06+00"],
   // VOID/REFUND CASCADE: these two ride on triggers that were later voided —
   // OJC3 on bet slip S2 (voided in the lifecycle), OJC4 on round NE:R99 (a
   // rolled-back round). Both must be REFUNDED and excluded from pool/GGR/loss.
-  ["OJC3", "A1001", "OJP1", "OJ1", "SPORTS_BET", "S2", 6.0, "2026-07-08 11:00:05+00", "I", "2026-07-08 11:00:06+00"],
-  ["OJC4", "A1001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R99", 7.0, "2026-07-08 09:05:05+00", "I", "2026-07-08 09:05:06+00"],
+  ["OJC3", "A1001", "OJP1", "OJ1", "SPORTS_BET", "S2", 6.0, null, "2026-07-08 11:00:05+00", "I", "2026-07-08 11:00:06+00"],
+  ["OJC4", "A1001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R99", 7.0, null, "2026-07-08 09:05:05+00", "I", "2026-07-08 09:05:06+00"],
+  // NL opted-in play (REQ: requirements/session-tracking, REQ-ST-4): 1% of
+  // each session-stamped slots round, stamped with the SAME platform session
+  // as the triggering round — the shadow session's activity.
+  ["OJC5", "A6001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R11", 0.05, "GS-NL1", "2026-07-08 12:05:05+00", "I", "2026-07-08 12:05:06+00"],
+  ["OJC6", "A6001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R12", 0.03, "GS-NL1", "2026-07-08 12:15:05+00", "I", "2026-07-08 12:15:06+00"],
+  ["OJC7", "A6001", "OJP1", "OJ1", "GAMING_ROUND", "NE:R13", 0.02, "GS-NL2", "2026-07-08 14:05:05+00", "I", "2026-07-08 14:05:06+00"],
 ];
 
 // Provider round rollbacks/voids (a round that never completed). Drives the
@@ -413,25 +427,39 @@ const gameRoundVoids = [
   ["NE:R99", "2026-07-08 09:05:30+00"],
 ];
 
+// session_id: REQ requirements/session-tracking (REQ-ST-1) — the win OJW1
+// predates stamping (NULL).
 const operatorJackpotWins = [
-  // win_id, jackpot_id, account_id, game_id, amount, win_ts, _op, _commit_ts
-  ["OJW1", "OJP1", "A1001", "OJ1", 3.0, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
+  // win_id, jackpot_id, account_id, game_id, amount, session_id, win_ts, _op, _commit_ts
+  ["OJW1", "OJP1", "A1001", "OJ1", 3.0, null, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
 ];
 
 // NetEnt: round grain, EUR, provider's own field names, jackpot embedded.
+// session_ref: REQ requirements/session-tracking (REQ-ST-1) — the operator
+// integration echoes the platform-session stamp on each round (NULL on
+// legacy rows that predate stamping; those never derive sessions).
 const netentRounds = [
-  // round_ref, player_ref, game_ref, bet_amount, win_amount, jp_contribution, jp_id, round_ts, _op, _commit_ts
-  ["R1", "A1001", "1101", 2.0, 0.5, 0.0, null, "2026-07-08 09:00:00+00", "I", "2026-07-08 09:00:01+00"],
-  ["R3", "A1001", "1102", 25.0, 25.0, 0.0, null, "2026-07-08 09:20:00+00", "I", "2026-07-08 09:20:01+00"],
+  // round_ref, player_ref, game_ref, bet_amount, win_amount, jp_contribution, jp_id, session_ref, round_ts, _op, _commit_ts
+  ["R1", "A1001", "1101", 2.0, 0.5, 0.0, null, null, "2026-07-08 09:00:00+00", "I", "2026-07-08 09:00:01+00"],
+  ["R3", "A1001", "1102", 25.0, 25.0, 0.0, null, null, "2026-07-08 09:20:00+00", "I", "2026-07-08 09:20:01+00"],
   // Mega Fortune: 1% of the wager diverted to pool JP1
-  ["R4", "A1001", "1103", 4.0, 0.0, 0.04, "JP1", "2026-07-08 09:30:00+00", "I", "2026-07-08 09:30:01+00"],
-  ["R7", "A2001", "1101", 8.0, 12.0, 0.0, null, "2026-07-08 10:00:00+00", "I", "2026-07-08 10:00:01+00"],
-  ["R8", "A2002", "1103", 10.0, 0.0, 0.10, "JP1", "2026-07-08 10:10:00+00", "I", "2026-07-08 10:10:01+00"],
+  ["R4", "A1001", "1103", 4.0, 0.0, 0.04, "JP1", null, "2026-07-08 09:30:00+00", "I", "2026-07-08 09:30:01+00"],
+  ["R7", "A2001", "1101", 8.0, 12.0, 0.0, null, null, "2026-07-08 10:00:00+00", "I", "2026-07-08 10:00:01+00"],
+  ["R8", "A2002", "1103", 10.0, 0.0, 0.10, "JP1", null, "2026-07-08 10:10:00+00", "I", "2026-07-08 10:10:01+00"],
   // PT slots round (REQ: requirements/pt-new-jurisdiction, REQ-PT-2/3):
   // Starburst -> canonical SLOT -> the homologated 'fortazar' sub-record
   // family. GGR 8 - 2 = 6.00; with poker P7's 0.40 rake the PT gaming GGR is
   // 6.40 -> 25% gaming duty 1.60 exactly (both split-basis arms exact at 2dp).
-  ["R10", "A11001", "1101", 8.0, 2.0, 0.0, null, "2026-07-08 09:00:00+00", "I", "2026-07-08 09:00:01+00"],
+  // Stamped with PT's platform session GS-PT1 (REQ: requirements/session-tracking).
+  ["R10", "A11001", "1101", 8.0, 2.0, 0.0, null, "GS-PT1", "2026-07-08 09:00:00+00", "I", "2026-07-08 09:00:01+00"],
+  // NL opted-in casino play (REQ: requirements/session-tracking, REQ-ST-8):
+  // two Starburst rounds in session GS-NL1 (ends INACTIVITY) and one in
+  // GS-NL2 (ends LOGOUT). Each triggers a 1% OJ1 contribution (OJC5-7) in
+  // the SAME session — so GS-NL1 derives a slots game session AND the
+  // operator-jackpot shadow session.
+  ["R11", "A6001", "1101", 5.0, 2.0, 0.0, null, "GS-NL1", "2026-07-08 12:05:00+00", "I", "2026-07-08 12:05:01+00"],
+  ["R12", "A6001", "1101", 3.0, 0.0, 0.0, null, "GS-NL1", "2026-07-08 12:15:00+00", "I", "2026-07-08 12:15:01+00"],
+  ["R13", "A6001", "1101", 2.0, 1.0, 0.0, null, "GS-NL2", "2026-07-08 14:05:00+00", "I", "2026-07-08 14:05:01+00"],
 ];
 
 // Evolution live casino: TRANSACTION grain, amounts in CENTS.
@@ -465,27 +493,31 @@ const aggregatorRounds = [
 const providerStatements = [
   // provider, statement_date_ts (00:00 UTC of the day), reported_ggr
   // NetEnt: 1.5 + 0 + 4.0 - 4.0 + 10.0 + 6.0 (R10, the PT slots round —
-  // REQ: requirements/pt-new-jurisdiction)
-  ["NetEnt", "2026-07-08", 17.5],
+  // REQ: requirements/pt-new-jurisdiction) + 3.0 + 3.0 + 1.0 (R11-R13, the
+  // NL session-stamped rounds — REQ: requirements/session-tracking)
+  ["NetEnt", "2026-07-08", 24.5],
   ["Evolution", "2026-07-08", 5.0], // 10.0 + (5.0 - 10.0)
   ["Playtech", "2026-07-08", 5.0],  // 6.0 - 1.0
   ["Spribe", "2026-07-08", 3.0],
 ];
 
+// session_id: REQ requirements/session-tracking (REQ-ST-1) — plays stamped
+// with their platform session (NULL on legacy rows that predate stamping).
 const pokerActivity = [
-  // activity_id, account_id, game_id, kind, amount_in, amount_out, rake_or_fee, activity_ts, _op, _commit_ts
-  ["P1", "A1002", "G6", "CASH_HAND", 5.0, 9.7, 0.3, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
-  ["P2", "A1001", "G7", "TOURNAMENT_ENTRY", 11.0, 40.0, 1.0, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
-  ["P3", "A2001", "G6", "CASH_HAND", 20.0, 0.0, 1.0, "2026-07-08 11:30:00+00", "I", "2026-07-08 11:30:01+00"],
-  ["P4", "A2002", "G7", "TOURNAMENT_ENTRY", 55.0, 0.0, 5.0, "2026-07-08 12:30:00+00", "I", "2026-07-08 12:30:01+00"],
+  // activity_id, account_id, game_id, kind, amount_in, amount_out, rake_or_fee, session_id, activity_ts, _op, _commit_ts
+  ["P1", "A1002", "G6", "CASH_HAND", 5.0, 9.7, 0.3, null, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
+  ["P2", "A1001", "G7", "TOURNAMENT_ENTRY", 11.0, 40.0, 1.0, null, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
+  ["P3", "A2001", "G6", "CASH_HAND", 20.0, 0.0, 1.0, null, "2026-07-08 11:30:00+00", "I", "2026-07-08 11:30:01+00"],
+  ["P4", "A2002", "G7", "TOURNAMENT_ENTRY", 55.0, 0.0, 5.0, null, "2026-07-08 12:30:00+00", "I", "2026-07-08 12:30:01+00"],
   // FR poker (REQ: requirements/fr-new-jurisdiction, REQ-FR-2): the only
   // gaming vertical licensed in France — a cash hand and a tournament entry.
-  ["P5", "A10001", "G6", "CASH_HAND", 10.0, 18.0, 0.5, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
-  ["P6", "A10001", "G7", "TOURNAMENT_ENTRY", 20.0, 0.0, 2.0, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
+  ["P5", "A10001", "G6", "CASH_HAND", 10.0, 18.0, 0.5, null, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
+  ["P6", "A10001", "G7", "TOURNAMENT_ENTRY", 20.0, 0.0, 2.0, null, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
   // PT poker (REQ: requirements/pt-new-jurisdiction, REQ-PT-2): the second
   // homologated sub-record family in the PT seed (slots R10 -> 'fortazar',
-  // this cash hand -> 'poker'). GGR = the 0.40 rake only.
-  ["P7", "A11001", "G6", "CASH_HAND", 5.0, 0.0, 0.4, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
+  // this cash hand -> 'poker'). GGR = the 0.40 rake only. Stamped with PT's
+  // platform session GS-PT1 (REQ: requirements/session-tracking).
+  ["P7", "A11001", "G6", "CASH_HAND", 5.0, 0.0, 0.4, "GS-PT1", "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
 ];
 
 const jackpotPools = [
@@ -497,6 +529,28 @@ const jackpotWins = [
   // win_id, jackpot_id, account_id, amount, win_ts
   // Pool pays out (seed + almost all contributions); balance stays >= 0
   ["W1", "JP1", "A2002", 100000.10, "2026-07-08 10:10:05+00"],
+];
+
+// ---- SESSION TRACKING seed (REQ: requirements/session-tracking) ----
+// Platform-session lifecycle rows (the OLTP's gaming_sessions mirror):
+// minted at login, ended by LOGOUT or by the 30-minute INACTIVITY timeout
+// (the timeout is enforced in the OLTP; the pipeline receives the result).
+//   GS-NL1: A6001's opted-in NL login — slots rounds R11/R12 AND their OJ1
+//           contributions OJC5/OJC6 in ONE session, ended INACTIVITY 30 min
+//           after the last activity (12:15:05 -> 12:45:05). Derives the
+//           slots game session + the OPERATOR-JACKPOT SHADOW SESSION.
+//   GS-NL2: A6001's second login (R13 + OJC7), ended LOGOUT — so the
+//           INACTIVITY vs LOGOUT end reasons are distinct in the NL file
+//           (acceptance 5).
+//   GS-PT1: A11001's PT login covering the existing seeded play (slots R10
+//           + poker P7), ended LOGOUT — PT reports the login itself.
+const gamingSessions = [
+  // session_id, account_id, started_at, last_activity_ts, ended_at, end_reason, _op, _commit_ts
+  ["GS-NL1", "A6001", "2026-07-08 12:00:00+00", "2026-07-08 12:15:05+00", "2026-07-08 12:45:05+00", "INACTIVITY", "I", "2026-07-08 12:45:06+00"],
+  ["GS-NL2", "A6001", "2026-07-08 14:00:00+00", "2026-07-08 14:30:00+00", "2026-07-08 14:30:00+00", "LOGOUT", "I", "2026-07-08 14:30:01+00"],
+  ["GS-PT1", "A11001", "2026-07-08 08:55:00+00", "2026-07-08 11:00:00+00", "2026-07-08 11:05:00+00", "LOGOUT", "I", "2026-07-08 11:05:01+00"],
+  // CDC replay of GS-NL1's terminal image — staging must dedupe to one row.
+  ["GS-NL1", "A6001", "2026-07-08 12:00:00+00", "2026-07-08 12:15:05+00", "2026-07-08 12:45:05+00", "INACTIVITY", "U", "2026-07-08 12:50:00+00"],
 ];
 
 // column name + logical type per table ('ts' = tz-aware timestamp,
@@ -552,7 +606,8 @@ const tables = {
     columns: [
       ["round_ref", "str"], ["player_ref", "str"], ["game_ref", "str"],
       ["bet_amount", "num"], ["win_amount", "num"], ["jp_contribution", "num"],
-      ["jp_id", "str"], ["round_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
+      ["jp_id", "str"], ["session_ref", "str"], // REQ: requirements/session-tracking
+      ["round_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
     ],
   },
   cdc_evolution_transactions: {
@@ -621,7 +676,8 @@ const tables = {
     columns: [
       ["activity_id", "str"], ["account_id", "str"], ["game_id", "str"],
       ["kind", "str"], ["amount_in", "num"], ["amount_out", "num"],
-      ["rake_or_fee", "num"], ["activity_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
+      ["rake_or_fee", "num"], ["session_id", "str"], // REQ: requirements/session-tracking
+      ["activity_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
     ],
   },
   cdc_jackpot_pools: {
@@ -656,20 +712,31 @@ const tables = {
     columns: [
       ["contribution_id", "str"], ["account_id", "str"], ["jackpot_id", "str"],
       ["game_id", "str"], ["trigger_type", "str"], ["trigger_ref", "str"],
-      ["amount", "num"], ["contributed_at", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
+      ["amount", "num"], ["session_id", "str"], // REQ: requirements/session-tracking
+      ["contributed_at", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
     ],
   },
   cdc_operator_jackpot_wins: {
     rows: operatorJackpotWins,
     columns: [
       ["win_id", "str"], ["jackpot_id", "str"], ["account_id", "str"],
-      ["game_id", "str"], ["amount", "num"], ["win_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
+      ["game_id", "str"], ["amount", "num"], ["session_id", "str"], // REQ: requirements/session-tracking
+      ["win_ts", "ts"], ["_op", "str"], ["_commit_ts", "ts"],
     ],
   },
   cdc_game_round_voids: {
     rows: gameRoundVoids,
     columns: [
       ["round_id", "str"], ["voided_at", "ts"],
+    ],
+  },
+  // REQ: requirements/session-tracking (REQ-ST-1)
+  cdc_gaming_sessions: {
+    rows: gamingSessions,
+    columns: [
+      ["session_id", "str"], ["account_id", "str"], ["started_at", "ts"],
+      ["last_activity_ts", "ts"], ["ended_at", "ts"], ["end_reason", "str"],
+      ["_op", "str"], ["_commit_ts", "ts"],
     ],
   },
   cdc_account_addresses: {

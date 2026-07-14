@@ -50,6 +50,13 @@ publish("stg_operator_jackpot_contributions", {
   assertions: { uniqueKey: ["contribution_id"], nonNull: ["contribution_id", "account_id", "jackpot_id", "game_id", "amount"] },
 }).query((ctx) => m.stgOperatorJackpotContributions(ctx));
 
+// REQ: requirements/session-tracking (REQ-ST-1)
+publish("stg_gaming_sessions", {
+  type: "view", schema: "staging", tags: ["staging", "sessions"],
+  description: "Platform-session lifecycle (login -> logout/inactivity timeout), deduped latest-per-session. The source of truth every per-game session view derives from.",
+  assertions: { uniqueKey: ["session_id"], nonNull: ["session_id", "account_id", "started_at"] },
+}).query((ctx) => m.stgGamingSessions(ctx));
+
 publish("stg_operator_jackpot_wins", {
   type: "view", schema: "staging", tags: ["staging", "gaming", "operator_jackpot"],
   description: "Operator-jackpot payouts, correlated to the phantom game so the win maps to a licensed vertical.",

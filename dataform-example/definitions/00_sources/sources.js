@@ -24,6 +24,7 @@ const sources = [
   "cdc_operator_jackpot_contributions", // unified-balance contributions (gaming + sports triggers)
   "cdc_operator_jackpot_wins",          // operator jackpot payouts (correlated to the phantom game)
   "cdc_game_round_voids",               // provider round rollbacks/voids (drive the refund cascade)
+  "cdc_gaming_sessions",   // platform-session lifecycle: login -> logout/timeout (REQ: requirements/session-tracking)
   "cdc_account_addresses",   // customer addresses (postcode validated per market)
   "cdc_postcode_regions",    // postcode-prefix -> region reference (lookup; may lag)
   "cdc_source_watermarks",   // per-source completeness watermarks (differential-speed data)

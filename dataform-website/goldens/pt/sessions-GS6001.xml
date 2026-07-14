@@ -1,0 +1,22 @@
+<ficheiro>
+  <cod_entexpl>77</cod_entexpl>
+  <datahr>20260714120000</datahr>
+  <id_ficheiro>16911</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_log>
+    <jogador>
+      <codjogador>W6001</codjogador>
+      <id_sessao>GS6001</id_sessao>
+      <timestp_acao>20260714103000.00 +00:00</timestp_acao>
+      <tipo_log>LOGIN</tipo_log>
+      <dispositivo>C</dispositivo>
+    </jogador>
+    <jogador>
+      <codjogador>W6001</codjogador>
+      <id_sessao>GS6001</id_sessao>
+      <timestp_acao>20260714111500.00 +00:00</timestp_acao>
+      <tipo_log>LOGOUT</tipo_log>
+      <dispositivo>C</dispositivo>
+    </jogador>
+  </registos_log>
+</ficheiro>

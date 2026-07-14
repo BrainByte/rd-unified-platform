@@ -141,15 +141,18 @@ INSERT INTO cdc_landing.cdc_games VALUES
   ('G9', 'Age of the Gods', 'Playtech', 'aog', 'Slot', 'I', TIMESTAMP '2026-07-01 09:00:00+00'),
   ('OJ1', 'Operator Mega Jackpot', 'operator', NULL, 'Operator Jackpot', 'I', TIMESTAMP '2026-07-01 09:00:00+00');
 
-CREATE OR REPLACE TABLE cdc_landing.cdc_netent_rounds (round_ref STRING, player_ref STRING, game_ref STRING, bet_amount NUMERIC, win_amount NUMERIC, jp_contribution NUMERIC, jp_id STRING, round_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
+CREATE OR REPLACE TABLE cdc_landing.cdc_netent_rounds (round_ref STRING, player_ref STRING, game_ref STRING, bet_amount NUMERIC, win_amount NUMERIC, jp_contribution NUMERIC, jp_id STRING, session_ref STRING, round_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_netent_rounds VALUES
-  ('R1', 'A1001', '1101', 2, 0.5, 0, NULL, TIMESTAMP '2026-07-08 09:00:00+00', 'I', TIMESTAMP '2026-07-08 09:00:01+00'),
-  ('R3', 'A1001', '1102', 25, 25, 0, NULL, TIMESTAMP '2026-07-08 09:20:00+00', 'I', TIMESTAMP '2026-07-08 09:20:01+00'),
-  ('R4', 'A1001', '1103', 4, 0, 0.04, 'JP1', TIMESTAMP '2026-07-08 09:30:00+00', 'I', TIMESTAMP '2026-07-08 09:30:01+00'),
-  ('R7', 'A2001', '1101', 8, 12, 0, NULL, TIMESTAMP '2026-07-08 10:00:00+00', 'I', TIMESTAMP '2026-07-08 10:00:01+00'),
-  ('R8', 'A2002', '1103', 10, 0, 0.1, 'JP1', TIMESTAMP '2026-07-08 10:10:00+00', 'I', TIMESTAMP '2026-07-08 10:10:01+00'),
-  ('R10', 'A11001', '1101', 8, 2, 0, NULL, TIMESTAMP '2026-07-08 09:00:00+00', 'I', TIMESTAMP '2026-07-08 09:00:01+00');
+  ('R1', 'A1001', '1101', 2, 0.5, 0, NULL, NULL, TIMESTAMP '2026-07-08 09:00:00+00', 'I', TIMESTAMP '2026-07-08 09:00:01+00'),
+  ('R3', 'A1001', '1102', 25, 25, 0, NULL, NULL, TIMESTAMP '2026-07-08 09:20:00+00', 'I', TIMESTAMP '2026-07-08 09:20:01+00'),
+  ('R4', 'A1001', '1103', 4, 0, 0.04, 'JP1', NULL, TIMESTAMP '2026-07-08 09:30:00+00', 'I', TIMESTAMP '2026-07-08 09:30:01+00'),
+  ('R7', 'A2001', '1101', 8, 12, 0, NULL, NULL, TIMESTAMP '2026-07-08 10:00:00+00', 'I', TIMESTAMP '2026-07-08 10:00:01+00'),
+  ('R8', 'A2002', '1103', 10, 0, 0.1, 'JP1', NULL, TIMESTAMP '2026-07-08 10:10:00+00', 'I', TIMESTAMP '2026-07-08 10:10:01+00'),
+  ('R10', 'A11001', '1101', 8, 2, 0, NULL, 'GS-PT1', TIMESTAMP '2026-07-08 09:00:00+00', 'I', TIMESTAMP '2026-07-08 09:00:01+00'),
+  ('R11', 'A6001', '1101', 5, 2, 0, NULL, 'GS-NL1', TIMESTAMP '2026-07-08 12:05:00+00', 'I', TIMESTAMP '2026-07-08 12:05:01+00'),
+  ('R12', 'A6001', '1101', 3, 0, 0, NULL, 'GS-NL1', TIMESTAMP '2026-07-08 12:15:00+00', 'I', TIMESTAMP '2026-07-08 12:15:01+00'),
+  ('R13', 'A6001', '1101', 2, 1, 0, NULL, 'GS-NL2', TIMESTAMP '2026-07-08 14:05:00+00', 'I', TIMESTAMP '2026-07-08 14:05:01+00');
 
 CREATE OR REPLACE TABLE cdc_landing.cdc_evolution_transactions (tx_id STRING, round_ref STRING, player_ref STRING, table_ref STRING, tx_type STRING, amount_cents NUMERIC, tx_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
@@ -223,21 +226,21 @@ INSERT INTO cdc_landing.cdc_payments VALUES
 CREATE OR REPLACE TABLE cdc_landing.cdc_provider_statements (provider STRING, statement_date DATE, reported_ggr NUMERIC);
 
 INSERT INTO cdc_landing.cdc_provider_statements VALUES
-  ('NetEnt', DATE '2026-07-08', 17.5),
+  ('NetEnt', DATE '2026-07-08', 24.5),
   ('Evolution', DATE '2026-07-08', 5),
   ('Playtech', DATE '2026-07-08', 5),
   ('Spribe', DATE '2026-07-08', 3);
 
-CREATE OR REPLACE TABLE cdc_landing.cdc_poker_activity (activity_id STRING, account_id STRING, game_id STRING, kind STRING, amount_in NUMERIC, amount_out NUMERIC, rake_or_fee NUMERIC, activity_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
+CREATE OR REPLACE TABLE cdc_landing.cdc_poker_activity (activity_id STRING, account_id STRING, game_id STRING, kind STRING, amount_in NUMERIC, amount_out NUMERIC, rake_or_fee NUMERIC, session_id STRING, activity_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_poker_activity VALUES
-  ('P1', 'A1002', 'G6', 'CASH_HAND', 5, 9.7, 0.3, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00'),
-  ('P2', 'A1001', 'G7', 'TOURNAMENT_ENTRY', 11, 40, 1, TIMESTAMP '2026-07-08 12:00:00+00', 'I', TIMESTAMP '2026-07-08 12:00:01+00'),
-  ('P3', 'A2001', 'G6', 'CASH_HAND', 20, 0, 1, TIMESTAMP '2026-07-08 11:30:00+00', 'I', TIMESTAMP '2026-07-08 11:30:01+00'),
-  ('P4', 'A2002', 'G7', 'TOURNAMENT_ENTRY', 55, 0, 5, TIMESTAMP '2026-07-08 12:30:00+00', 'I', TIMESTAMP '2026-07-08 12:30:01+00'),
-  ('P5', 'A10001', 'G6', 'CASH_HAND', 10, 18, 0.5, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00'),
-  ('P6', 'A10001', 'G7', 'TOURNAMENT_ENTRY', 20, 0, 2, TIMESTAMP '2026-07-08 12:00:00+00', 'I', TIMESTAMP '2026-07-08 12:00:01+00'),
-  ('P7', 'A11001', 'G6', 'CASH_HAND', 5, 0, 0.4, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00');
+  ('P1', 'A1002', 'G6', 'CASH_HAND', 5, 9.7, 0.3, NULL, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00'),
+  ('P2', 'A1001', 'G7', 'TOURNAMENT_ENTRY', 11, 40, 1, NULL, TIMESTAMP '2026-07-08 12:00:00+00', 'I', TIMESTAMP '2026-07-08 12:00:01+00'),
+  ('P3', 'A2001', 'G6', 'CASH_HAND', 20, 0, 1, NULL, TIMESTAMP '2026-07-08 11:30:00+00', 'I', TIMESTAMP '2026-07-08 11:30:01+00'),
+  ('P4', 'A2002', 'G7', 'TOURNAMENT_ENTRY', 55, 0, 5, NULL, TIMESTAMP '2026-07-08 12:30:00+00', 'I', TIMESTAMP '2026-07-08 12:30:01+00'),
+  ('P5', 'A10001', 'G6', 'CASH_HAND', 10, 18, 0.5, NULL, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00'),
+  ('P6', 'A10001', 'G7', 'TOURNAMENT_ENTRY', 20, 0, 2, NULL, TIMESTAMP '2026-07-08 12:00:00+00', 'I', TIMESTAMP '2026-07-08 12:00:01+00'),
+  ('P7', 'A11001', 'G6', 'CASH_HAND', 5, 0, 0.4, 'GS-PT1', TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00');
 
 CREATE OR REPLACE TABLE cdc_landing.cdc_jackpot_pools (jackpot_id STRING, jackpot_name STRING, provider STRING, seed_amount NUMERIC, contribution_rate NUMERIC);
 
@@ -257,25 +260,37 @@ INSERT INTO cdc_landing.cdc_operator_jackpot_pools VALUES
 CREATE OR REPLACE TABLE cdc_landing.cdc_jackpot_optins (optin_id STRING, account_id STRING, jackpot_id STRING, opted_in_at TIMESTAMP, opted_out_at TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_jackpot_optins VALUES
-  ('OPT1', 'A1001', 'OJP1', TIMESTAMP '2026-07-01 00:00:00+00', NULL, 'I', TIMESTAMP '2026-07-01 00:00:01+00');
+  ('OPT1', 'A1001', 'OJP1', TIMESTAMP '2026-07-01 00:00:00+00', NULL, 'I', TIMESTAMP '2026-07-01 00:00:01+00'),
+  ('OPT2', 'A6001', 'OJP1', TIMESTAMP '2026-07-05 00:00:00+00', NULL, 'I', TIMESTAMP '2026-07-05 00:00:01+00');
 
-CREATE OR REPLACE TABLE cdc_landing.cdc_operator_jackpot_contributions (contribution_id STRING, account_id STRING, jackpot_id STRING, game_id STRING, trigger_type STRING, trigger_ref STRING, amount NUMERIC, contributed_at TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
+CREATE OR REPLACE TABLE cdc_landing.cdc_operator_jackpot_contributions (contribution_id STRING, account_id STRING, jackpot_id STRING, game_id STRING, trigger_type STRING, trigger_ref STRING, amount NUMERIC, session_id STRING, contributed_at TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_operator_jackpot_contributions VALUES
-  ('OJC1', 'A1001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R1', 5, TIMESTAMP '2026-07-08 09:00:05+00', 'I', TIMESTAMP '2026-07-08 09:00:06+00'),
-  ('OJC2', 'A1001', 'OJP1', 'OJ1', 'SPORTS_BET', 'S1', 4, TIMESTAMP '2026-07-08 10:00:05+00', 'I', TIMESTAMP '2026-07-08 10:00:06+00'),
-  ('OJC3', 'A1001', 'OJP1', 'OJ1', 'SPORTS_BET', 'S2', 6, TIMESTAMP '2026-07-08 11:00:05+00', 'I', TIMESTAMP '2026-07-08 11:00:06+00'),
-  ('OJC4', 'A1001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R99', 7, TIMESTAMP '2026-07-08 09:05:05+00', 'I', TIMESTAMP '2026-07-08 09:05:06+00');
+  ('OJC1', 'A1001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R1', 5, NULL, TIMESTAMP '2026-07-08 09:00:05+00', 'I', TIMESTAMP '2026-07-08 09:00:06+00'),
+  ('OJC2', 'A1001', 'OJP1', 'OJ1', 'SPORTS_BET', 'S1', 4, NULL, TIMESTAMP '2026-07-08 10:00:05+00', 'I', TIMESTAMP '2026-07-08 10:00:06+00'),
+  ('OJC3', 'A1001', 'OJP1', 'OJ1', 'SPORTS_BET', 'S2', 6, NULL, TIMESTAMP '2026-07-08 11:00:05+00', 'I', TIMESTAMP '2026-07-08 11:00:06+00'),
+  ('OJC4', 'A1001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R99', 7, NULL, TIMESTAMP '2026-07-08 09:05:05+00', 'I', TIMESTAMP '2026-07-08 09:05:06+00'),
+  ('OJC5', 'A6001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R11', 0.05, 'GS-NL1', TIMESTAMP '2026-07-08 12:05:05+00', 'I', TIMESTAMP '2026-07-08 12:05:06+00'),
+  ('OJC6', 'A6001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R12', 0.03, 'GS-NL1', TIMESTAMP '2026-07-08 12:15:05+00', 'I', TIMESTAMP '2026-07-08 12:15:06+00'),
+  ('OJC7', 'A6001', 'OJP1', 'OJ1', 'GAMING_ROUND', 'NE:R13', 0.02, 'GS-NL2', TIMESTAMP '2026-07-08 14:05:05+00', 'I', TIMESTAMP '2026-07-08 14:05:06+00');
 
-CREATE OR REPLACE TABLE cdc_landing.cdc_operator_jackpot_wins (win_id STRING, jackpot_id STRING, account_id STRING, game_id STRING, amount NUMERIC, win_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
+CREATE OR REPLACE TABLE cdc_landing.cdc_operator_jackpot_wins (win_id STRING, jackpot_id STRING, account_id STRING, game_id STRING, amount NUMERIC, session_id STRING, win_ts TIMESTAMP, _op STRING, _commit_ts TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_operator_jackpot_wins VALUES
-  ('OJW1', 'OJP1', 'A1001', 'OJ1', 3, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00');
+  ('OJW1', 'OJP1', 'A1001', 'OJ1', 3, NULL, TIMESTAMP '2026-07-08 11:00:00+00', 'I', TIMESTAMP '2026-07-08 11:00:01+00');
 
 CREATE OR REPLACE TABLE cdc_landing.cdc_game_round_voids (round_id STRING, voided_at TIMESTAMP);
 
 INSERT INTO cdc_landing.cdc_game_round_voids VALUES
   ('NE:R99', TIMESTAMP '2026-07-08 09:05:30+00');
+
+CREATE OR REPLACE TABLE cdc_landing.cdc_gaming_sessions (session_id STRING, account_id STRING, started_at TIMESTAMP, last_activity_ts TIMESTAMP, ended_at TIMESTAMP, end_reason STRING, _op STRING, _commit_ts TIMESTAMP);
+
+INSERT INTO cdc_landing.cdc_gaming_sessions VALUES
+  ('GS-NL1', 'A6001', TIMESTAMP '2026-07-08 12:00:00+00', TIMESTAMP '2026-07-08 12:15:05+00', TIMESTAMP '2026-07-08 12:45:05+00', 'INACTIVITY', 'I', TIMESTAMP '2026-07-08 12:45:06+00'),
+  ('GS-NL2', 'A6001', TIMESTAMP '2026-07-08 14:00:00+00', TIMESTAMP '2026-07-08 14:30:00+00', TIMESTAMP '2026-07-08 14:30:00+00', 'LOGOUT', 'I', TIMESTAMP '2026-07-08 14:30:01+00'),
+  ('GS-PT1', 'A11001', TIMESTAMP '2026-07-08 08:55:00+00', TIMESTAMP '2026-07-08 11:00:00+00', TIMESTAMP '2026-07-08 11:05:00+00', 'LOGOUT', 'I', TIMESTAMP '2026-07-08 11:05:01+00'),
+  ('GS-NL1', 'A6001', TIMESTAMP '2026-07-08 12:00:00+00', TIMESTAMP '2026-07-08 12:15:05+00', TIMESTAMP '2026-07-08 12:45:05+00', 'INACTIVITY', 'U', TIMESTAMP '2026-07-08 12:50:00+00');
 
 CREATE OR REPLACE TABLE cdc_landing.cdc_account_addresses (account_id STRING, postcode STRING, city STRING, _op STRING, _commit_ts TIMESTAMP);
 

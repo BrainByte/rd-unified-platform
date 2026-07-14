@@ -98,6 +98,9 @@ FORMATTERS = {
     ("NL", "payments"): engine.bind(nl_v1_11.SPEC, "payments"),
     ("NL", "players"):  engine.bind(nl_v1_11.SPEC, "players"),
     ("NL", "gaming"):   engine.bind(nl_v1_11.SPEC, "gaming"),
+    # true per-game session grain (rounds ride inside these for NL)
+    # REQ: requirements/session-tracking (REQ-ST-6)
+    ("NL", "sessions"): engine.bind(nl_v1_11.SPEC, "sessions"),
 
     # FR is spec-only (no hand-written module ever existed): the ANJ
     # event-log traces, where one canonical record fans out to several
@@ -116,6 +119,9 @@ FORMATTERS = {
     ("PT", "payments"): engine.bind(pt_v1.SPEC, "payments"),
     ("PT", "players"):  engine.bind(pt_v1.SPEC, "players"),
     ("PT", "gaming"):   engine.bind(pt_v1.SPEC, "gaming"),
+    # platform sessions as SESS_ LOGIN/LOGOUT files
+    # REQ: requirements/session-tracking (REQ-ST-6)
+    ("PT", "sessions"): engine.bind(pt_v1.SPEC, "sessions"),
 }
 
 

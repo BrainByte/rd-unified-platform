@@ -136,6 +136,76 @@ const RULE_TYPES = {
     `,
   },
 
+  // ---- SESSION rule types (REQ: requirements/session-tracking, REQ-ST-5) ----
+  // ST-201-style: every session-stamped play's timestamp must fall inside its
+  // platform session's [start, end] window (an open session has no upper
+  // bound yet). Cross-domain: checks the core facts for THIS market's
+  // players, like no_unlicensed_games checks the gaming fact.
+  activity_within_session: {
+    validate: (r, j) =>
+      j && j.sessionReporting
+        ? []
+        : [`${r.id}: activity_within_session requires sessionReporting config on the market`],
+    violations: (ctx, j, r) => `
+      SELECT '${r.id}' AS rule_id, g.activity_id AS row_key, CAST(NULL AS DATE) AS report_date
+      FROM ${ctx.ref("fct_gaming_activity")} g
+      JOIN ${ctx.ref("fct_platform_sessions")} s ON g.session_id = s.session_id
+      JOIN ${ctx.ref("dim_customer_account")} a ON s.account_id = a.account_id
+      WHERE a.jurisdiction = '${j.code}'
+        AND (g.occurred_at < s.started_at
+             OR (s.ended_at IS NOT NULL AND g.occurred_at > s.ended_at))
+    `,
+  },
+
+  // ST-202-style: at most one open platform session per player.
+  single_open_session: {
+    validate: (r, j) =>
+      j && j.sessionReporting
+        ? []
+        : [`${r.id}: single_open_session requires sessionReporting config on the market`],
+    violations: (ctx, j, r) => `
+      SELECT '${r.id}' AS rule_id, s.account_id AS row_key, CAST(NULL AS DATE) AS report_date
+      FROM ${ctx.ref("fct_platform_sessions")} s
+      JOIN ${ctx.ref("dim_customer_account")} a ON s.account_id = a.account_id
+      WHERE a.jurisdiction = '${j.code}' AND s.ended_at IS NULL
+      GROUP BY s.account_id
+      HAVING COUNT(*) > 1
+    `,
+  },
+
+  // ST-203-style: end reason must come from the market's configured
+  // vocabulary (sessionReporting.endReasons) — the allowed set is CONFIG,
+  // so the rule never repeats it.
+  end_reason_in_set: {
+    validate: (r, j) =>
+      j && j.sessionReporting && Array.isArray(j.sessionReporting.endReasons) && j.sessionReporting.endReasons.length
+        ? []
+        : [`${r.id}: end_reason_in_set requires non-empty sessionReporting.endReasons on the market`],
+    violations: (ctx, j, r, t, k, d) => std(ctx, j, r, t,
+      `end_reason IS NULL OR end_reason NOT IN (${j.sessionReporting.endReasons.map((v) => `'${v}'`).join(", ")})`, k, d),
+  },
+
+  // ST-204-style — THE single-game invariant (REQ-ST-4): no derived game
+  // session may aggregate more than one game. Checked over the
+  // PRE-AGGREGATION set (fct_game_session_activity): grouping by the derived
+  // game-session key, COUNT(DISTINCT game) must be 1 — a jackpot
+  // contribution mis-stamped into a slots game session shows up here as a
+  // second distinct game under one key.
+  single_game_session: {
+    validate: (r, j) =>
+      j && j.sessionReporting && j.sessionReporting.granularity === "per_game"
+        ? []
+        : [`${r.id}: single_game_session requires sessionReporting granularity 'per_game'`],
+    violations: (ctx, j, r) => `
+      SELECT '${r.id}' AS rule_id, ga.game_session_id AS row_key, CAST(NULL AS DATE) AS report_date
+      FROM ${ctx.ref("fct_game_session_activity")} ga
+      JOIN ${ctx.ref("dim_customer_account")} a ON ga.account_id = a.account_id
+      WHERE a.jurisdiction = '${j.code}'
+      GROUP BY ga.game_session_id
+      HAVING COUNT(DISTINCT ga.game_id) > 1
+    `,
+  },
+
   // cross-domain rule: no slip in the file may be VOIDED in the lifecycle fact
   no_voided_slips: {
     validate: () => [],
@@ -163,6 +233,13 @@ function periodicRules(report, commonPeriodicRules) {
   return [...commonPeriodicRules, ...(report.rules || [])];
 }
 
+// Session-reporting rules come from the market's sessionReporting block —
+// a market without the block has none.
+// REQ: requirements/session-tracking (REQ-ST-5)
+function marketSessionRules(j) {
+  return (j.sessionReporting && j.sessionReporting.rules) || [];
+}
+
 // opts: { table, keyColumn, dateColumn } — defaults target the betting
 // submission file; gaming assertions pass the gaming file + activity_id;
 // periodic-register assertions pass the register table + player_ref +
@@ -176,4 +253,4 @@ function violationQuery(ctx, j, rule, opts = {}) {
   return type.violations(ctx, j, rule, table, opts.keyColumn || "slip_id", opts.dateColumn || "report_date");
 }
 
-module.exports = { RULE_TYPES, marketRules, marketGamingRules, periodicRules, violationQuery };
+module.exports = { RULE_TYPES, marketRules, marketGamingRules, periodicRules, marketSessionRules, violationQuery };

@@ -451,6 +451,30 @@ const jurisdictions = {
       defaultSportCode: "OV", // overig / other
       eventNameTemplate: "{home} - {away}",
     },
+    // ---- SESSION REPORTING (REQ: requirements/session-tracking, REQ-ST-2/7) ----
+    // The Netherlands defines sessions PER GAME: the CDB WOK_Game_Session
+    // carries exactly one Game_ID, and the kansspelbelasting (KSB) GAT report
+    // needs the same single-game basis — so game sessions are DERIVED from
+    // the stored platform session plus the activity stamped with it
+    // (REQ-ST-3), and the operator-jackpot shadow session emerges from that
+    // derivation because OJ1 contributions are stamped gaming activity of
+    // their own game (REQ-ST-4). Timeout minutes are config, not code.
+    sessionReporting: {
+      granularity: "per_game",          // platform | per_game
+      timeoutMinutes: 30,               // inactivity disconnect
+      endReasons: ["LOGOUT", "INACTIVITY"],
+      reportEmptySessions: false,       // a login with no play is not reported
+      rules: [
+        { id: "ST-201", type: "activity_within_session",
+          description: "Every session-stamped play must fall inside its platform session's [start, end] window" },
+        { id: "ST-202", type: "single_open_session",
+          description: "At most one open platform session per player (Koa concurrent-login policy)" },
+        { id: "ST-203", type: "end_reason_in_set",
+          description: "Session end reason must come from the configured vocabulary (LOGOUT/INACTIVITY)" },
+        { id: "ST-204", type: "single_game_session",
+          description: "THE CDB/GAT invariant: no derived game session may aggregate more than one game" },
+      ],
+    },
     rules: [
       { id: "NL-101", type: "valid_sport_code",
         description: "Sport code must be a KSA-published code" },
@@ -715,6 +739,26 @@ const jurisdictions = {
       unmappedPolicy: "block",
       defaultSportCode: null,
       eventNameTemplate: "{home} - {away}",
+    },
+    // ---- SESSION REPORTING (REQ: requirements/session-tracking, REQ-ST-2/7) ----
+    // Portugal reports the LOGIN itself: the SESS_ record family carries
+    // LOGIN/LOGOUT events for the platform session, so PT reads the stored
+    // platform sessions directly — 'platform' granularity, same stored facts
+    // as NL's per-game regime (REQ-ST-3: a granularity change is config, not
+    // a migration). No single-game invariant applies at this grain.
+    sessionReporting: {
+      granularity: "platform",
+      timeoutMinutes: 30,
+      endReasons: ["LOGOUT", "INACTIVITY"],
+      reportEmptySessions: false,
+      rules: [
+        { id: "ST-201", type: "activity_within_session",
+          description: "Every session-stamped play must fall inside its platform session's [start, end] window" },
+        { id: "ST-202", type: "single_open_session",
+          description: "At most one open platform session per player" },
+        { id: "ST-203", type: "end_reason_in_set",
+          description: "SESS_ tipo_log vocabulary: end reason must be LOGOUT or INACTIVITY" },
+      ],
     },
     rules: [
       { id: "PT-101", type: "in_set", field: "slip_status", values: ["SETTLED", "VOIDED"],
