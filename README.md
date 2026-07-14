@@ -18,6 +18,7 @@ BigQuery + Dataform; the entire pipeline also runs offline in DuckDB in seconds.
 |---|---|
 | [`README_FIRST.md`](README_FIRST.md) | **The map** — how to digest this material, in order |
 | [`how-to.md`](how-to.md) | **The training guide** — what every artifact is, the universal change workflow, and step-by-step use cases (new reported field, new gaming product, DGOJ periodic reporting for Spain, a whole new jurisdiction). *The first place to go when asked to change something* |
+| [`big-query-dataforms-howto.md`](big-query-dataforms-howto.md) | **The deployment runbook** — step-by-step installation into an existing GCP project: BigQuery + Dataform setup (Git-connected repository, release/workflow configs, seed proof run, CDC cutover), and the Python translation layer on Cloud Run orchestrated by Cloud Workflows so regulator XML is produced only when the data is ready |
 | [`OVERVIEW.md`](OVERVIEW.md) | The *why*, for technical decision-makers: 17 stored-proc forks vs one config-driven codebase |
 | [`technology-skills-migration.md`](technology-skills-migration.md) | For SQL Server / OLTP engineers: where the triggers, procs, views and `IF @Market` went |
 | [`performance-analysis.md`](performance-analysis.md) | In-depth performance comparison vs hand-crafted procs/triggers/views — runtime, write-path, scale and operational axes, with measured numbers and an honest "where legacy wins" |
