@@ -610,10 +610,24 @@ def admin():
                    AND receipt_id != 'VIA-SESSION'
                  ORDER BY submitted_at DESC LIMIT 12""")
     safe_recent = c.fetchall()
+    # the placeholders, shown SEPARATELY so routing is visible, never
+    # mistaken for (or hidden from) deliveries.
+    # REQ: requirements/session-tracking (REQ-ST-8)
+    c.execute("""SELECT jurisdiction, record_type, receipt_id, COUNT(*)
+                 FROM safe_submissions
+                 WHERE receipt_id LIKE 'SUPPRESSED-%' OR receipt_id = 'VIA-SESSION'
+                 GROUP BY 1, 2, 3 ORDER BY 1, 2, 3""")
+    safe_routed = c.fetchall()
+    routed_reasons = {
+        "VIA-SESSION": "rounds ride inside the per-game session records",
+        "SUPPRESSED-VOID": "this market never reports voids",
+        "SUPPRESSED-UNLICENSED": "vertical not licensed/homologated here",
+    }
     return render_template("admin/dashboard.html", players=players, open_bets=open_bets,
                            deposits24=deposits24, inflight=inflight, online=online,
                            recent_payments=recent_payments, arming=arming,
-                           safe_counts=safe_counts, safe_recent=safe_recent)
+                           safe_counts=safe_counts, safe_recent=safe_recent,
+                           safe_routed=safe_routed, routed_reasons=routed_reasons)
 
 
 @app.route("/admin/players")

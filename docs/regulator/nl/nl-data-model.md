@@ -55,6 +55,44 @@ The model is **event/record oriented rather than relational**: there are no XSD 
 - **Bets are composite** — a bet has 1–64 `Part` legs, each a UID-identified selection with event, sport, odds, live/bank flags, prognosis, and per-part stake, supporting singles, combinations, and system ("XY") bets.
 - **Corrections chain** — most record types allow an optional `Replaced_Record_ID` pointing at the record they supersede; independent of that, a `KSA_Cancellation` record can void any prior record by type and `Record_ID`. Together these provide replace and delete semantics over an append-only stream.
 
+## How sessions work (and the multi-game collision)
+
+The KSA model has **no platform-session entity**: a login as such is
+never reported. The only session in the CDB is `WOK_Game_Session_v1.11`,
+and it is **game-scoped by construction** — the record carries exactly
+one `Game_ID` alongside its `Game_Session_ID`, so a session spanning two
+games is structurally inexpressible. A session here means "one player's
+continuous play of one game": start/end datetimes, rounds played and
+won, optional commission, and the list of `{Transaction_ID,
+Player_Profile_ID}` pairs tying the money to the transaction ledger.
+The Dutch gambling-tax reporting (the **kansspelbelasting/KSB GAT**
+report to the Belastingdienst — a separate delivery from the KSA CDB)
+requires session figures on the same single-game basis. *(GAT layout and
+citation to be pinned against the Belastingdienst specification;
+requirement carried as stated by the business.)*
+
+That single-game rule collides with any product that makes one player
+action belong to two games at once. This platform's worked example is
+the **operator jackpot** (`requirements/operator-jackpots/`): a
+standalone opt-in game with no UI of its own that takes a contribution
+from every casino stake. One login where an opted-in player spins slots
+is therefore activity in *two* games — and for NL it must become **two
+parallel `WOK_Game_Session` records**.
+
+How this repository resolves it (`requirements/session-tracking/`):
+**platform sessions are stored** (login → logout or inactivity timeout),
+every play is stamped with its platform session, and NL's game sessions
+are **derived** — one per (platform session × game), first play to last
+play, rounds counted, transactions listed. The jackpot's contributions
+are stamped rounds of their own game, so its session (the "shadow
+session") emerges from the same derivation with no special-case code,
+and an assertion enforces the invariant that no derived session ever
+aggregates more than one game. Rounds are consequently **not** deposited
+individually for NL — they ride inside their game-session records, which
+file when the platform session ends (logout or timeout). The end
+*reason* is not a CDB field; it stays in the operator's tables, and the
+timeout is the operator's configured inactivity disconnect.
+
 ## Data typing approach
 
 All reusable types live in `include_v1.11.xsd`:

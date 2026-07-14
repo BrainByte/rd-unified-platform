@@ -74,6 +74,20 @@
 </table>
 {% else %}<p class="muted">Nothing delivered yet — the engine polls every few seconds;
 players, completed payments and settled bets flow through automatically.</p>{% endif %}
+{% if safe_routed %}
+<h3>Routed / suppressed <small class="muted">(bookkeeping — never deposited as
+individual records)</small></h3>
+<table>
+  <tr><th>Jurisdiction</th><th>Type</th><th>Routing</th><th>Records</th><th>Why</th></tr>
+  {% for r in safe_routed %}
+    <tr>
+      <td>{{ r[0] }}</td><td>{{ r[1] }}</td>
+      <td class="mono">{{ r[2] }}</td><td>{{ r[3] }}</td>
+      <td class="muted">{{ routed_reasons.get(r[2], '') }}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endif %}
 {% if safe_recent %}
 <table>
   <tr><th>Type</th><th>Record</th><th>Market</th><th>Receipt</th><th>When</th></tr>
