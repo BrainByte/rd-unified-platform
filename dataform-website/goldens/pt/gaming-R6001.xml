@@ -1,0 +1,60 @@
+<ficheiro>
+  <cod_entexpl>77</cod_entexpl>
+  <datahr>20260714120000</datahr>
+  <id_ficheiro>19154</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_jogo>
+    <jogador>
+      <codjogador>W6001</codjogador>
+      <logon>joana_pt</logon>
+      <conta_jog>
+        <codigo>W6001</codigo>
+        <saldo_ini>70.00</saldo_ini>
+        <saldo_mov>4.00</saldo_mov>
+        <saldo_fim>74.00</saldo_fim>
+        <bonus_ini>0.00</bonus_ini>
+        <bonus_mov>0.00</bonus_mov>
+        <bonus_fim>0.00</bonus_fim>
+        <pinscr_ini>0.00</pinscr_ini>
+        <pinscr_mov>0.00</pinscr_mov>
+        <pinscr_fim>0.00</pinscr_fim>
+      </conta_jog>
+      <apostas>
+        <fortazar>
+          <cod_ficha>R6001</cod_ficha>
+          <cod_aptr_jog>R6001</cod_aptr_jog>
+          <ap_cruz>N</ap_cruz>
+          <timestp_ini>20260714111500.00 +00:00</timestp_ini>
+          <timestp_fim>20260714111500.00 +00:00</timestp_fim>
+          <dathr_ini_evento>20260714111500</dathr_ini_evento>
+          <dathr_fim_evento>20260714111500</dathr_fim_evento>
+          <cod_fichajog>R6001-J</cod_fichajog>
+          <id_sessao>GS6001</id_sessao>
+          <ip_jogador>0.0.0.0</ip_jogador>
+          <ip_regiao>PT</ip_regiao>
+          <cod_opejog>R6001-OP</cod_opejog>
+          <timestp>20260714111500.00 +00:00</timestp>
+          <descr_ap>Slots</descr_ap>
+          <ro_result_nr>0</ro_result_nr>
+          <ro_result_cor>NA</ro_result_cor>
+          <sm_result>NA</sm_result>
+          <bin_cartao>NA</bin_cartao>
+          <bin_result>NA</bin_result>
+          <a_saldo_ini>70.00</a_saldo_ini>
+          <a_valor>2.00</a_valor>
+          <a_saldo_fim>68.00</a_saldo_fim>
+          <a_bonus_ini>0.00</a_bonus_ini>
+          <a_bonus>0.00</a_bonus>
+          <a_bonus_fim>0.00</a_bonus_fim>
+          <a_comissao>0.00</a_comissao>
+          <g_saldo_ini>68.00</g_saldo_ini>
+          <g_ganho>6.00</g_ganho>
+          <g_saldo_fim>74.00</g_saldo_fim>
+          <r_saldo_ini>74.00</r_saldo_ini>
+          <r_valor>0.00</r_valor>
+          <r_saldo_fim>74.00</r_saldo_fim>
+        </fortazar>
+      </apostas>
+    </jogador>
+  </registos_jogo>
+</ficheiro>

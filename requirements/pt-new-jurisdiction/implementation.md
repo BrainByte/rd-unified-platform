@@ -1,12 +1,13 @@
-# Portugal (PT) new jurisdiction — implementation plan
+# Portugal (PT) new jurisdiction — implementation
 
-*Step-by-step plan for [requirements.md](requirements.md), following
-[`how-to.md`](../../how-to.md) § 7 and the France precedent
+*Step-by-step record of how [requirements.md](requirements.md) was
+implemented, following [`how-to.md`](../../how-to.md) § 7 and the France
+precedent
 ([fr-new-jurisdiction/implementation.md](../fr-new-jurisdiction/implementation.md)).
-**Status: not yet implemented** — written ahead as the work order; as
-each part lands it gains its `REQ: requirements/pt-new-jurisdiction`
-change-site comments and the trace table moves from *planned* to
-*proven*. Sources: [pt-data-model.md](../../docs/regulator/pt/pt-data-model.md)
+Written ahead as the work order and executed as planned — § "As
+implemented" records where reality amended the plan. Every change site
+carries a grep-able `REQ: requirements/pt-new-jurisdiction` comment.
+Sources: [pt-data-model.md](../../docs/regulator/pt/pt-data-model.md)
 (gazette citations) and [docs/regulator/pt/derived/](../../docs/regulator/pt/derived/)
 (the transcribed schemas).*
 
@@ -130,15 +131,58 @@ Per how-to § 7 step 5, all data:
 4. PT reconciliation PDF: residual 0.00, completeness green.
 5. `reset_db.py` before the final commit.
 
-## Planned requirement → artifact trace
+## As implemented — amendments to the plan
 
-| Requirement | Planned artifact | To be proven by |
+The plan executed as written; reality added these findings:
+
+1. **The gazette-schema gate passed first time** — 10/10 goldens valid
+   against `derived/*.xsd` on the first run, because the spec and the
+   oracle were both built from the same gazette transcription (with its
+   defects already repaired at transcription time). The FR experience
+   (defects caught at gate time) and the PT experience (defects caught
+   at transcription time) are the two orderings of the same discipline.
+2. **Sub-record element order held two traps**: the poker family appends
+   a `pinscr_*` prize triplet after the refund triplet, and `fortazar`
+   carries **no** `resultado` element — both caught by reading the
+   schemas before freezing goldens, either would have failed the gate.
+3. **Two generic engine additions only**: the `digits14-fftz` codec
+   (Oracle-style `.FF TZH:TZM` timestamps, UTC-normalised) and a `mod`
+   modifier on the `crc` binding so numeric ids fit the gazette's
+   `xs:short` file id. No PT-specific engine code.
+4. **A live-wire cosmetic catch**: the account-movement figure could
+   render `-0.00` (negative float zero); normalised at source in
+   `_balances()`.
+5. **Decisions the docs left open** (agent-reported, commented in
+   config): illustrative Portuguese-flavoured sport codes
+   (FUTB/TENI/BASQ) pending the Modelo de Dados; `pbanca`/BACC kept
+   unmapped ("never type-approved for this operator") giving PT the
+   ES-style single-game block as well; flat 0.08 tax constant (the
+   schedule shape is proven elsewhere); the seeded NetEnt daily
+   statement uplifted so provider revenue-share recon stays at zero
+   breaks with the new PT slots round.
+6. **Demo simplifications, declared in code**: one enveloped `ficheiro`
+   per record (hourly batching is the production difference), cash-only
+   wallet (bonus/`pinscr` triplets zero), placeholder KYC/table/card
+   fields, and the current-balance-derived triplets shared with FR.
+
+Verification results: `npm run check` green — **135/135 unit tests, 76
+models, 132 rule assertions, 66 expectations, 19 negative tests**
+(before PT: 72/114/62/18); emit-sql diff additive only. Demo suites:
+PT **10/10 goldens + 10/10 gazette-schema-valid**; NL 9/9, ES 10/10,
+FR 12/12 + 9/9 all unchanged. Live: registered `joana_pt`, deposited,
+one bet settled and one voided (the `r_*` refund triplet restoring the
+balance exactly), slots and poker rounds both reported (full portfolio
+licensed — contrast FR), PT reconciliation residual 0.00, reported 6/6.
+
+## Requirement → artifact trace
+
+| Requirement | Implemented by | Proven by |
 |---|---|---|
-| REQ-PT-1 market as config | `jurisdictions.js` `PT` entry | validator + emit-sql additive diff |
-| REQ-PT-2 homologation as nomenclature | closed maps, `block`, no OJACK | negative test: OJACK round blocked from PT |
-| REQ-PT-3 split tax bases | `taxModel: "turnover"` + `gamingTaxRate` GGR | tax expectation proving stakes-based betting duty + GGR gaming duty |
-| REQ-PT-4 Safe formats from the engine | `specs/pt_v1.py` (envelope + JGDR/TRAN/AJOG) | golden files per record family |
-| REQ-PT-5 gazette schemas as oracle | `test_pt_spec.py` phase-2 XSD gate | goldens validate against `derived/*.xsd` |
-| REQ-PT-6 cadence simplification declared | envelope-per-record + module comments | doc + code comments; SAFE files carry the real envelope |
-| REQ-PT-7 player protection | `playerProtection` config | breach-detector fan-out includes PT |
-| REQ-PT-8 demo end-to-end | demo dict edits + PT SAFE folder | live e2e + PT reconciliation residual 0.00 |
+| REQ-PT-1 market as config | `jurisdictions.js` `PT` entry | validator clean; emit-sql diff additive only |
+| REQ-PT-2 homologation as nomenclature | closed maps, `block`, no OJACK/BACC; full `gaming_verticals` in the demo `MARKETS` | negative test `ptUnlicensedGameTest` (PT-201 fires); live slots AND poker both reported |
+| REQ-PT-3 split tax bases | `taxModel: "turnover"` 0.08 + `gamingTaxRate` 0.25 | expectations: 25 × 0.08 = 2.00 (stakes, not GGR's 1.20) and 6.40 × 0.25 = 1.60 |
+| REQ-PT-4 Safe formats from the engine | `specs/pt_v1.py` (ficheiro envelope + JGDR/TRAN/AJOG with triplets) | 10/10 golden files across every branch |
+| REQ-PT-5 gazette schemas as oracle | `test_pt_spec.py` phase-2 XSD gate | 10/10 goldens valid against `derived/*.xsd` |
+| REQ-PT-6 cadence simplification declared | envelope-per-record + module comments | SAFE files carry the real envelope (live `id_ficheiro`/`cod_cofre` verified) |
+| REQ-PT-7 player protection | `playerProtection` config (NATIONAL register, verification-gated withdrawal) | breach-detector fan-out includes PT (assertion count +18) |
+| REQ-PT-8 demo end-to-end | demo dict edits + PT SAFE folder | live e2e + PT reconciliation residual 0.00, reported 6/6 |

@@ -661,6 +661,125 @@ const jurisdictions = {
       withdrawalRequiresVerification: true,
     },
   },
+
+  // ==========================================================================
+  // PORTUGAL — SRIJ (Serviço de Regulação e Inspeção de Jogos, Turismo de
+  // Portugal), RJO (Decreto-Lei n.º 66/2015) + Regulamento n.º 903-B/2015
+  // (technical regime, analysed in docs/regulator/pt/pt-data-model.md). The
+  // NINTH market. A Safe/vault PULL regime: the operator's Captor deposits
+  // hourly AJOG_/TRAN_/JGDR_ XML files, packaged daily by 01:00, into an
+  // in-country Safe that SRIJ collects over FTPS — so the cadence here is
+  // daily and voids are FIRST-CLASS (refund triplets r_saldo_ini/r_valor/
+  // r_saldo_fim and the RESF_ total_reembolsos are part of the wire format).
+  // Full-KYC regime (nome/NIF/id_cidadao per secção 5.2.1): the player is
+  // identified by CLEAR operator account id, no pseudonymisation.
+  // THE PORTUGUESE DIFFERENCE — SPLIT TAX BASES (IEJO): fixed-odds sports
+  // betting is taxed on TURNOVER (stakes — the DE RennwLottG mechanics,
+  // reused exactly) while casino/poker games are taxed on GGR — the first
+  // market combining taxModel 'turnover' with a GGR gamingTaxRate.
+  // LICENSING — HOMOLOGATION: PT licenses the full portfolio, but every
+  // game must be individually homologated (type-approved) by SRIJ before
+  // offer (secção 3.2.1) — the fourth posture of the licensing story
+  // (MT licenses OJACK, ES blocks one game, FR blocks the casino vertical,
+  // PT blocks any NON-HOMOLOGATED game). Rates and codes ILLUSTRATIVE —
+  // pin to the IEJO articles and SRIJ's current Modelo de Dados before
+  // production. REQ: requirements/pt-new-jurisdiction (REQ-PT-1/2/3/7)
+  // ==========================================================================
+  PT: {
+    code: "PT",
+    dataset: "reporting_pt",
+    currency: "EUR",
+    rounding: 2,
+    timezone: "Europe/Lisbon",
+    addressValidation: { postcodePattern: "^[0-9]{4}-[0-9]{3}$" }, // código postal NNNN-NNN
+    submissionCadence: "daily", // daily package window (files by 01:00, Anexo 1)
+    includeVoided: true, // refund triplets / total_reembolsos are first-class
+    // IEJO on fixed-odds sports betting taxes the STAKES (turnover) — reuse
+    // the DE mechanics. 8% is ILLUSTRATIVE — pin to the IEJO articles
+    // (Decreto-Lei 66/2015 anexo) before production; the effective-dated
+    // schedule shape is already proven on BG/NL/FR if a change lands.
+    taxModel: "turnover",
+    taxRate: 0.08,
+    reportFields: [
+      "slip_id", "account_id", "slip_status",
+      "stake", "payout", "ggr",
+      "sport_code", "event_name",
+      "placed_at_local", "settled_at_local",
+    ],
+    // SRIJ authorises competitions per licence — a CLOSED list with no OTHER
+    // bucket, so unmapped sports BLOCK the file. No horse racing: apostas
+    // hípicas (the AJOG_ 'hipica' sub-record family) are a separate licence
+    // this operator does not hold, hence no HORS entry. Codes illustrative.
+    nomenclature: {
+      sportCodes: { FOOT: "FUTB", TENN: "TENI", BASK: "BASQ" },
+      unmappedPolicy: "block",
+      defaultSportCode: null,
+      eventNameTemplate: "{home} - {away}",
+    },
+    rules: [
+      { id: "PT-101", type: "in_set", field: "slip_status", values: ["SETTLED", "VOIDED"],
+        description: "Regulamento 903-B/2015 Anexo 1 (AJOG_): the daily file carries settled operations and refunds (reembolsos) only — open bets have no terminal record" },
+      { id: "PT-102", type: "zero_when", field: "payout", whenField: "slip_status", equals: "VOIDED",
+        description: "Regulamento 903-B/2015 Anexo 1: a refunded bet reports its stake back via the r_* triplet — a voided slip must report zero winnings" },
+      { id: "PT-103", type: "no_unmapped_fixtures",
+        description: "RJO art. 10.º / secção 3.2.1: only SRIJ-authorised competitions may be offered — an unmapped sport blocks the file" },
+      { id: "PT-104", type: "valid_sport_code",
+        description: "Sport code must be on the SRIJ authorised list (closed, no OTHER bucket)" },
+      { id: "PT-105", type: "max_value", field: "stake", value: 50000,
+        description: "Stakes above EUR 50k indicate a data error; block the file" },
+    ],
+
+    // ---- GAMING domain: homologation (REQ-PT-2) ----
+    // PT licenses the full demo portfolio (RJO art. 5.º: fixed-odds betting,
+    // poker, blackjack, games of chance), but ONLY games homologated by SRIJ
+    // (secção 3.2.1) may be offered. The map is therefore CLOSED over the
+    // homologated set, keyed to the AJOG_ sub-record families ('fortazar' =
+    // games of chance: roulette/slots; 'bjack'; 'poker'). NOT homologated:
+    //   - BACC (the 'pbanca' family exists in the regime, but this operator
+    //     never had its baccarat games type-approved), and
+    //   - OJACK (the operator jackpot was never submitted for homologation)
+    // — both are absent from the map, so unmappedPolicy 'block' +
+    // no_unlicensed_games keeps them out of every PT file.
+    gamingNomenclature: {
+      gameCodes: { SLOT: "fortazar", ROUL: "fortazar", BLKJ: "bjack", POKC: "poker", POKT: "poker" },
+      unmappedPolicy: "block",
+      defaultGameCode: null,
+    },
+    // THE SPLIT-BASIS MARKET (REQ-PT-3): betting duty above is TURNOVER
+    // (stakes x taxRate) while gaming duty here is GGR x gamingTaxRate —
+    // both IEJO arms in one entry. 25% is the ILLUSTRATIVE online-games
+    // rate — pin to the IEJO articles before production.
+    gamingTaxRate: 0.25,
+    // No homologated operator-jackpot game (OJACK is unmapped and blocked),
+    // so the policy is moot — declared 'gross' (validator requires one).
+    jackpotPolicy: "gross",
+    gamingReportFields: [
+      "activity_id", "account_id", "game_code", "game_name", "vertical",
+      "stake", "payout", "rake_or_fee", "gaming_ggr", "occurred_at_local",
+    ],
+    gamingRules: [
+      { id: "PT-201", type: "no_unlicensed_games",
+        description: "RJO / secção 3.2.1: every game offered must be SRIJ-homologated — a non-homologated game in a PT file is an unlicensed offering" },
+      { id: "PT-202", type: "valid_game_code",
+        description: "Game code must be a homologated AJOG_ sub-record family (fortazar/bjack/poker)" },
+    ],
+    // ---- PLAYER PROTECTION & PAYMENTS (REQ-PT-7) ----
+    playerProtection: {
+      // secção 5.3.2: player-set deposit AND bet limits, each at daily/
+      // weekly/monthly granularity (reductions immediate, relaxations after
+      // 24h) — mandatory to OFFER, but no statutory default amount, so no
+      // statutory arm here.
+      defaultDepositLimits: null,
+      // SRIJ's national self-exclusion register (lista de autoexcluídos) —
+      // consumed via the ListaExcluidos SOAP pull + real-time push in
+      // reality; mandatory to honour, like ES's RGIAJ and NL's CRUKS.
+      selfExclusionSources: ["OPERATOR", "NATIONAL"],
+      mandatoryRegister: "NATIONAL", // SRIJ lista de autoexcluídos
+      // Full KYC with AT (tax authority) / civil-registry verification at
+      // registration (secção 5.2.1); withdrawal requires a verified identity.
+      withdrawalRequiresVerification: true,
+    },
+  },
 };
 
 module.exports = { jurisdictions, commonRules, commonGamingRules, commonPeriodicRules };

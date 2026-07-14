@@ -69,7 +69,7 @@
 # defaulted, and each module says so where it does it.
 # ============================================================================
 from . import dk, engine, es, generic, gr, nl  # noqa: F401  (es/nl = test oracles)
-from .specs import es_v3_3, fr_v1, nl_v1_11
+from .specs import es_v3_3, fr_v1, nl_v1_11, pt_v1
 
 # (jurisdiction, record_type) -> formatter(canonical dict) -> xml.etree Element
 FORMATTERS = {
@@ -108,6 +108,14 @@ FORMATTERS = {
     ("FR", "payments"): engine.bind(fr_v1.SPEC, "payments"),
     ("FR", "players"):  engine.bind(fr_v1.SPEC, "players"),
     ("FR", "gaming"):   engine.bind(fr_v1.SPEC, "gaming"),
+
+    # PT is spec-only: SRIJ Safe category files whose validation oracle
+    # is the gazette's own schemas (docs/regulator/pt/derived/), proven
+    # by test_pt_spec.py. REQ: requirements/pt-new-jurisdiction (REQ-PT-4/5)
+    ("PT", "bets"):     engine.bind(pt_v1.SPEC, "bets"),
+    ("PT", "payments"): engine.bind(pt_v1.SPEC, "payments"),
+    ("PT", "players"):  engine.bind(pt_v1.SPEC, "players"),
+    ("PT", "gaming"):   engine.bind(pt_v1.SPEC, "gaming"),
 }
 
 

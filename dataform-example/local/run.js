@@ -366,6 +366,33 @@ function frUnlicensedGameTest() {
   };
 }
 
+// PT non-homologated-game negative test (REQ: requirements/pt-new-jurisdiction,
+// REQ-PT-2): Portugal licenses the full portfolio but ONLY SRIJ-homologated
+// games — the operator jackpot (canonical OJACK) was never homologated, so it
+// is absent from the PT map (block policy). Inject a real operator-jackpot
+// activity id (OJC1 -> phantom game OJ1 -> canonical OJACK) into a copy of
+// the PT gaming file; the no_unlicensed_games machinery must fire — the
+// fourth posture of the licensing story (MT licenses it, ES blocks that one
+// game, FR blocks the whole casino vertical, PT blocks the non-homologated
+// game).
+function ptUnlicensedGameTest() {
+  const pt = jurisdictions.PT;
+  const gOpts = { table: "gaming_submission_ready_pt_ojack", keyColumn: "activity_id" };
+  const corruptCtx = { ref: (n) => n };
+  return {
+    setup: [
+      `CREATE OR REPLACE TABLE gaming_submission_ready_pt_ojack AS
+         SELECT * FROM gaming_submission_ready_pt
+         UNION ALL
+         SELECT * REPLACE ('OJC1' AS activity_id) FROM gaming_submission_ready_pt WHERE activity_id = 'P7'`,
+    ],
+    checks: [
+      { rule: "PT-201 (no_unlicensed_games) blocks the operator jackpot from PT — never SRIJ-homologated", expectViolations: 1,
+        sql: violationQuery(corruptCtx, pt, { id: "PT-201", type: "no_unlicensed_games" }, gOpts) },
+    ],
+  };
+}
+
 // Loss-limit negative test: a large operator-jackpot contribution (a gaming
 // wager on the phantom game) pushes A1001's net loss over their personal
 // daily LOSS limit — proving operator-jackpot contributions count toward
@@ -508,6 +535,8 @@ async function main() {
   const ojneg = operatorJackpotBlockTest();
   // REQ: requirements/fr-new-jurisdiction (REQ-FR-2)
   const frneg = frUnlicensedGameTest();
+  // REQ: requirements/pt-new-jurisdiction (REQ-PT-2)
+  const ptneg = ptUnlicensedGameTest();
   const llneg = lossLimitContributionTest();
   const woneg = walletOverspendTest();
   const fineg = faultIsolationNegativeTests();
@@ -520,7 +549,7 @@ async function main() {
     for (const s of seed) console.log("  " + s.split("\n")[0]);
     console.log(`\n-- ${plan.length} pipeline steps --`);
     for (const s of plan) console.log(`  [${s.kind}] ${s.name}`);
-    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + frneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
+    console.log(`\n-- ${expectations.length} expectations, ${neg.checks.length + gneg.checks.length + ppneg.checks.length + eneg.checks.length + ojneg.checks.length + frneg.checks.length + ptneg.checks.length + llneg.checks.length + woneg.checks.length + fineg.checks.length + slneg.checks.length + pneg.checks.length} negative tests --`);
     console.log("\n✔ Plan built cleanly. Run without --dry-run to execute in DuckDB.");
     return;
   }
@@ -573,8 +602,8 @@ async function main() {
     }
   }
 
-  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...frneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
-  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...frneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
+  for (const s of [...neg.setup, ...gneg.setup, ...ppneg.setup, ...eneg.setup, ...ojneg.setup, ...frneg.setup, ...ptneg.setup, ...llneg.setup, ...woneg.setup, ...fineg.setup, ...slneg.setup, ...pneg.setup]) await run(s);
+  for (const check of [...neg.checks, ...gneg.checks, ...ppneg.checks, ...eneg.checks, ...ojneg.checks, ...frneg.checks, ...ptneg.checks, ...llneg.checks, ...woneg.checks, ...fineg.checks, ...slneg.checks, ...pneg.checks]) {
     const rows = await run(check.sql);
     if (rows.length === check.expectViolations) {
       console.log(`✔ negative test: ${check.rule} caught the corruption`);

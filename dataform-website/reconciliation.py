@@ -54,11 +54,17 @@ TAX_RATES = {
     # FR public levies on the produit brut des jeux; illustrative pending
     # pinning to primary sources. REQ: requirements/fr-new-jurisdiction (REQ-FR-3)
     "FR": [{"rate": 0.549, "to": "2025-07-01"}, {"rate": 0.593, "from": "2025-07-01"}],
+    # PT IEJO on fixed-odds STAKES (turnover — see TAX_BASIS); the demo
+    # recon models one basis per market, so the 25% GGR gaming duty is a
+    # pipeline-side computation (declared simplification).
+    # REQ: requirements/pt-new-jurisdiction (REQ-PT-3)
+    "PT": [{"rate": 0.08}],
 }
 
 # The tax BASE per market (REQ: de-regulator-addition): 'ggr' (default) or
 # 'turnover' — Germany taxes STAKES, not stake - payout.
-TAX_BASIS = {"DE": "turnover"}
+TAX_BASIS = {"DE": "turnover",
+             "PT": "turnover"}  # REQ: requirements/pt-new-jurisdiction (REQ-PT-3)
 
 # How each market treats OPERATOR-FUNDED bonus stakes (golden chips) in
 # taxable GGR — variance as data, mirroring the pipeline's jackpotPolicy
@@ -70,6 +76,7 @@ BONUS_STAKE_POLICY = {
     "BG": "gross", "GR": "gross", "NL": "deduct",
     "DE": "gross",   # turnover regime: operator-funded stakes are taxed too
     "FR": "deduct",  # REQ: requirements/fr-new-jurisdiction (REQ-FR-3)
+    "PT": "gross",   # turnover regime (REQ: requirements/pt-new-jurisdiction, REQ-PT-3)
 }
 
 

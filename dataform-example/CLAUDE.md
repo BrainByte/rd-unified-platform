@@ -233,7 +233,7 @@ the gate. One more convention: the demo database
   entirely FICTITIOUS single-user gaming site (Python 3.11 / Flask /
   persistent DuckDB committed to git) that plays the role of the
   operator OLTP so the architecture can be demonstrated end to end by
-  clicking, not slides. Register in any of the eight markets (T&Cs,
+  clicking, not slides. Register in any of the nine markets (T&Cs,
   national id, per-market postcode hints), limits, KYC, deposits/
   withdrawals, sports bets that settle ~40s after placement via LAZY
   settlement (WIN/LOSS/VOID with reasons), casino (slots/blackjack/
@@ -244,7 +244,7 @@ the gate. One more convention: the demo database
   same invariants the breach detectors prove after the fact.
 - Fictitious regulator SAFE + near-realtime submission engine
   (`dataform-website/safe.py` + `submission.py`, both started/stopped by
-  app.py as daemon threads): ONE SOAP 1.1 service impersonates all eight
+  app.py as daemon threads): ONE SOAP 1.1 service impersonates all nine
   regulators with an endpoint per jurisdiction PER RECORD TYPE
   (bets/payments/players), ?wsdl per endpoint, SOAP Faults on unknown
   jurisdiction/type, and a browsable status page (port 5002). The engine
@@ -376,6 +376,31 @@ the gate. One more convention: the demo database
   MISE+ANNUL void, POACHAT poker, slots SUPPRESSED-UNLICENSED, FR recon
   residual 0.00 reported 5/5.
 
+- PORTUGAL (PT / SRIJ) — the NINTH market (branch pt-integration; REQ:
+  repo-root requirements/pt-new-jurisdiction, work-order-first like FR).
+  The SRIJ Safe regime (Regulamento 903-B/2015; analysis + DERIVED
+  gazette-schema transcriptions under docs/regulator/pt/). Pipeline: one
+  config object — daily, includeVoided true, clear full-KYC ids, closed
+  sport list (block), SPLIT TAX BASES (taxModel turnover 8% on stakes,
+  the DE mechanics + gamingTaxRate 25% GGR in one entry — expectations
+  prove 25x0.08=2.00 and 6.40x0.25=1.60), HOMOLOGATION as the fourth
+  licensing posture (SLOT/ROUL->fortazar, BLKJ->bjack, POKC/POKT->poker;
+  OJACK and BACC never homologated -> blocked, negative test PT-201),
+  NATIONAL register (lista de autoexcluidos). Seed A11001 + S17/S18 +
+  R10/P7 + watermark; NetEnt statement uplifted for provider recon. 135
+  unit tests / 76 models / 132 assertions / 66 expectations / 19
+  negative tests; emit-sql additive. Demo: PT Safe category files from
+  the MAPPING ENGINE (specs/pt_v1.py): <ficheiro> envelope (cod_entexpl
+  byte, id_ficheiro crc-mod short, cod_cofre) wrapping JGDR_/TRAN_/AJOG_
+  records with a_*/g_*/r_* balance triplets and the conta_jog snapshot;
+  one enveloped file per record (hourly batching declared as the
+  production difference). test_pt_spec.py: 10/10 goldens AND 10/10
+  XSD-valid against the derived gazette schemas — the first market whose
+  oracle came from the regulator's own printed schemas. Live e2e:
+  settled + voided bets (r_* refund triplet), slots AND poker rounds
+  reported (full portfolio licensed — contrast FR), PT recon residual
+  0.00 reported 6/6.
+
 **Open items (agreed direction, not yet built):**
 1. ~~Effective-dating on tax rates and regulator codes~~ DONE
    (includes/effective_dating.js): a taxRate/sportCode/gameCode can be a
@@ -412,7 +437,7 @@ the gate. One more convention: the demo database
    (register a runner), not on the config; re-add the file only once a
    runner exists. Until then, `npm run check` on desktop is the gate and
    MRs are merged manually.
-6. Scale from 8 example markets (MT, ES, DK, BG, GR, NL, DE, FR) toward the real 17
+6. Scale from 9 example markets (MT, ES, DK, BG, GR, NL, DE, FR, PT) toward the real 17
 
 (Former item #5 — verify `npm run local` end-to-end on desktop — is
 DONE as of 2026-07-11; see the OFFLINE TEST HARNESS entry above.)

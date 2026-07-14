@@ -1,0 +1,28 @@
+<ficheiro>
+  <cod_entexpl>77</cod_entexpl>
+  <datahr>20260714120000</datahr>
+  <id_ficheiro>20701</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_jogador>
+    <jogador>
+      <codjogador>W6001</codjogador>
+      <conta_jog>W6001</conta_jog>
+      <tip_pag>OUTRO</tip_pag>
+      <logon>joana_pt</logon>
+      <id_cidadao>PT-NIF-123456789</id_cidadao>
+      <id_tipocid>4</id_tipocid>
+      <timestp_reg>20260714103000.00 +00:00</timestp_reg>
+      <alias_jog>joana_pt</alias_jog>
+      <nome>joana_pt</nome>
+      <data_nascimento>19910314</data_nascimento>
+      <nif>PT-NIF-123456789</nif>
+      <morada>NaoDisponivel</morada>
+      <cod_postal>0000-000</cod_postal>
+      <id_nacao>PT</id_nacao>
+      <telefone>000000000</telefone>
+      <email>joana_pt@betnova.example</email>
+      <resp_at>NA</resp_at>
+      <id_resp_at>NA</id_resp_at>
+    </jogador>
+  </registos_jogador>
+</ficheiro>

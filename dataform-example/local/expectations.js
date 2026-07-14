@@ -7,14 +7,14 @@
 
 const expectations = [
   {
-    // REQ: requirements/fr-new-jurisdiction — counts include the FR pair S15/S16
-    desc: "lifecycle: 21 slips with correct statuses (incl. DK/BG/GR/NL/DE/FR, BG 2025 resubmission, ES second-day slip + 5 fault-isolation demo slips)",
+    // REQ: requirements/pt-new-jurisdiction — counts include the PT pair S17/S18
+    desc: "lifecycle: 23 slips with correct statuses (incl. DK/BG/GR/NL/DE/FR/PT, BG 2025 resubmission, ES second-day slip + 5 fault-isolation demo slips)",
     sql: `SELECT slip_status, COUNT(*)::INT AS n FROM fct_bet_slip_lifecycle
           GROUP BY slip_status ORDER BY slip_status`,
     expect: [
       { slip_status: "OPEN", n: 1 },
-      { slip_status: "SETTLED", n: 17 }, // 9 + 5 fault-isolation demo + S13 (DE) + S14 (ES) + S15 (FR)
-      { slip_status: "VOIDED", n: 3 },   // S2, S5 + S16 (FR)
+      { slip_status: "SETTLED", n: 18 }, // 9 + 5 fault-isolation demo + S13 (DE) + S14 (ES) + S15 (FR) + S17 (PT)
+      { slip_status: "VOIDED", n: 4 },   // S2, S5 + S16 (FR) + S18 (PT)
     ],
   },
   {
@@ -126,11 +126,12 @@ const expectations = [
     expect: [{ n: 1 }],
   },
   {
-    desc: "provider spread: rounds normalised from NetEnt(5), Evolution(2), Playtech(1), Spribe-via-aggregator(1)",
+    // REQ: requirements/pt-new-jurisdiction — NetEnt gains the PT slots round R10
+    desc: "provider spread: rounds normalised from NetEnt(6), Evolution(2), Playtech(1), Spribe-via-aggregator(1)",
     sql: `SELECT provider, COUNT(*)::INT AS rounds FROM stg_game_rounds GROUP BY provider ORDER BY provider`,
     expect: [
       { provider: "Evolution", rounds: 2 },
-      { provider: "NetEnt", rounds: 5 },
+      { provider: "NetEnt", rounds: 6 },
       { provider: "Playtech", rounds: 1 },
       { provider: "Spribe", rounds: 1 },
     ],
@@ -273,6 +274,8 @@ const expectations = [
       { jurisdiction: "MT", direction: "DEPOSIT", total: 350 },   // 200 + 50 + 5x20 demo fundings
       { jurisdiction: "MT", direction: "WITHDRAWAL", total: 150 },
       { jurisdiction: "NL", direction: "DEPOSIT", total: 150 },   // funds A6001's wallet
+      // REQ: requirements/pt-new-jurisdiction — funds A11001's wallet
+      { jurisdiction: "PT", direction: "DEPOSIT", total: 100 },
     ],
   },
   {
@@ -532,6 +535,40 @@ const expectations = [
     sql: `SELECT CAST(total_ggr AS DOUBLE) AS g, CAST(gaming_tax_due AS DOUBLE) AS t
           FROM gaming_tax_summary_fr WHERE report_date = DATE '2026-07-08'`,
     expect: [{ g: 2.5, t: 0.25 }],
+  },
+
+  // ---- PORTUGAL (SRIJ) — the 9th market, REQ: requirements/pt-new-jurisdiction ----
+  {
+    desc: "PT file (REQ-PT-1): settled S17 AND voided S18 both present — refunds are first-class, carried with status, zero payout, clear account id (full-KYC regime), SRIJ sport code",
+    sql: `SELECT slip_id, account_id, slip_status, sport_code,
+                 CAST(payout AS DOUBLE) AS payout
+          FROM submission_ready_pt ORDER BY slip_id`,
+    expect: [
+      { slip_id: "S17", account_id: "A11001", slip_status: "SETTLED", sport_code: "FUTB", payout: 10 },
+      { slip_id: "S18", account_id: "A11001", slip_status: "VOIDED", sport_code: "FUTB", payout: 0 },
+    ],
+  },
+  {
+    desc: "PT betting tax is TURNOVER-based (IEJO 8% of STAKES): settled stake 25 -> tax_due 2.00, NOT the 1.20 a GGR basis would give; the voided S18 stake never enters the base",
+    sql: `SELECT CAST(total_stake AS DOUBLE) AS s, CAST(total_payout AS DOUBLE) AS p,
+                 CAST(tax_due AS DOUBLE) AS t
+          FROM tax_summary_pt WHERE report_date = DATE '2026-07-08'`,
+    expect: [{ s: 25, p: 10, t: 2 }],
+  },
+  {
+    desc: "PT gaming file (REQ-PT-2): only HOMOLOGATED games, coded to the AJOG_ sub-record families — slots R10 -> fortazar, poker P7 -> poker",
+    sql: `SELECT activity_id, game_code, vertical, CAST(gaming_ggr AS DOUBLE) AS ggr
+          FROM gaming_submission_ready_pt ORDER BY activity_id`,
+    expect: [
+      { activity_id: "NE:R10", game_code: "fortazar", vertical: "CASINO_ROUND", ggr: 6 }, // 8.00 wager - 2.00 payout
+      { activity_id: "P7", game_code: "poker", vertical: "POKER_CASH", ggr: 0.4 },        // rake only
+    ],
+  },
+  {
+    desc: "PT SPLIT BASIS proven (REQ-PT-3): gaming duty is GGR-based (6.00 + 0.40 = 6.40 x 25% -> 1.60) while the betting duty above is stakes-based — both IEJO arms from ONE config entry",
+    sql: `SELECT CAST(total_ggr AS DOUBLE) AS g, CAST(gaming_tax_due AS DOUBLE) AS t
+          FROM gaming_tax_summary_pt WHERE report_date = DATE '2026-07-08'`,
+    expect: [{ g: 6.4, t: 1.6 }],
   },
 ];
 

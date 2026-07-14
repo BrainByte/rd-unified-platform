@@ -1,0 +1,17 @@
+<ficheiro>
+  <cod_entexpl>77</cod_entexpl>
+  <datahr>20260714120000</datahr>
+  <id_ficheiro>20182</id_ficheiro>
+  <cod_cofre>2AA</cod_cofre>
+  <registos_conta>
+    <conta>
+      <codjogador>W6001</codjogador>
+      <cod_conta>W6001</cod_conta>
+      <cod_optct>CREDITO</cod_optct>
+      <timestp_op>20260714103000.00 +00:00</timestp_op>
+      <saldo_ini>0.00</saldo_ini>
+      <saldo_mov>100.00</saldo_mov>
+      <saldo_fim>100.00</saldo_fim>
+    </conta>
+  </registos_conta>
+</ficheiro>

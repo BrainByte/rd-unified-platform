@@ -45,6 +45,9 @@ const accounts = [
   // France (REQ: requirements/fr-new-jurisdiction, REQ-FR-8): the 8th market.
   // Clear national id — the sealed-vault regime reports identifiers in clear.
   ["A10001", "FR", "FR-CNI-778899", "1987-06-14", "VERIFIED", "2026-06-10 09:00:00+00", "I", "2026-06-10 09:00:01+00"],
+  // Portugal (REQ: requirements/pt-new-jurisdiction, REQ-PT-8): the 9th
+  // market. NIF-style national id, clear — PT is a full-KYC regime.
+  ["A11001", "PT", "PT-NIF-235794610", "1990-10-03", "VERIFIED", "2026-06-20 09:00:00+00", "I", "2026-06-20 09:00:01+00"],
 ];
 
 // ---- FAULT ISOLATION seed (see includes/exceptions.js) ----
@@ -61,6 +64,9 @@ const accountAddresses = [
   // France: valid 5-digit code postal (no region requirement).
   // REQ: requirements/fr-new-jurisdiction (REQ-FR-1)
   ["A10001", "75001", "Paris", "I", "2026-06-10 09:00:05+00"],
+  // Portugal: valid NNNN-NNN código postal (no region requirement).
+  // REQ: requirements/pt-new-jurisdiction (REQ-PT-1)
+  ["A11001", "1000-001", "Lisboa", "I", "2026-06-20 09:00:05+00"],
 ];
 
 // Postcode-prefix -> region reference. 'MST' (Mosta) is intentionally NOT yet
@@ -94,6 +100,10 @@ const sourceWatermarks = [
   // the FR onboarding: without this row the pipeline compiled fine but held
   // A10001 WAITING_DATA (period_not_complete) and shipped an empty FR file.
   ["bet_settlement", "FR", "2026-07-09 00:00:00+00"],
+  // PT (REQ: requirements/pt-new-jurisdiction, REQ-PT-8 / acceptance 5).
+  // The documented classic mistake: without this row the pipeline compiles
+  // fine but holds A11001 WAITING_DATA and ships an empty PT file.
+  ["bet_settlement", "PT", "2026-07-09 00:00:00+00"],
 ];
 
 // Persisted retry state from prior runs (the pipeline's memory across runs).
@@ -187,6 +197,10 @@ const payments = [
   // FR: funds A10001's wallet before any stake (spend gate stays clean).
   // REQ: requirements/fr-new-jurisdiction (REQ-FR-8)
   ["D17", "A10001", "DEPOSIT", 500.0, "CARD", "COMPLETED", "2026-07-08 08:00:00+00", "2026-07-08 08:00:05+00", "I", "2026-07-08 08:00:06+00"],
+  // PT: funds A11001's wallet BEFORE any stake (bets 25+12, slots 8, poker 5
+  // all follow it), so the sufficient-balance spend gate stays clean.
+  // REQ: requirements/pt-new-jurisdiction (REQ-PT-8)
+  ["D18", "A11001", "DEPOSIT", 100.0, "CARD", "COMPLETED", "2026-07-08 08:00:00+00", "2026-07-08 08:00:05+00", "I", "2026-07-08 08:00:06+00"],
 ];
 
 // Generic jurisdiction-attribute carrier (Option B). Market-specific data
@@ -250,6 +264,10 @@ const betSlips = [
   // bet AND a voided one — France reports voids (ANNUL traces).
   ["S15", "A10001", "F1", "sports", "I", "2026-07-08 10:00:00+00"],
   ["S16", "A10001", "F1", "sports", "I", "2026-07-08 11:00:00+00"],
+  // PT slips (REQ: requirements/pt-new-jurisdiction, REQ-PT-1/8): a settled
+  // bet AND a voided one — PT reports voids (refund triplets / reembolsos).
+  ["S17", "A11001", "F1", "sports", "I", "2026-07-08 10:00:00+00"],
+  ["S18", "A11001", "F1", "sports", "I", "2026-07-08 11:00:00+00"],
 ];
 
 const betSlipEvents = [
@@ -322,6 +340,15 @@ const betSlipEvents = [
   // S16 voided: reported with slip_status VOIDED and zero payout (ANNUL)
   ["S16", "PLACED",  "2026-07-08 11:00:00+00", 15.0, null, "I", "2026-07-08 11:00:01+00"],
   ["S16", "VOIDED",  "2026-07-08 12:30:00+00", null, null, "I", "2026-07-08 12:30:01+00"],
+  // ---- PT (REQ: requirements/pt-new-jurisdiction, REQ-PT-3/8) ----
+  // S17 settled: stake 25 -> TURNOVER tax 25 x 8% = 2.00 exactly (a GGR-based
+  // 8% on 25-10=15 would give 1.20: the expectation proves the SPLIT basis).
+  ["S17", "PLACED",  "2026-07-08 10:00:00+00", 25.0, null, "I", "2026-07-08 10:00:01+00"],
+  ["S17", "SETTLED", "2026-07-08 18:00:00+00", null, 10.0, "I", "2026-07-08 18:00:01+00"],
+  // S18 voided: reported with slip_status VOIDED, zero payout, stake refunded
+  // — and its stake never enters the turnover tax base.
+  ["S18", "PLACED",  "2026-07-08 11:00:00+00", 12.0, null, "I", "2026-07-08 11:00:01+00"],
+  ["S18", "VOIDED",  "2026-07-08 12:30:00+00", null, null, "I", "2026-07-08 12:30:01+00"],
 ];
 
 // ---- GAMING domain seed ----
@@ -400,6 +427,11 @@ const netentRounds = [
   ["R4", "A1001", "1103", 4.0, 0.0, 0.04, "JP1", "2026-07-08 09:30:00+00", "I", "2026-07-08 09:30:01+00"],
   ["R7", "A2001", "1101", 8.0, 12.0, 0.0, null, "2026-07-08 10:00:00+00", "I", "2026-07-08 10:00:01+00"],
   ["R8", "A2002", "1103", 10.0, 0.0, 0.10, "JP1", "2026-07-08 10:10:00+00", "I", "2026-07-08 10:10:01+00"],
+  // PT slots round (REQ: requirements/pt-new-jurisdiction, REQ-PT-2/3):
+  // Starburst -> canonical SLOT -> the homologated 'fortazar' sub-record
+  // family. GGR 8 - 2 = 6.00; with poker P7's 0.40 rake the PT gaming GGR is
+  // 6.40 -> 25% gaming duty 1.60 exactly (both split-basis arms exact at 2dp).
+  ["R10", "A11001", "1101", 8.0, 2.0, 0.0, null, "2026-07-08 09:00:00+00", "I", "2026-07-08 09:00:01+00"],
 ];
 
 // Evolution live casino: TRANSACTION grain, amounts in CENTS.
@@ -432,7 +464,9 @@ const aggregatorRounds = [
 // revenue share on) — reconciled against internal records.
 const providerStatements = [
   // provider, statement_date_ts (00:00 UTC of the day), reported_ggr
-  ["NetEnt", "2026-07-08", 11.5],   // 1.5 + 0 + 4.0 - 4.0 + 10.0
+  // NetEnt: 1.5 + 0 + 4.0 - 4.0 + 10.0 + 6.0 (R10, the PT slots round —
+  // REQ: requirements/pt-new-jurisdiction)
+  ["NetEnt", "2026-07-08", 17.5],
   ["Evolution", "2026-07-08", 5.0], // 10.0 + (5.0 - 10.0)
   ["Playtech", "2026-07-08", 5.0],  // 6.0 - 1.0
   ["Spribe", "2026-07-08", 3.0],
@@ -448,6 +482,10 @@ const pokerActivity = [
   // gaming vertical licensed in France — a cash hand and a tournament entry.
   ["P5", "A10001", "G6", "CASH_HAND", 10.0, 18.0, 0.5, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
   ["P6", "A10001", "G7", "TOURNAMENT_ENTRY", 20.0, 0.0, 2.0, "2026-07-08 12:00:00+00", "I", "2026-07-08 12:00:01+00"],
+  // PT poker (REQ: requirements/pt-new-jurisdiction, REQ-PT-2): the second
+  // homologated sub-record family in the PT seed (slots R10 -> 'fortazar',
+  // this cash hand -> 'poker'). GGR = the 0.40 rake only.
+  ["P7", "A11001", "G6", "CASH_HAND", 5.0, 0.0, 0.4, "2026-07-08 11:00:00+00", "I", "2026-07-08 11:00:01+00"],
 ];
 
 const jackpotPools = [

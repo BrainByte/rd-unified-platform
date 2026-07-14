@@ -57,8 +57,8 @@ test("KYC: withdrawal breach requires a VERIFIED identity check AT OR BEFORE com
   assert.match(sql, /p\.direction = 'WITHDRAWAL' AND p\.status = 'COMPLETED'/);
   assert.match(sql, /NOT EXISTS/);
   assert.match(sql, /v\.status = 'VERIFIED' AND v\.event_ts <= p\.completed_ts/);
-  // REQ: requirements/fr-new-jurisdiction — FR joined the every-market list
-  assert.match(sql, /p\.jurisdiction IN \('MT', 'ES', 'DK', 'BG', 'GR', 'NL', 'DE', 'FR'\)/); // every market requires it
+  // REQ: requirements/pt-new-jurisdiction — PT joined the every-market list
+  assert.match(sql, /p\.jurisdiction IN \('MT', 'ES', 'DK', 'BG', 'GR', 'NL', 'DE', 'FR', 'PT'\)/); // every market requires it
 });
 
 // ---- compliance dim ----

@@ -79,6 +79,8 @@ CODECS = {
     "digits8": lambda v: utc(v).strftime("%Y%m%d"),               # AAAAMMDD
     "digits6": lambda v: utc(v).strftime("%Y%m"),                 # AAAAMM
     "digits12-yy": lambda v: utc(v).strftime("%y%m%d%H%M%S"),     # FR AAMMJJHHMMSS
+    # PT "YYYYMMDDHH24MISS.FF TZH:TZM" (Oracle-style mask; UTC-normalised)
+    "digits14-fftz": lambda v: utc(v).strftime("%Y%m%d%H%M%S") + ".00 +00:00",
     "sha1-upper": lambda v: hashlib.sha1(str(v).encode("utf-8")).hexdigest().upper(),
     # FR "canonique" names: uppercase, restricted to [0-9A-Z' -]
     "fr-canonique": lambda v: _re.sub(r"[^0-9A-Z' -]", "", str(v).upper()),
@@ -141,6 +143,8 @@ def _emit(parent, name, binding, ctx):
     elif "crc" in binding:                               # deterministic NUMERIC id
         parts = _resolve_parts(binding["crc"], ctx["rec"])
         raw = zlib.crc32("|".join(str(p) for p in parts).encode("utf-8"))
+        if "mod" in binding:                             # fit narrow integer types
+            raw = raw % binding["mod"]
     elif binding.get("uid_from_key"):
         raw = uid(*ctx["key"])
     elif binding.get("now"):

@@ -10,7 +10,7 @@
 #     GET  http://127.0.0.1:5002/safe/<MKT>/<type>?wsdl  minimal WSDL
 #     GET  http://127.0.0.1:5002/                        status page (demo-friendly)
 #
-#     <MKT>  = MT | ES | DK | BG | GR | NL | DE | FR
+#     <MKT>  = MT | ES | DK | BG | GR | NL | DE | FR | PT
 #     <type> = bets | payments | players | gaming | rud | rut
 #
 # The SAFE stands in for the EXTERNAL, regulator-operated store the operator
@@ -34,7 +34,7 @@ import xml.etree.ElementTree as ET
 from xml.dom import minidom
 
 PORT = 5002
-JURISDICTIONS = ["MT", "ES", "DK", "BG", "GR", "NL", "DE", "FR"]  # REQ: requirements/fr-new-jurisdiction
+JURISDICTIONS = ["MT", "ES", "DK", "BG", "GR", "NL", "DE", "FR", "PT"]  # REQ: requirements/{fr,pt}-new-jurisdiction
 # 'gaming' (casino rounds) added with financial reconciliation: GGR for tax
 # spans sports AND gaming, so the reported record set must cover both.
 # 'rud'/'rut' are the DGOJ-style periodic registers (daily detailed /

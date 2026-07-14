@@ -52,6 +52,11 @@ MARKETS = {
     # ANJ trace regime: voids are first-class ANNUL events; the sealed
     # vault carries clear player ids. REQ: requirements/fr-new-jurisdiction (REQ-FR-1/2)
     "FR": {"include_voided": True,  "hashed_ref": False, "gaming_verticals": {"POKER"}},
+    # SRIJ Safe regime: full-KYC clear ids, refunds first-class; the full
+    # portfolio is licensed but only HOMOLOGATED games — the operator
+    # jackpot is not. REQ: requirements/pt-new-jurisdiction (REQ-PT-1/2)
+    "PT": {"include_voided": True,  "hashed_ref": False,
+           "gaming_verticals": {"SLOTS", "BLACKJACK", "POKER"}},
 }
 
 
@@ -118,6 +123,7 @@ def _balances(rec, current, stake, credit):
     rec["balance_after_stake"] = before - float(stake)
     rec["balance_before_credit"] = before - float(stake)
     rec["balance_after_credit"] = float(current)
+    rec["balance_net"] = float(current) - before + 0.0   # PT saldo_mov (+0.0 kills -0.0)
     return rec
 
 
@@ -136,7 +142,8 @@ def _log_replace(cur, rtype, key, mkt, receipt):
 
 # ---- record type: bets (the submission-table analog) -----------------------
 PENDING_BETS_SQL = """
-SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id, b.fixture_id,
+SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id, a.username,
+       b.fixture_id,
        f.sport, f.competition, f.home, f.away, b.selection, b.odds,
        p.stake,
        CASE WHEN v.slip_id IS NOT NULL THEN 'VOIDED' ELSE 'SETTLED' END AS status,
@@ -161,9 +168,9 @@ ORDER BY terminal_at
 def submit_pending_bets(cur):
     cur.execute(PENDING_BETS_SQL)
     n = 0
-    for (slip_id, mkt, account_id, national_id, fixture_id, sport, comp, home,
-         away, selection, odds, stake, status, payout, reason, placed_at,
-         terminal_at) in cur.fetchall():
+    for (slip_id, mkt, account_id, national_id, username, fixture_id, sport,
+         comp, home, away, selection, odds, stake, status, payout, reason,
+         placed_at, terminal_at) in cur.fetchall():
         meta = MARKETS.get(mkt)
         if meta is None:
             continue
@@ -176,6 +183,7 @@ def submit_pending_bets(cur):
             "record_key": slip_id,
             "slip_id": slip_id,
             "player_ref": _player_ref(mkt, account_id, national_id),
+            "username": username,      # PT AJOG_ carries the player logon
             "fixture_id": fixture_id,
             "sport": sport,
             "event": f"{home} v {away} ({comp})",
@@ -290,7 +298,7 @@ def submit_pending_players(cur):
 # cover the FULL GGR tax base (sports settlements AND gaming rounds), or the
 # reconciliation of OLTP vs reported would carry a permanent structural gap.
 PENDING_GAMING_SQL = """
-SELECT r.round_id, a.jurisdiction, a.account_id, a.national_id,
+SELECT r.round_id, a.jurisdiction, a.account_id, a.national_id, a.username,
        r.game, r.stake, r.payout, r.funding, r.session_id, r.round_ts
 FROM game_rounds r
 JOIN accounts a USING (account_id)
@@ -304,8 +312,8 @@ def submit_pending_gaming(cur):
     from engine import GAME_TYPE_CODES   # game types as configurable data
     cur.execute(PENDING_GAMING_SQL)
     n = 0
-    for (round_id, mkt, account_id, national_id, game, stake, payout, funding,
-         session_id, round_ts) in cur.fetchall():
+    for (round_id, mkt, account_id, national_id, username, game, stake, payout,
+         funding, session_id, round_ts) in cur.fetchall():
         meta = MARKETS.get(mkt)
         if meta is None:
             continue
@@ -321,6 +329,7 @@ def submit_pending_gaming(cur):
             "record_key": round_id,
             "round_id": round_id,
             "player_ref": _player_ref(mkt, account_id, national_id),
+            "username": username,      # PT AJOG_ carries the player logon
             "game": game,
             # the configurable magic number: operator-jackpot rounds are
             # deducible from the gaming data alone.
