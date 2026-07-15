@@ -2,6 +2,7 @@
 .venv/
 __pycache__/
 *.pyc
+.idea
 
 # DuckDB write-ahead logs (the .duckdb database file itself IS committed;
 # the .wal only exists while a server is running or after an unclean stop)
