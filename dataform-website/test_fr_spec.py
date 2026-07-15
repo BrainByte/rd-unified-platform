@@ -10,6 +10,13 @@
 # rounds with and without winnings. All timestamps come from the records
 # (FR traces carry no serialisation clock), so output is deterministic.
 #
+# Session attribution (REQ: requirements/fr-new-jurisdiction, REQ-FR-9):
+# the player-instigated cases carry a session_id and their traces must
+# state it in IDSession; the operator events (GAIN/ANNUL/IDENT) must
+# emit 0-sys even though the canonical record carries the player's
+# session — the VERIFIED case has one precisely to prove it is ignored.
+# R7002's None proves the 0-sys fallback for unstamped legacy rows.
+#
 #   python test_fr_spec.py            compare against the goldens (exit 0/1)
 #   python test_fr_spec.py --regen    rewrite the goldens (review the diff!)
 #
@@ -45,7 +52,7 @@ CASES = [
         "event": "Alpha v Beta (Demo League)",
         "participants": [{"name": "Alpha"}, {"name": "Beta"}],
         "selection": "HOME", "odds": 2.5, "stake": 10.0, "payout": 25.0,
-        "status": "SETTLED", "void_reason": None,
+        "status": "SETTLED", "void_reason": None, "session_id": "GS7001",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 100.0, "balance_after_stake": 90.0,
         "balance_before_credit": 90.0, "balance_after_credit": 115.0}),
@@ -55,7 +62,7 @@ CASES = [
         "event": "Gamma v Delta (Cup)",
         "participants": [{"name": "Gamma"}, {"name": "Delta"}],
         "selection": "AWAY", "odds": 3.0, "stake": 5.0, "payout": 0,
-        "status": "SETTLED", "void_reason": None,
+        "status": "SETTLED", "void_reason": None, "session_id": "GS7001",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 115.0, "balance_after_stake": 110.0,
         "balance_before_credit": 110.0, "balance_after_credit": 110.0}),
@@ -66,24 +73,30 @@ CASES = [
         "participants": [{"name": "Epsilon"}, {"name": "Zeta"}],
         "selection": "HOME", "odds": 1.8, "stake": 4.0, "payout": 0,
         "status": "VOIDED", "void_reason": "palpable error",
+        "session_id": "GS7002",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 110.0, "balance_after_stake": 106.0,
         "balance_before_credit": 106.0, "balance_after_credit": 110.0}),
     ("payments", {
         "record_key": "P7001", "payment_id": "P7001", "player_ref": "W7001",
         "direction": "DEPOSIT", "amount": 100.0, "method": "CARD",
+        "session_id": "GS7001",
         "completed_at": T1, "balance": 100.0, "balance_before": 0.0}),
     ("payments", {
         "record_key": "P7002", "payment_id": "P7002", "player_ref": "W7001",
         "direction": "WITHDRAWAL", "amount": 40.0, "method": "BANK",
+        "session_id": "GS7002",
         "completed_at": T2, "balance": 70.0, "balance_before": 110.0}),
-    ("players", {  # pending -> OUVINFOPERSO (account opening)
+    ("players", {  # pending -> OUVINFOPERSO (account opening, signup session)
         "record_key": "W7001-PENDING", "player_ref": "W7001", "jurisdiction": "FR",
         "kyc_status": "PENDING", "opened_at": T1, "username": "amelie_fr",
+        "session_id": "GS7000",
         "date_of_birth": date(1991, 3, 14), "balance": 0.0}),
-    ("players", {  # verified -> CPTEIDENTITE
+    ("players", {  # verified -> CPTEIDENTITE (operator event: the session
+                   # on the record must be IGNORED — the trace says 0-sys)
         "record_key": "W7001-VERIFIED", "player_ref": "W7001", "jurisdiction": "FR",
         "kyc_status": "VERIFIED", "opened_at": T1, "username": "amelie_fr",
+        "session_id": "GS7005",
         "date_of_birth": date(1991, 3, 14), "balance": 70.0}),
     ("gaming", {   # poker win -> POACHAT + POGAIN
         "record_key": "R7001", "round_id": "R7001", "player_ref": "W7001",

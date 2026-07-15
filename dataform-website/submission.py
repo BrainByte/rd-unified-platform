@@ -157,7 +157,7 @@ PENDING_BETS_SQL = """
 SELECT b.slip_id, a.jurisdiction, a.account_id, a.national_id, a.username,
        b.fixture_id,
        f.sport, f.competition, f.home, f.away, b.selection, b.odds,
-       p.stake,
+       p.stake, b.session_id,
        CASE WHEN v.slip_id IS NOT NULL THEN 'VOIDED' ELSE 'SETTLED' END AS status,
        CASE WHEN v.slip_id IS NOT NULL THEN 0 ELSE COALESCE(s.payout, 0) END AS payout,
        v.reason, p.event_ts AS placed_at, COALESCE(v.event_ts, s.event_ts) AS terminal_at
@@ -181,8 +181,8 @@ def submit_pending_bets(cur):
     cur.execute(PENDING_BETS_SQL)
     n = 0
     for (slip_id, mkt, account_id, national_id, username, fixture_id, sport,
-         comp, home, away, selection, odds, stake, status, payout, reason,
-         placed_at, terminal_at) in cur.fetchall():
+         comp, home, away, selection, odds, stake, session_id, status, payout,
+         reason, placed_at, terminal_at) in cur.fetchall():
         meta = MARKETS.get(mkt)
         if meta is None:
             continue
@@ -205,6 +205,10 @@ def submit_pending_bets(cur):
             "odds": odds,
             "stake": stake,
             "payout": payout,
+            # the session the player placed the bet in — player-instigated
+            # traces carry it (FR IDSession, PT id_sessao); operator events
+            # (settle/void) never do. REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
+            "session_id": session_id,
             # which fields a market reports is canonical-layer variance:
             # only void-reporting markets carry the status/void reason
             "status": status if meta["include_voided"] else None,
@@ -226,7 +230,7 @@ def submit_pending_bets(cur):
 # ---- record type: payments --------------------------------------------------
 PENDING_PAYMENTS_SQL = """
 SELECT p.payment_id, a.jurisdiction, a.account_id, a.national_id,
-       p.direction, p.amount, p.method, p.completed_ts
+       p.direction, p.amount, p.method, p.session_id, p.completed_ts
 FROM payments p
 JOIN accounts a USING (account_id)
 WHERE p.status = 'COMPLETED'
@@ -240,7 +244,7 @@ def submit_pending_payments(cur):
     cur.execute(PENDING_PAYMENTS_SQL)
     n = 0
     for (payment_id, mkt, account_id, national_id, direction, amount,
-         method, completed_ts) in cur.fetchall():
+         method, session_id, completed_ts) in cur.fetchall():
         if mkt not in MARKETS:
             continue
         rec = {
@@ -250,6 +254,9 @@ def submit_pending_payments(cur):
             "direction": direction,
             "amount": amount,
             "method": method,
+            # the session the player requested the movement in (FR IDSession).
+            # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
+            "session_id": session_id,
             "completed_at": completed_ts,
             # GR reports the balance after each wallet movement; FR wants
             # the before/after pair. The demo supplies the current balance
@@ -269,7 +276,7 @@ def submit_pending_payments(cur):
 # ---- record type: players (re-reported when KYC status changes) -------------
 PENDING_PLAYERS_SQL = """
 SELECT a.account_id, a.jurisdiction, a.national_id, a.kyc_status,
-       a.opened_at, a.date_of_birth, a.username
+       a.opened_at, a.date_of_birth, a.username, a.signup_session_id
 FROM accounts a
 WHERE NOT a.is_admin
   AND NOT EXISTS (SELECT 1 FROM safe_submissions ss
@@ -283,7 +290,7 @@ def submit_pending_players(cur):
     cur.execute(PENDING_PLAYERS_SQL)
     n = 0
     for (account_id, mkt, national_id, kyc_status, opened_at,
-         date_of_birth, username) in cur.fetchall():
+         date_of_birth, username, signup_session_id) in cur.fetchall():
         if mkt not in MARKETS:
             continue
         rec = {
@@ -296,6 +303,11 @@ def submit_pending_players(cur):
             # opening trace wants the login/pseudonym
             "date_of_birth": date_of_birth,
             "username": username,
+            # registration is player-instigated inside the session minted for
+            # it — FR's OUVINFOPERSO carries it; the operator's KYC trace
+            # (CPTEIDENTITE) never does.
+            # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
+            "session_id": signup_session_id,
             "balance": db.balance(cur, account_id),
         }
         receipt = _submit(mkt, "players", account_id, rec)

@@ -27,10 +27,16 @@
 # the wallet ledger by the submission layer.
 #
 # Demo defaults, declared once: operator id 9001 and vault id 1 are
-# fixtures; the website captures no client IP (0.0.0.0); system-time
-# events use the regulator's own "0-sys" session convention seen in the
-# examples; OUVINFOPERSO identity beyond login/pseudonym/DOB is omitted
-# (the demo captures no name/address at registration).
+# fixtures; the website captures no client IP (0.0.0.0); OUVINFOPERSO
+# identity beyond login/pseudonym/DOB is omitted (the demo captures no
+# name/address at registration).
+#
+# IDSession attribution — REQ: requirements/fr-new-jurisdiction (REQ-FR-9):
+# a trace for a PLAYER-instigated action (MISE, ALIM/RETRAIT, OUV, PO
+# play) carries the player's current session id, exactly as the
+# regulator's own examples do (PASPMISE7.xml: <IDSession>638604</IDSession>);
+# a trace for an OPERATOR/system action (GAIN, ANNUL, IDENT) carries the
+# "0-sys" sentinel the samples pair with the Supervision flag.
 # ============================================================================
 
 _IP = {"const": "0.0.0.0"}
@@ -39,7 +45,10 @@ _IP = {"const": "0.0.0.0"}
 def _HEADER(date_field, event_key, session=None, po_order=False):
     """The common trace header. The PASP/CJ families order it
     IDOper..IDCoffre; the newer PO family puts IDCoffre second and swaps
-    IP/session — both orders exactly as the regulator's examples."""
+    IP/session — both orders exactly as the regulator's examples.
+    IDSession defaults to the player's session (player-instigated
+    events, falling back to 0-sys for unstamped legacy rows); operator
+    events pass session={"const": "0-sys"}. (REQ-FR-9)"""
     fields = {
         "IDOper": {"config": "operator_id"},
         "DateEvt": {"from": date_field, "as": "digits12-yy"},
@@ -76,8 +85,9 @@ SPEC = {
         "bets": {
             "documents": [
                 {"suffix": "MISE", "element": "PASPMISE", "fields": {
-                    **_HEADER("placed_at", ["fr-bet-mise", "$slip_id", "$status"],
-                              session={"const": "0-sys"}),
+                    # placement is the player's action: IDSession is the
+                    # session the bet was placed in (REQ-FR-9)
+                    **_HEADER("placed_at", ["fr-bet-mise", "$slip_id", "$status"]),
                     "Tech": {"from": "slip_id"},
                     "PaSp": {"children": {
                         "Combi": {"const": "S"},          # simple (single) bet
@@ -108,6 +118,8 @@ SPEC = {
                 }},
                 {"suffix": "GAIN", "element": "PASPGAIN",
                  "when": {"field": "payout", "positive": True}, "fields": {
+                    # settlement is the operator's action: 0-sys, paired
+                    # with the Supervision flag below (REQ-FR-9)
                     **_HEADER("terminal_at", ["fr-bet-gain", "$slip_id"],
                               session={"const": "0-sys"}),
                     "Supervision": {"children": {}},
@@ -120,6 +132,8 @@ SPEC = {
                 }},
                 {"suffix": "ANNUL", "element": "PASPANNUL",
                  "when": {"field": "status", "equals": "VOIDED"}, "fields": {
+                    # a void is the operator's action: 0-sys, paired with
+                    # the Supervision flag below (REQ-FR-9)
                     **_HEADER("terminal_at", ["fr-bet-annul", "$slip_id"],
                               session={"const": "0-sys"}),
                     "Supervision": {"children": {}},
@@ -144,8 +158,9 @@ SPEC = {
             "documents": [
                 {"suffix": "ALIM", "element": "CPTEALIM",
                  "when": {"field": "direction", "equals": "DEPOSIT"}, "fields": {
-                    **_HEADER("completed_at", ["fr-alim", "$payment_id"],
-                              session={"const": "0-sys"}),
+                    # a deposit is the player's action: IDSession is the
+                    # session it was made in (REQ-FR-9)
+                    **_HEADER("completed_at", ["fr-alim", "$payment_id"]),
                     "IDRef": {"from": "payment_id"},
                     "DateDemande": {"from": "completed_at", "as": "digits12-yy"},
                     "DateEffective": {"from": "completed_at", "as": "digits12-yy"},
@@ -160,8 +175,9 @@ SPEC = {
                 }},
                 {"suffix": "RETRAIT", "element": "CPTERETRAIT",
                  "when": {"field": "direction", "equals": "WITHDRAWAL"}, "fields": {
-                    **_HEADER("completed_at", ["fr-retrait", "$payment_id"],
-                              session={"const": "0-sys"}),
+                    # a withdrawal request is the player's action: IDSession
+                    # is the session it was requested in (REQ-FR-9)
+                    **_HEADER("completed_at", ["fr-retrait", "$payment_id"]),
                     "IDRef": {"from": "payment_id"},
                     "DateDemande": {"from": "completed_at", "as": "digits12-yy"},
                     "SoldeDemande": {"from": "amount", "as": "money"},
@@ -179,6 +195,8 @@ SPEC = {
             "documents": [
                 {"suffix": "OUV", "element": "OUVINFOPERSO",
                  "when": {"field": "kyc_status", "equals": "PENDING"}, "fields": {
+                    # the player registers inside the session minted for it:
+                    # IDSession is that session (REQ-FR-9)
                     **_HEADER("opened_at", ["fr-ouv", "$player_ref"]),
                     "Login": {"from": "username", "fallback_field": "player_ref"},
                     "Pseudo": {"from": "username", "fallback_field": "player_ref"},
@@ -198,7 +216,10 @@ SPEC = {
                 }},
                 {"suffix": "IDENT", "element": "CPTEIDENTITE",
                  "when": {"field": "kyc_status", "equals": "VERIFIED"}, "fields": {
-                    **_HEADER("opened_at", ["fr-ident", "$player_ref"]),
+                    # identity verification is the operator's action: 0-sys,
+                    # never the player's session (REQ-FR-9)
+                    **_HEADER("opened_at", ["fr-ident", "$player_ref"],
+                              session={"const": "0-sys"}),
                     "NatureVerification": {"const": "PieceIdentite"},
                 }},
             ],

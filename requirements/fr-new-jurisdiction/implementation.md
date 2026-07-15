@@ -186,6 +186,56 @@ Live: registered `amelie_fr`, deposited, one bet won (MISE+GAIN), one
 voided (MISE+ANNUL re-report), poker round (ACHAT), slots round
 suppressed as unlicensed; FR reconciliation residual 0.00, reported 5/5.
 
+## REQ-FR-9 — session attribution (added 2026-07-15)
+
+[requirements.md](requirements.md) REQ-FR-9 arrived after the original
+onboarding: player-instigated traces carry the player's current session
+in `IDSession`; operator actions carry `0-sys`. The regulator's own
+examples already behave this way (`PASPMISE7.xml` carries
+`<IDSession>638604</IDSession>`) — the first implementation had
+hard-coded `0-sys` on every header, a deviation this removes.
+
+**E1. OLTP session stamps.** `db.py` gains `bet_slips.session_id` and
+`payments.session_id` (the session the player placed/requested in) and
+`accounts.signup_session_id`; `app.py` stamps them from the live
+request's `g.session_id` (blocked/held attempts included), and
+registration now mints its session *before* the account row is written
+so the signup is stamped, never inferred. `game_rounds.session_id`
+already existed (REQ-OJ-2). Stamp-at-write is the state-from-events
+rule on the wire: the serialiser never reconstructs a session.
+
+**E2. Canonical dicts.** `submission.py`'s bets/payments/players
+queries and record dicts gain `session_id` (players: the signup
+session).
+
+**E3. The spec.** `specs/fr_v1.py`: MISE/ALIM/RETRAIT/OUV drop the
+`0-sys` override and take the header default
+(`{"from": "session_id", "fallback": "0-sys"}` — the fallback keeps
+unstamped legacy rows serialisable); GAIN/ANNUL keep pinned `0-sys`
+(paired with `Supervision`, as the samples do); IDENT pins `0-sys`
+explicitly so it ignores the session the canonical record now carries.
+
+**E4. Proof.** `test_fr_spec.py`: the player-instigated cases carry
+sessions; the VERIFIED (IDENT) case carries one **to prove it is
+ignored**; R7002's `None` session proves the fallback. Golden diff: 6
+files, exactly one `IDSession` line each (12/12 match, 9/9 XSD-valid).
+Live: one FR login (`GS1001`) produced 13 traces — every
+player-instigated trace (3× MISE incl. the void's re-reported MISE,
+POACHAT+POGAIN, ALIM, RETRAIT, OUV) carries `GS1001`; every operator
+trace (2× GAIN, ANNUL, IDENT) carries `0-sys`. Acceptance criterion 6
+satisfied.
+
+**Ripple, intended.** PT's `AJOG_` bet sub-records bind `id_sessao`
+from the same canonical field: previously the `"0"` fallback, now the
+real session — so `id_sessao` joins the `SESS_` platform-session
+records, matching the gazette's own `AJOG.sample.xml` (which carries a
+real session id; the type is `xs:string`). PT bets fixtures + goldens
+updated (11/11 goldens, 11/11 gazette-valid); NL and ES suites
+byte-identical, no other market's goldens changed. The pipeline
+(`dataform-example/`) is untouched — no FR reporting *file* carries a
+session column; the session entity itself is
+[session-tracking](../session-tracking/requirements.md) scope.
+
 ## Requirement → artifact trace
 
 | Requirement | Implemented by | Proven by |
@@ -198,3 +248,4 @@ suppressed as unlicensed; FR reconciliation residual 0.00, reported 5/5.
 | REQ-FR-6 balance triplets | `_balances()` in `submission.py` from the wallet ledger | goldens and live traces carry consistent avant/mouvement/après |
 | REQ-FR-7 player protection | `playerProtection` config (NATIONAL register, verification-gated withdrawal) | existing breach-detector fan-out includes FR (assertion count +18) |
 | REQ-FR-8 demo end-to-end | demo dict edits (engine/submission/safe/recon) + FR SAFE folder | live e2e; FR reconciliation residual 0.00, reported 5/5 |
+| REQ-FR-9 session attribution | session stamps in `db.py`/`app.py` (E1); `session_id` on bets/payments/players canonical dicts (E2); `IDSession` bindings in `specs/fr_v1.py` (E3) | goldens 12/12 + 9/9 XSD (IDENT proven to ignore the record's session; `None` proves the 0-sys fallback); live: 13 traces from one login — player traces `GS1001`, operator traces `0-sys` |

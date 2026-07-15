@@ -54,14 +54,15 @@ def main():
     cur = db.cursor()
     db.init_schema(cur)
 
-    # customer-services account (never bets; sees everything)
+    # customer-services account (never bets; sees everything). Seeded rows
+    # predate any login, so they carry no session stamp (NULL).
     aid = next_id(cur, "account", "W")
-    cur.execute("INSERT INTO accounts VALUES (?, 'admin', ?, 'MT', NULL, DATE '1980-01-01', 'VERIFIED', TRUE, ?, NULL)",
+    cur.execute("INSERT INTO accounts VALUES (?, 'admin', ?, 'MT', NULL, DATE '1980-01-01', 'VERIFIED', TRUE, NULL, ?, NULL)",
                 [aid, generate_password_hash("admin"), now()])
 
     # a ready-to-play demo player: MT, verified, funded, sensible limits
     pid = next_id(cur, "account", "W")
-    cur.execute("INSERT INTO accounts VALUES (?, 'demo', ?, 'MT', 'MT-ID-70011', DATE '1990-05-10', 'VERIFIED', FALSE, ?, NULL)",
+    cur.execute("INSERT INTO accounts VALUES (?, 'demo', ?, 'MT', 'MT-ID-70011', DATE '1990-05-10', 'VERIFIED', FALSE, NULL, ?, NULL)",
                 [pid, generate_password_hash("demo"), now()])
     cur.execute("INSERT INTO terms_acceptances VALUES (?, ?, ?)", [pid, engine.TERMS_VERSION, now()])
     vid = next_id(cur, "verification", "V")
@@ -74,7 +75,7 @@ def main():
         cur.execute("INSERT INTO player_limits VALUES (?, ?, ?, ?, ?, NULL)",
                     [lid, pid, ltype, amount, now()])
     dep = next_id(cur, "payment", "P")
-    cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', 200.00, 'CARD', 'COMPLETED', NULL, ?, ?)",
+    cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', 200.00, 'CARD', 'COMPLETED', NULL, NULL, ?, ?)",
                 [dep, pid, now(), now()])
 
     engine.top_up_fixtures(cur)

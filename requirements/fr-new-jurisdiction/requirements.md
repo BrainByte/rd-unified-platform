@@ -2,9 +2,9 @@
 
 | | |
 |---|---|
-| Requirement id | **FR** (fr-new-jurisdiction) — individual items REQ-FR-1 … REQ-FR-8 |
+| Requirement id | **FR** (fr-new-jurisdiction) — individual items REQ-FR-1 … REQ-FR-9 |
 | Scope | The reporting pipeline (`dataform-example/`), the regulator format layer (`dataform-website/regulator_formats/`), and the demo stack (BetNova site, submission engine, SAFE, reconciliation) |
-| Status | **Implemented** — see [implementation.md](implementation.md) § "As implemented" and the requirement → artifact → proven-by trace |
+| Status | **Implemented** — see [implementation.md](implementation.md) § "As implemented" (REQ-FR-1…8), § "REQ-FR-9 — session attribution" (added later), and the requirement → artifact → proven-by trace |
 | Companion docs | [overview.md](overview.md) (what & how) · [implementation.md](implementation.md) (the plan) · [docs/regulator/fr/fr-data-model.md](../../docs/regulator/fr/fr-data-model.md) (the analysed regulator model) |
 
 ## Background / regulatory context
@@ -98,6 +98,25 @@ poker — and the SAFE receives FR traces (`dataform-safe/FR/…`) with
 receipts, including the MISE+GAIN pair for one settled bet. The FR
 reconciliation PDF reconciles to zero.
 
+**REQ-FR-9 — Session attribution (`IDSession`).** The trace header
+states who acted. Every trace for a record **instigated by the player**
+carries the player's **current session id** — the platform session of
+[session-tracking](../session-tracking/requirements.md) REQ-ST-1 — in
+its `IDSession` header field: registration (`OUVINFOPERSO`; the demo
+mints the session in the same request), deposits and withdrawal
+requests (`CPTEALIM`/`CPTERETRAIT`), bet placement (`PASPMISE`) and
+poker play (`POACHAT`/`POGAIN`, already stamped via
+`game_rounds.session_id`). Every trace for an action **performed by the
+operator** — bet settlement (`PASPGAIN`), void (`PASPANNUL`), identity
+verification (`CPTEIDENTITE`) — carries the regulator's **`0-sys`**
+sentinel instead, preserving the sampled `Supervision` + `0-sys`
+pairing for system-generated events
+([fr-data-model.md](../../docs/regulator/fr/fr-data-model.md) § key
+entities). Consequently the player-instigated OLTP writes FR reports
+(bets, payments) must be **session-stamped at write time**, as gaming
+plays already are — the session is a fact captured with the action,
+never inferred at serialisation time.
+
 ## Out of scope
 
 - Horse racing (PAHI), lotteries (LOTI/LOJI) and fantasy (FA) — the demo
@@ -126,3 +145,8 @@ reconciliation PDF reconciles to zero.
    with completeness green.
 5. The `cdc_source_watermarks` row for FR exists (the documented classic
    mistake — without it FR compiles fine and reports nothing).
+6. Session attribution (REQ-FR-9): an FR player's `MISE`, `CPTEALIM`
+   and PO traces carry the `GS-…` session id of the login in which the
+   player acted, while the `GAIN`/`ANNUL` traces for the same slips and
+   the `CPTEIDENTITE` KYC trace carry `0-sys` — proven by golden files
+   and the live demo trace pair.

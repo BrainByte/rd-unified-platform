@@ -115,19 +115,23 @@ def register():
                 flash("That username is taken.", "error")
             else:
                 aid = next_id(g.cur, "account", "W")
+                # registration is a player action inside the session minted
+                # for it — stamped so FR's OUVINFOPERSO trace can carry it.
+                # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
+                gs = engine.start_gaming_session(g.cur, aid)
                 # date_of_birth: REQ requirements/max-stake-limits (age-banded caps)
                 g.cur.execute(
-                    "INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, 'PENDING', FALSE, ?, ?)",
+                    "INSERT INTO accounts VALUES (?, ?, ?, ?, ?, ?, 'PENDING', FALSE, ?, ?, ?)",
                     [aid, username, generate_password_hash(f["password"]),
                      f.get("jurisdiction", "MT"), f.get("national_id") or None,
-                     f.get("date_of_birth") or "1990-01-01", now(), now()])
+                     f.get("date_of_birth") or "1990-01-01", gs, now(), now()])
                 g.cur.execute("INSERT INTO terms_acceptances VALUES (?, ?, ?)",
                               [aid, engine.TERMS_VERSION, now()])
                 vid = next_id(g.cur, "verification", "V")
                 g.cur.execute("INSERT INTO verifications VALUES (?, ?, 'IDENTITY', 'PENDING', ?)",
                               [vid, aid, now()])
                 session["account_id"] = aid
-                session["gs"] = engine.start_gaming_session(g.cur, aid)
+                session["gs"] = gs
                 flash(f"Welcome to BetNova, {username}! Your account is {aid}. "
                       "Verify your identity to enable withdrawals.", "ok")
                 return redirect(url_for("account"))
@@ -285,19 +289,21 @@ def deposit():
     pid = next_id(g.cur, "payment", "P")
     excl = engine.active_exclusion(g.cur, aid)
     block = engine.deposit_limit_block(g.cur, aid, amount) if amount > 0 else "invalid amount"
+    # a deposit is player-instigated: stamp the player's current session.
+    # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
     if excl:
-        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'FAILED', ?, ?, NULL)",
-                      [pid, aid, amount, f"blocked: self-excluded ({excl})", now()])
+        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'FAILED', ?, ?, ?, NULL)",
+                      [pid, aid, amount, f"blocked: self-excluded ({excl})", g.session_id, now()])
         flash("Deposit BLOCKED: your account is self-excluded. "
               "(In the pipeline, a completed deposit here would be a compliance breach — "
               "the platform correctly refuses it.)", "error")
     elif block:
-        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'FAILED', ?, ?, NULL)",
-                      [pid, aid, amount, f"blocked: {block}", now()])
+        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'FAILED', ?, ?, ?, NULL)",
+                      [pid, aid, amount, f"blocked: {block}", g.session_id, now()])
         flash(f"Deposit BLOCKED: it {block}.", "error")
     else:
-        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'COMPLETED', NULL, ?, ?)",
-                      [pid, aid, amount, now(), now()])
+        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'DEPOSIT', ?, 'CARD', 'COMPLETED', NULL, ?, ?, ?)",
+                      [pid, aid, amount, g.session_id, now(), now()])
         flash(f"Deposited {amount:.2f} (fictitious funds).", "ok")
         # the homepage deal, for real: a golden chip for qualifying deposits
         # REQ: requirements/golden-chips (REQ-GC-1)
@@ -323,15 +329,17 @@ def withdraw():
         flash("Withdrawal exceeds your balance.", "error")
         return redirect(url_for("account"))
     pid = next_id(g.cur, "payment", "P")
+    # a withdrawal request is player-instigated: stamp the current session.
+    # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
     if user["kyc_status"] != "VERIFIED":
-        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'WITHDRAWAL', ?, 'BANK', 'REQUESTED', ?, ?, NULL)",
-                      [pid, aid, amount, "held: identity not verified (KYC)", now()])
+        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'WITHDRAWAL', ?, 'BANK', 'REQUESTED', ?, ?, ?, NULL)",
+                      [pid, aid, amount, "held: identity not verified (KYC)", g.session_id, now()])
         flash("Withdrawal HELD at REQUESTED — identity not verified. "
               "(A completed withdrawal without KYC would breach the pipeline's "
               "unverified-withdrawal detector; the platform holds it instead.)", "warn")
     else:
-        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'WITHDRAWAL', ?, 'BANK', 'COMPLETED', NULL, ?, ?)",
-                      [pid, aid, amount, now(), now()])
+        g.cur.execute("INSERT INTO payments VALUES (?, ?, 'WITHDRAWAL', ?, 'BANK', 'COMPLETED', NULL, ?, ?, ?)",
+                      [pid, aid, amount, g.session_id, now(), now()])
         flash(f"Withdrew {amount:.2f} (fictitious funds).", "ok")
     return redirect(url_for("account"))
 
@@ -368,8 +376,11 @@ def place_bet():
 
     odds = float(orow[0])
     slip_id = next_id(g.cur, "slip", "S")
-    g.cur.execute("INSERT INTO bet_slips VALUES (?, ?, ?, ?, ?, 'sports', ?)",
-                  [slip_id, aid, fid, selection, odds, now()])
+    # placement is player-instigated: stamp the player's current session
+    # (settlement/void are operator events — they carry no session).
+    # REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
+    g.cur.execute("INSERT INTO bet_slips VALUES (?, ?, ?, ?, ?, 'sports', ?, ?)",
+                  [slip_id, aid, fid, selection, odds, g.session_id, now()])
     g.cur.execute("INSERT INTO bet_slip_events VALUES (?, 'PLACED', ?, ?, NULL, NULL)",
                   [slip_id, now(), stake])
     # demo speed: first bet arms the fixture to settle shortly

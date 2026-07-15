@@ -46,6 +46,9 @@ CASES = [
         "participants": [{"name": "Alfa"}, {"name": "Beta"}],
         "selection": "HOME", "odds": 2.5, "stake": 10.0, "payout": 25.0,
         "status": "SETTLED", "void_reason": None,
+        # bets are session-stamped at placement (REQ: requirements/
+        # fr-new-jurisdiction, REQ-FR-9): id_sessao joins the SESS_ record
+        "session_id": "GS6001",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 100.0, "balance_after_stake": 90.0,
         "balance_before_credit": 90.0, "balance_after_credit": 115.0,
@@ -56,7 +59,7 @@ CASES = [
         "event": "Gama v Delta (Taca)",
         "participants": [{"name": "Gama"}, {"name": "Delta"}],
         "selection": "AWAY", "odds": 3.0, "stake": 5.0, "payout": 0,
-        "status": "SETTLED", "void_reason": None,
+        "status": "SETTLED", "void_reason": None, "session_id": "GS6001",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 115.0, "balance_after_stake": 110.0,
         "balance_before_credit": 110.0, "balance_after_credit": 110.0,
@@ -68,6 +71,7 @@ CASES = [
         "participants": [{"name": "Epsilon"}, {"name": "Zeta"}],
         "selection": "HOME", "odds": 1.8, "stake": 4.0, "payout": 0,
         "status": "VOIDED", "void_reason": "erro de cotacao",
+        "session_id": "GS6002",
         "placed_at": T1, "terminal_at": T2,
         "balance_before_stake": 110.0, "balance_after_stake": 106.0,
         "balance_before_credit": 106.0, "balance_after_credit": 110.0,

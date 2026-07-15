@@ -63,6 +63,8 @@ CREATE TABLE IF NOT EXISTS accounts (
   date_of_birth DATE,                  -- REQ: requirements/max-stake-limits (age-banded caps)
   kyc_status   VARCHAR NOT NULL,       -- PENDING / VERIFIED
   is_admin     BOOLEAN NOT NULL DEFAULT FALSE,
+  signup_session_id VARCHAR,           -- the session minted for the registration
+                                       -- REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
   opened_at    TIMESTAMPTZ NOT NULL,
   last_seen    TIMESTAMPTZ
 );
@@ -109,6 +111,8 @@ CREATE TABLE IF NOT EXISTS payments (
   amount DECIMAL(12,2) NOT NULL, method VARCHAR,
   status VARCHAR NOT NULL,              -- REQUESTED / COMPLETED / FAILED
   reason VARCHAR,                       -- why FAILED / held
+  session_id VARCHAR,                   -- the session the player requested it in
+                                        -- REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
   requested_ts TIMESTAMPTZ NOT NULL, completed_ts TIMESTAMPTZ
 );
 
@@ -132,6 +136,8 @@ CREATE TABLE IF NOT EXISTS bet_slips (
   slip_id VARCHAR PRIMARY KEY, account_id VARCHAR NOT NULL,
   fixture_id VARCHAR NOT NULL, selection VARCHAR NOT NULL,
   odds DECIMAL(6,2) NOT NULL, product VARCHAR NOT NULL DEFAULT 'sports',
+  session_id VARCHAR,                   -- the session the player placed it in
+                                        -- REQ: requirements/fr-new-jurisdiction (REQ-FR-9)
   created_at TIMESTAMPTZ NOT NULL
 );
 
